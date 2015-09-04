@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">Virde</string>
 
-    <string name="action_settings">Settings</string>
+    <!-- menu_main -->
+    <string name="action_sinc">Sincronizar</string>
+    <string name="action_servers">Servidores</string>
+    <string name="action_about">Acerca de</string>
 
     <!-- item_issue -->
     <string name="suscribe">Suscribirse</string>

@@ -15,7 +15,7 @@
     </style>
 
     <!-- Base application theme NoActionBar -->
-    <style name="AppThemeNoActionBar" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppThemeNoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
 
         <!--   your app branding color for the app bar -->
         <item name="colorPrimary">@color/primary</item>
@@ -28,6 +28,7 @@
 
     </style>
 
+    <!-- Texts -->
     <style name="text" parent="@android:style/TextAppearance.Medium">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -54,6 +55,7 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <!-- Buttons -->
     <style name="suscribirse" parent="Widget.AppCompat.Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">36dp</item>
