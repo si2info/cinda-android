@@ -1,0 +1,12 @@
+<resources>
+
+    <!-- activity_main -->
+    <string name="verdi_server">Servidor Virde</string>
+    <string name="verdi_server_url">http://myverdiserver.com</string>
+    <string name="verdi_server_desc">Descripción del servidor al que el usuario está conectado</string>
+
+    <!-- item_issue -->
+    <string name="issue_title">Lorem ipsum dolor sit amet, consectetur adipiscing elit</string>
+    <string name="issue_description">Praesent felis dolor, tristique ut vehicula id, egestas eget eros. Etiam vitae tortor quis dui efficitur semper. Nulla tristique facilisis maximus.</string>
+
+</resources>

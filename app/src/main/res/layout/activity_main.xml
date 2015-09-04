@@ -1,0 +1,69 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@android:color/white" >
+
+    <include
+        layout="@layout/toolbar"
+        android:id="@+id/toolbar"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:layout_below="@+id/toolbar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/serverInfo"
+        android:background="@color/primary"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="-42dp"
+        android:onClick="showInfoServer">
+
+        <TextView
+            style="@style/text"
+            android:text="@string/verdi_server"
+            android:id="@+id/server"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="16sp" />
+
+        <TextView
+            style="@style/text.url"
+            android:text="@string/verdi_server_url"
+            android:id="@+id/serverUrl"
+            android:layout_below="@+id/server"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="8dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="8dp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+        <TextView
+            style="@style/text.14"
+            android:text="@string/verdi_server_desc"
+            android:id="@+id/serverDesc"
+            android:layout_below="@+id/serverUrl"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="8dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:paddingBottom="8dp" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

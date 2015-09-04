@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Virde</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- item_issue -->
+    <string name="suscribe">Suscribirse</string>
+    <string name="unsuscribe">No me interesa</string>
+
+    <!-- Test String -->
+    <string name="verdi_server"> </string>
+    <string name="verdi_server_desc"> </string>
+
+</resources>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+
+    <TextView
+        style="@style/text.issueTitle"
+        android:text="@string/issue_title"
+        android:id="@+id/title"
+        android:background="@color/card_issue_1"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:paddingTop="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="36dp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/topUsers"
+        android:orientation="horizontal"
+        android:layout_below="@+id/title"
+        android:layout_marginTop="-24dp"
+        android:paddingLeft="16dp">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:id="@+id/topUser1"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/test_logo_si2" />
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:id="@+id/topUser2"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/test_logo_si2" />
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:id="@+id/topUser3"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/test_logo_si2" />
+
+    </LinearLayout>
+
+    <TextView
+        style="@style/text.issueDescription"
+        android:text="@string/issue_description"
+        android:id="@+id/description"
+        android:layout_below="@+id/topUsers"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp" />
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/suscribirse"
+        android:text="@string/suscribe"
+        android:id="@+id/suscriptionButton"
+        android:layout_below="@+id/description"
+        android:layout_alignRight="@+id/description"
+        android:layout_alignEnd="@+id/description"
+        android:layout_marginTop="8dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:id="@+id/separator"
+        android:background="@color/separator"
+        android:layout_below="@+id/suscriptionButton"
+        android:layout_marginTop="8dp" />
+
+</RelativeLayout>
