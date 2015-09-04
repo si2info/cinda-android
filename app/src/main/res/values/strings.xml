@@ -10,8 +10,25 @@
     <string name="suscribe">Suscribirse</string>
     <string name="unsuscribe">No me interesa</string>
 
+    <!-- campaign -->
+    <string name="campaign_data">DATOS DE LA CAMPAÑA</string>
+    <string name="campaign_my_data">DATOS CONTRIBUIDOS POR MI</string>
+    <string name="campaign_objective"><font fgcolor="@color/primary">Objetivo: </font></string>
+    <string name="campaign_geo_area"><font fgcolor="@color/primary">Ámbito geográfico: </font></string>
+    <string name="campaign_dates"><font fgcolor="@color/primary">Fechas: </font></string>
+
     <!-- Test String -->
-    <string name="verdi_server"> </string>
-    <string name="verdi_server_desc"> </string>
+        <!-- activity_main -->
+        <string name="verdi_server"> </string>
+        <string name="verdi_server_url"> </string>
+        <string name="verdi_server_desc"> </string>
+
+        <!-- item_issue -->
+        <string name="issue_title"> </string>
+        <string name="issue_description"> </string>
+
+        <!-- item_campaign_user -->
+        <string name="campaign_user_title"> </string>
+        <string name="campaign_user_data"> </string>
 
 </resources>

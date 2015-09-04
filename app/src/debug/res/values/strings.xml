@@ -9,4 +9,13 @@
     <string name="issue_title">Lorem ipsum dolor sit amet, consectetur adipiscing elit</string>
     <string name="issue_description">Praesent felis dolor, tristique ut vehicula id, egestas eget eros. Etiam vitae tortor quis dui efficitur semper. Nulla tristique facilisis maximus.</string>
 
+    <!-- campaign -->
+    <string name="campaign_objective"><font fgcolor="#4CAF50">Objetivo: </font>Tomar fotos y aportar la posición GPS de todas las mariposas que se observen en el campo.</string>
+    <string name="campaign_geo_area"><font fgcolor="#4CAF50">Ámbito geográfico: </font>GRANADA</string>
+    <string name="campaign_dates"><font fgcolor="#4CAF50">Fechas: </font>01 Sep 2015 &#8211; 31 Ago 2016</string>
+
+    <!-- item_campaign_user -->
+    <string name="campaign_user_title">09 Sep 1999</string>
+    <string name="campaign_user_data">Lorem ipsum dolor sit amet, consectetur adipiscing elit</string>
+
 </resources>

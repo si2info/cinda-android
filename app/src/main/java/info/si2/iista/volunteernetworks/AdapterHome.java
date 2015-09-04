@@ -54,6 +54,7 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
                     description = (TextView)itemView.findViewById(R.id.description);
                     topUsers = (LinearLayout)itemView.findViewById(R.id.topUsers);
                     suscribe = (Button)itemView.findViewById(R.id.suscriptionButton);
+                    itemView.setOnClickListener(this);
                     break;
             }
 

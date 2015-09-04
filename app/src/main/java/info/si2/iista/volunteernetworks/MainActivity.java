@@ -1,5 +1,6 @@
 package info.si2.iista.volunteernetworks;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
@@ -119,6 +120,9 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
     @Override
     public void onHomeItemClick(View view, int position) {
 
+        Intent intent = new Intent(this, Campaign.class);
+        startActivity(intent);
+
     }
 
     public void showInfoServer (View view) {
@@ -131,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
     }
 
+    /** Bottom bar Animations **/
     public void animateInfoOut(View view, float size) {
 
         TranslateAnimation anim = new TranslateAnimation(0, 0, Animation.RELATIVE_TO_SELF, Util.convertDpToPixel(getApplicationContext(), size));
