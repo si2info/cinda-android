@@ -29,15 +29,16 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
     // Animate server info
     private RelativeLayout serverInfo;
     private static final Interpolator INTERPOLATOR = new FastOutSlowInInterpolator();
-    private float sizeInfoServer = 120.0f;
+    private int sizeInfoServer = 60;
     private int sizeDescServer = -40;
+    private int sizeInfoDescServer = 300;
     private long duration = 400L;
     private boolean isAnimatingInfoOut;   // Info
     private boolean isAnimatingInfoIn;    // Info
     private boolean isInfoShowing = true; // Info
-    private boolean isAnimatingDescOut;    // Description
-    private boolean isAnimatingDescIn;     // Description
-    private boolean isDescShowing;         // Description
+    private boolean isAnimatingDescOut;   // Description
+    private boolean isAnimatingDescIn;    // Description
+    private boolean isDescShowing;        // Description
 
 
     @Override
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         // RecyclerView
         recyclerView.setHasFixedSize(true);
 
-        AdapterHome homeAdapter = new AdapterHome(getApplicationContext(), items, getApplication());
+        AdapterHome homeAdapter = new AdapterHome(getApplicationContext(), items);
         homeAdapter.setClickListener(this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
                 if (dy > 3 && !isAnimatingInfoOut && isInfoShowing) {
                     if (isDescShowing) { // Descripción visible, ocultar el bloque completo
-                        animateInfoOut(serverInfo, 200.0f);
+                        animateInfoOut(serverInfo, Util.convertPixelsToDp(getApplicationContext(), sizeInfoDescServer));
                     } else
                         animateInfoOut(serverInfo, sizeInfoServer);
                 } else if (dy < -3 && !isAnimatingInfoIn && !isInfoShowing) {
@@ -132,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
     public void animateInfoOut(View view, float size) {
 
-        TranslateAnimation anim = new TranslateAnimation(0, 0, Animation.RELATIVE_TO_SELF, size);
+        TranslateAnimation anim = new TranslateAnimation(0, 0, Animation.RELATIVE_TO_SELF, Util.convertDpToPixel(getApplicationContext(), size));
 
         anim.setDuration(duration);
         anim.setFillEnabled(false);
@@ -171,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
     public void animateInfoIn(View view) {
 
-        TranslateAnimation anim = new TranslateAnimation(0, 0, Animation.RELATIVE_TO_SELF, -sizeInfoServer);
+        TranslateAnimation anim = new TranslateAnimation(0, 0, Animation.RELATIVE_TO_SELF, -Util.convertDpToPixel(getApplicationContext(), sizeInfoServer));
 
         anim.setDuration(duration);
         anim.setFillEnabled(false);

@@ -1,6 +1,5 @@
 package info.si2.iista.volunteernetworks;
 
-import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -29,14 +28,12 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
 
     // Adapter
     private Context context;
-    private Application app;
     private ArrayList<ItemIssue> items;
 
     // Listener
     private ClickListener clickListener;
 
-    AdapterHome(Context context, ArrayList<ItemIssue> items, Application application){
-        this.app = application;
+    AdapterHome(Context context, ArrayList<ItemIssue> items){
         this.context = context;
         this.items = items;
     }
