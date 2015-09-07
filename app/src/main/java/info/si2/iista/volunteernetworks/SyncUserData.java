@@ -2,6 +2,8 @@ package info.si2.iista.volunteernetworks;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,7 +37,12 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Views
+        CoordinatorLayout layout = (CoordinatorLayout)findViewById(R.id.layout);
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.myFAB);
+
+        // Remove Fab button
+        layout.removeView(fab);
 
         /** Test Data **/
 
@@ -52,11 +59,11 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
 
         // RecyclerView
         recyclerView.setHasFixedSize(true);
-        AdapterSyncUserData homeAdapter = new AdapterSyncUserData(getApplicationContext(), items);
-        homeAdapter.setClickListener(this);
+        AdapterSyncUserData adapter = new AdapterSyncUserData(getApplicationContext(), items);
+        adapter.setClickListener(this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(homeAdapter);
+        recyclerView.setAdapter(adapter);
 
     }
 

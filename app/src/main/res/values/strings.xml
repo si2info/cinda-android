@@ -17,6 +17,15 @@
     <string name="campaign_geo_area"><font fgcolor="@color/primary">Ámbito geográfico: </font></string>
     <string name="campaign_dates"><font fgcolor="@color/primary">Fechas: </font></string>
 
+    <!-- Servers -->
+    <string name="delete_text">¿Seguro que quiere eliminar este servidor?</string>
+    <string name="new_server">Nuevo servidor</string>
+    <string name="name_server">Url de servidor</string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="add">Añadir</string>
+    <string name="cancel">Cancelar</string>
+
     <!-- Test String -->
         <!-- activity_main -->
         <string name="verdi_server"> </string>

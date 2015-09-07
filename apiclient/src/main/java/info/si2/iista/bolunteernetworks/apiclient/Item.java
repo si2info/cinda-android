@@ -9,5 +9,6 @@ public class Item {
 
     public static final int ISSUE = 1;
     public static final int SYNC = 2;
+    public static final int SERVER = 3;
 
 }

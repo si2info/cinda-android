@@ -117,6 +117,8 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                 return true;
 
             case R.id.action_servers:
+                intent = new Intent(this, Servers.class);
+                startActivity(intent);
                 return true;
 
             case R.id.action_about:

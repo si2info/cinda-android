@@ -31,9 +31,6 @@ public class AdapterSyncUserData extends RecyclerView.Adapter<AdapterSyncUserDat
     private Context context;
     private ArrayList<ItemSync> items;
 
-    // Adapter
-    private boolean isSynchronizing;
-
     // Listener
     private ClickListener clickListener;
 

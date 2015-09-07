@@ -26,6 +26,10 @@
             android:name=".SyncUserData"
             android:theme="@style/AppTheme" />
 
+        <activity
+            android:name=".Servers"
+            android:theme="@style/AppTheme" />
+
     </application>
 
 </manifest>
