@@ -18,4 +18,8 @@
     <string name="campaign_user_title">09 Sep 1999</string>
     <string name="campaign_user_data">Lorem ipsum dolor sit amet, consectetur adipiscing elit</string>
 
+    <!-- item_campaign_sync -->
+    <string name="campaign_sync_title">Nombre de campaña</string>
+    <string name="campaign_sync_desc">01 Ago 2015</string>
+
 </resources>

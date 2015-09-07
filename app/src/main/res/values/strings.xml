@@ -2,7 +2,7 @@
     <string name="app_name">Virde</string>
 
     <!-- menu_main -->
-    <string name="action_sinc">Sincronizar</string>
+    <string name="action_sync">Sincronizar</string>
     <string name="action_servers">Servidores</string>
     <string name="action_about">Acerca de</string>
 
@@ -30,5 +30,9 @@
         <!-- item_campaign_user -->
         <string name="campaign_user_title"> </string>
         <string name="campaign_user_data"> </string>
+
+        <!-- item_campaign_sync -->
+        <string name="campaign_sync_title"> </string>
+        <string name="campaign_sync_desc"> </string>
 
 </resources>

@@ -39,4 +39,5 @@
         android:layout_alignRight="@+id/title"
         android:layout_alignEnd="@+id/title"
         android:paddingBottom="16dp" />
+
 </RelativeLayout>

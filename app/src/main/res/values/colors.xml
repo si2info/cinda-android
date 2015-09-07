@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- General -->
     <color name="primary">#4CAF50</color>
     <color name="primary_dark">#388E3C</color>
     <color name="accent">#CDDC39</color>
+
+    <color name="error">#CD382E</color>
 
     <!-- Separator -->
     <color name="separator">#E5E5E5</color>
