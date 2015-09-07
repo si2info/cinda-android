@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="wrap_content">
 
     <ImageView
         android:layout_width="48dp"
         android:layout_height="64dp"
-        android:id="@+id/imageView"
+        android:id="@+id/imgUser"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:src="@drawable/test_logo_si2"
         android:scaleType="centerCrop"
-        android:paddingBottom="16dp" />
+        android:paddingBottom="16dp"
+        android:contentDescription="@string/app_name"/>
 
     <TextView
         style="@style/campaign.userTitle"
         android:text="@string/campaign_user_title"
-        android:id="@+id/textView"
-        android:layout_alignTop="@+id/imageView"
-        android:layout_toRightOf="@+id/imageView"
+        android:id="@+id/title"
+        android:layout_alignTop="@+id/imgUser"
+        android:layout_toEndOf="@+id/imgUser"
+        android:layout_toRightOf="@+id/imgUser"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="16dp"
@@ -29,11 +32,11 @@
     <TextView
         style="@style/campaign.userData"
         android:text="@string/campaign_user_data"
-        android:id="@+id/textView2"
-        android:layout_below="@+id/textView"
-        android:layout_alignLeft="@+id/textView"
-        android:layout_alignStart="@+id/textView"
-        android:layout_alignRight="@+id/textView"
-        android:layout_alignEnd="@+id/textView"
+        android:id="@+id/description"
+        android:layout_below="@+id/title"
+        android:layout_alignLeft="@+id/title"
+        android:layout_alignStart="@+id/title"
+        android:layout_alignRight="@+id/title"
+        android:layout_alignEnd="@+id/title"
         android:paddingBottom="16dp" />
 </RelativeLayout>
