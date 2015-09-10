@@ -1,5 +1,6 @@
 package info.si2.iista.volunteernetworks;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -66,13 +67,13 @@ public class Campaign extends AppCompatActivity {
 
     public void addContribution (View view) {
 
-        // TODO Intent a actividad "añadir contribución"
+        Intent intent = new Intent(this, Contribution.class);
+        startActivity(intent);
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_campaign, menu);
         return true;
     }
 

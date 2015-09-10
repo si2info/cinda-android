@@ -69,7 +69,9 @@
         android:layout_alignParentEnd="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:maxLines="4"
+        android:ellipsize="end" />
 
     <android.support.v7.widget.AppCompatButton
         style="@style/suscribirse"

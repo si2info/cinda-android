@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="info.si2.iista.volunteernetworks" >
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -28,6 +32,10 @@
 
         <activity
             android:name=".Servers"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".Contribution"
             android:theme="@style/AppTheme" />
 
     </application>

@@ -10,7 +10,7 @@
     <color name="text">#313131</color>
 
     <!-- Separator -->
-    <color name="separator">#E5E5E5</color>
+    <color name="separator">#999999</color>
 
     <!-- Button suscribe/unsuscribe -->
     <color name="unsuscribe">#CD382E</color>

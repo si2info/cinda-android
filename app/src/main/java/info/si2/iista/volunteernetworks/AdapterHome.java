@@ -2,6 +2,7 @@ package info.si2.iista.volunteernetworks;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,8 +105,13 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
             case Item.ISSUE:
 
                 // Color de cabecera
-                int color = Color.parseColor(item.getHeaderColor());
-                holder.title.setBackgroundColor(color);
+                if (item.getHeaderColor() == null) { // Color por defecto
+                    int color = ContextCompat.getColor(context, R.color.primary_dark);
+                    holder.title.setBackgroundColor(color);
+                } else { // Color de asignado
+                    int color = Color.parseColor(item.getHeaderColor());
+                    holder.title.setBackgroundColor(color);
+                }
 
                 // Imágenes de Top Users
                 int topUsers = holder.topUsers.getChildCount();
@@ -120,6 +126,10 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
                             .into(image);
 
                 }
+
+                // Text
+                holder.title.setText(item.getTitle());
+                holder.description.setText(item.getDescription());
 
                 // Suscribe button style
                 setStyleButton(item.isSuscribe(), holder.suscribe);
@@ -140,11 +150,11 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
     public void setStyleButton (boolean isSuscribe, Button view) {
 
         if (isSuscribe) {
-            view.setBackgroundResource(R.drawable.button_suscribe);
-            view.setText(context.getString(R.string.suscribe));
-        } else {
             view.setBackgroundResource(R.drawable.button_unsuscribe);
             view.setText(context.getString(R.string.unsuscribe));
+        } else {
+            view.setBackgroundResource(R.drawable.button_suscribe);
+            view.setText(context.getString(R.string.suscribe));
         }
 
     }

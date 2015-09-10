@@ -7,8 +7,8 @@ package info.si2.iista.bolunteernetworks.apiclient;
  */
 public class ItemIssue {
 
-    private int type;
-    private String headerColor, title, description;
+    private int type, id;
+    private String headerColor, title, description, image;
     private boolean isSuscribe;
 
     public ItemIssue (int type, String headerColor, String title, String description, boolean isSuscribe) {
@@ -25,6 +25,14 @@ public class ItemIssue {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getHeaderColor() {

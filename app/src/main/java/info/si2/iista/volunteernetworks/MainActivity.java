@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,18 +15,22 @@ import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import info.si2.iista.bolunteernetworks.apiclient.Item;
 import info.si2.iista.bolunteernetworks.apiclient.ItemIssue;
+import info.si2.iista.bolunteernetworks.apiclient.OnApiClientResult;
+import info.si2.iista.bolunteernetworks.apiclient.Result;
+import info.si2.iista.bolunteernetworks.apiclient.Virde;
 import info.si2.iista.volunteernetworks.util.Util;
 
-public class MainActivity extends AppCompatActivity implements AdapterHome.ClickListener {
+public class MainActivity extends AppCompatActivity implements AdapterHome.ClickListener, OnApiClientResult {
 
     // RecyclerView
     private RecyclerView recyclerView;
-    private ArrayList<ItemIssue> items;
+    private AdapterHome adapter;
+    private ArrayList<ItemIssue> items = new ArrayList<>();
 
     // Animate server info
     private RelativeLayout serverInfo;
@@ -55,26 +60,14 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         serverInfo = (RelativeLayout)findViewById(R.id.serverInfo);
 
-
-        /** Test Data **/
-
-        items = new ArrayList<>();
-        items.add(new ItemIssue(Item.ISSUE, "#c53929", "title", "description", true));
-        items.add(new ItemIssue(Item.ISSUE, "#29b6f6", "title", "description", false));
-        items.add(new ItemIssue(Item.ISSUE, "#ffcd40", "title", "description", false));
-        items.add(new ItemIssue(Item.ISSUE, "#68c594", "title", "description", true));
-        items.add(new ItemIssue(Item.ISSUE, "#8665e4", "title", "description", true));
-
-        /** End Test Data **/
-
         // RecyclerView
         recyclerView.setHasFixedSize(true);
 
-        AdapterHome homeAdapter = new AdapterHome(getApplicationContext(), items);
-        homeAdapter.setClickListener(this);
+        adapter = new AdapterHome(getApplicationContext(), items);
+        adapter.setClickListener(this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(homeAdapter);
+        recyclerView.setAdapter(adapter);
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -92,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
             }
         });
+
+        Virde.getInstance(this).getListCampaigns();
 
     }
 
@@ -293,6 +288,29 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         });
 
         view.startAnimation(anim);
+
+    }
+
+    @Override
+    public void onApiClientRequestResult(Pair<Result, ArrayList> result) {
+
+        switch (result.first.getResultFrom()) {
+            case Virde.FROM_LIST_CAMPAIGNS:
+                if (result.first.isError()) {
+                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                } else {
+
+                    if (items == null)
+                        items = new ArrayList<>();
+
+                    for (Object item : result.second) {
+                        items.add((ItemIssue)item);
+                        adapter.notifyItemInserted(items.size()-1);
+                    }
+
+                }
+                break;
+        }
 
     }
 
