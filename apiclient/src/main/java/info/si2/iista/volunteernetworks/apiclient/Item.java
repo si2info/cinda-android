@@ -1,4 +1,4 @@
-package info.si2.iista.bolunteernetworks.apiclient;
+package info.si2.iista.volunteernetworks.apiclient;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -7,7 +7,7 @@ package info.si2.iista.bolunteernetworks.apiclient;
  */
 public class Item {
 
-    public static final int ISSUE = 1;
+    public static final int CAMPAIGN = 1;
     public static final int SYNC = 2;
     public static final int SERVER = 3;
 

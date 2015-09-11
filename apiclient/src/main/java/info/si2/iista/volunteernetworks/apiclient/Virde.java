@@ -1,4 +1,4 @@
-package info.si2.iista.bolunteernetworks.apiclient;
+package info.si2.iista.volunteernetworks.apiclient;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -65,10 +65,10 @@ public class Virde {
 
     /** AsyncTasks **/
 
-    class VirdeGetListCampaigns extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemIssue>>> {
+    class VirdeGetListCampaigns extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemCampaign>>> {
 
         @Override
-        protected Pair<Result, ArrayList<ItemIssue>> doInBackground(String... params) {
+        protected Pair<Result, ArrayList<ItemCampaign>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
             return apiClient.getListCampaigns();
         }
@@ -80,10 +80,10 @@ public class Virde {
 
     }
 
-    class VirdeGetDataCampaign extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemIssue>>> {
+    class VirdeGetDataCampaign extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemCampaign>>> {
 
         @Override
-        protected Pair<Result, ArrayList<ItemIssue>> doInBackground(String... params) {
+        protected Pair<Result, ArrayList<ItemCampaign>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
             return apiClient.getDataCampaign(Integer.valueOf(params[0]));
         }

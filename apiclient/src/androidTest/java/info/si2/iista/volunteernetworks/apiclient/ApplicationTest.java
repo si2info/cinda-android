@@ -1,4 +1,4 @@
-package info.si2.iista.bolunteernetworks.apiclient;
+package info.si2.iista.volunteernetworks.apiclient;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

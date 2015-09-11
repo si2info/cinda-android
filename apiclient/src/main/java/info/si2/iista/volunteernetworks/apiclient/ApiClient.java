@@ -1,4 +1,4 @@
-package info.si2.iista.bolunteernetworks.apiclient;
+package info.si2.iista.volunteernetworks.apiclient;
 
 import android.util.Pair;
 
@@ -44,13 +44,13 @@ public class ApiClient {
         return INSTANCE;
     }
 
-    public Pair<Result, ArrayList<ItemIssue>> getListCampaigns () {
+    public Pair<Result, ArrayList<ItemCampaign>> getListCampaigns () {
 
         // FROM
         int from = Virde.FROM_LIST_CAMPAIGNS;
         String message = "No se pudieron obtener las campañas, inténtelo más tarde";
 
-        ArrayList<ItemIssue> result = new ArrayList<>();
+        ArrayList<ItemCampaign> result = new ArrayList<>();
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -66,10 +66,10 @@ public class ApiClient {
                     .setDateFormat("yyyy-MM-dd HH:mm:ss");
             Gson gson = gsonBuilder.create();
 
-            ItemIssue[] items = gson.fromJson(respStr, ItemIssue[].class);
+            ItemCampaign[] items = gson.fromJson(respStr, ItemCampaign[].class);
 
-            for (ItemIssue item : items)
-                item.setType(Item.ISSUE);
+            for (ItemCampaign item : items)
+                item.setType(Item.CAMPAIGN);
 
             Collections.addAll(result, items);
 
@@ -82,13 +82,13 @@ public class ApiClient {
 
     }
 
-    public Pair<Result, ArrayList<ItemIssue>> getDataCampaign (int id) {
+    public Pair<Result, ArrayList<ItemCampaign>> getDataCampaign (int id) {
 
         // FROM
         int from = Virde.FROM_DATA_CAMPAIGN;
         String message = "No se pudo obtener la campaña, inténtelo más tarde";
 
-        ArrayList<ItemIssue> result = new ArrayList<>();
+        ArrayList<ItemCampaign> result = new ArrayList<>();
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -104,12 +104,10 @@ public class ApiClient {
                     .setDateFormat("yyyy-MM-dd HH:mm:ss");
             Gson gson = gsonBuilder.create();
 
-            ItemIssue[] items = gson.fromJson(respStr, ItemIssue[].class);
+            ItemCampaign item = gson.fromJson(respStr, ItemCampaign.class);
+            item.setType(Item.CAMPAIGN);
 
-            for (ItemIssue item : items)
-                item.setType(Item.ISSUE);
-
-            Collections.addAll(result, items);
+            Collections.addAll(result, item);
 
             return new Pair<>(new Result(false, null, from, 0), result);
 
