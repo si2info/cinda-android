@@ -1,6 +1,7 @@
 package info.si2.iista.volunteernetworks.database;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -29,9 +30,12 @@ public class DBApi {
     private static SQLiteDatabase database;
     private static DataBase dbHelper;
     private static DBApi INSTANCE;
+    private static Context context;
+    private boolean fromInsertToUpdate;
 
     public synchronized static void createInstance (Context c) {
         if (dbHelper == null) {
+            context = c;
             INSTANCE = new DBApi(c);
         }
     }
@@ -57,6 +61,8 @@ public class DBApi {
 
     public Result insertCampaignsToDB (ArrayList<ItemCampaign> items) {
 
+        String activeServer = getActiveServer();
+
         try {
 
             int nRows = items.size();
@@ -70,15 +76,23 @@ public class DBApi {
 
                 Cursor c = database.rawQuery(sql, null);
 
-                if (c.getCount() == 0) { // Si no existe la campaña, añadir
+                if (c.getCount() == 0) { // Si no existe la campaña, INSERT
 
                     ItemCampaign item = items.get(i);
 
                     String ecodedTitle = URLEncoder.encode(item.getTitle(), "UTF-8");
-//                    String encodedShortDesc = URLEncoder.encode(item.getShortDescription(), "UTF-8");
-                    String encodedShortDesc = "";
-                    String encodedDesc = URLEncoder.encode(item.getDescription(), "UTF-8");
 
+                    // Short description
+                    String encodedShortDesc = "";
+                    if (item.getShortDescription() != null)
+                        encodedShortDesc = URLEncoder.encode(item.getShortDescription(), "UTF-8");
+
+                    // Description
+                    String encodedDesc = "";
+                    if (item.getDescription() != null)
+                        encodedDesc = URLEncoder.encode(item.getDescription(), "UTF-8");
+
+                    // Scope
                     String econdedScope = "";
                     if (item.getScope() != null)
                         econdedScope = URLEncoder.encode(item.getScope(), "UTF-8");
@@ -89,14 +103,22 @@ public class DBApi {
                             "VALUES (" + item.getId() + "," + item.getType() + ",'" + item.getHeaderColor() + "','" +
                             ecodedTitle + "','" + encodedShortDesc + "','" + encodedDesc + "','" +
                             econdedScope + "','" + item.getImage() + "','" + item.isSuscribe() + "','" +
-                            dateToString(item.getDateStart()) + "','" + dateToString(item.getDateEnd()) + "','" + item.isLoaded() + "')";
+                            dateToString(item.getDateStart()) + "','" + dateToString(item.getDateEnd()) + "','" +
+                            activeServer + "','" + true + "','" + item.isLoaded() + "')";
 
                     database.execSQL(sql);
+
+                } else { // Si existe la campaña, UPDATE
+                    fromInsertToUpdate = true;
+                    updateCampaign(items.get(i));
                 }
 
                 c.close();
 
             }
+
+            // Not active campaigns
+            disableCampaigns(items);
 
             close(); // Close DB
 
@@ -113,41 +135,57 @@ public class DBApi {
 
         try {
 
-            open(); // Open DB
+            if (!fromInsertToUpdate) {
+                open(); // Open DB
+            }
 
-                // Comprobar si la campaña existe mediante su ID
-                String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS + " " +
+            // Comprobar si la campaña existe mediante su ID
+            String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS + " " +
                         "WHERE " + DBCampaign.ID + " = '" + item.getId() + "'";
 
-                Cursor c = database.rawQuery(sql, null);
+            Cursor c = database.rawQuery(sql, null);
 
-                if (c.getCount() == 1) { // Si no existe la campaña, añadir
+            if (c.getCount() == 1) { // Si no existe la campaña, añadir
 
-                    String ecodedTitle = URLEncoder.encode(item.getTitle(), "UTF-8");
-                    String encodedShortDesc = URLEncoder.encode(item.getShortDescription(), "UTF-8");
-                    String encodedDesc = URLEncoder.encode(item.getDescription(), "UTF-8");
-                    String econdedScope = URLEncoder.encode(item.getScope(), "UTF-8");
+                String ecodedTitle = URLEncoder.encode(item.getTitle(), "UTF-8");
 
-                    sql = "UPDATE " + DBCampaign.TABLE_CAMPAIGNS + " " +
-                            "SET " + DBCampaign.ID + "=" + item.getId() + "," +
-                            DBCampaign.TYPE + "=" + item.getType() + ",'" +
-                            DBCampaign.COLOR + "=" + item.getHeaderColor() + "','" +
-                            DBCampaign.TITLE + "=" + ecodedTitle + "','" +
-                            DBCampaign.SHORT_DESCRIPTION + "=" + encodedShortDesc + "','" +
-                            DBCampaign.DESCRIPTION + "=" + encodedDesc + "','" +
-                            DBCampaign.SCOPE + "=" + econdedScope + "','" +
-                            DBCampaign.IMAGE + "=" + item.getImage() + "','" +
-                            DBCampaign.IS_SUSCRIBE + "=" + item.isSuscribe() + "','" +
-                            DBCampaign.DATE_START + "=" + dateToString(item.getDateStart()) + "','" +
-                            DBCampaign.DATE_END + "=" + dateToString(item.getDateEnd()) + "','" +
-                            DBCampaign.LOADED + "=" + item.isLoaded() + "')";
+                // Short description
+                String encodedShortDesc = "";
+                if (item.getShortDescription() != null)
+                    encodedShortDesc = URLEncoder.encode(item.getShortDescription(), "UTF-8");
 
-                    database.execSQL(sql);
-                }
+                // Description
+                String encodedDesc = "";
+                if (item.getDescription() != null)
+                    encodedDesc = URLEncoder.encode(item.getDescription(), "UTF-8");
 
-                c.close();
+                // Scope
+                String econdedScope = "";
+                if (item.getScope() != null)
+                    econdedScope = URLEncoder.encode(item.getScope(), "UTF-8");
 
-            close(); // Close DB
+                sql = "UPDATE " + DBCampaign.TABLE_CAMPAIGNS + " " +
+                        "SET " + DBCampaign.ID + "=" + item.getId() + "," +
+                        DBCampaign.TYPE + "=" + item.getType() + "," +
+                        DBCampaign.COLOR + "='" + item.getHeaderColor() + "'," +
+                        DBCampaign.TITLE + "='" + ecodedTitle + "'," +
+                        DBCampaign.SHORT_DESCRIPTION + "='" + encodedShortDesc + "'," +
+                        DBCampaign.DESCRIPTION + "='" + encodedDesc + "'," +
+                        DBCampaign.SCOPE + "='" + econdedScope + "'," +
+                        DBCampaign.IMAGE + "='" + item.getImage() + "'," +
+                        DBCampaign.IS_SUSCRIBE + "='" + item.isSuscribe() + "'," +
+                        DBCampaign.DATE_START + "='" + dateToString(item.getDateStart()) + "'," +
+                        DBCampaign.DATE_END + "='" + dateToString(item.getDateEnd()) + "'," +
+                        DBCampaign.LOADED + "='" + item.isLoaded() + "' " +
+                        "WHERE " + DBCampaign.ID + "=" + item.getId();
+
+                database.execSQL(sql);
+            }
+
+            c.close();
+            if (!fromInsertToUpdate) {
+                close(); // Close DB
+            }
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -162,7 +200,8 @@ public class DBApi {
 
         int from = DBVirde.FROM_SELECT_CAMPAIGNS;
         ArrayList<ItemCampaign> result = new ArrayList<>();
-        String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS;
+        String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS +
+                    " WHERE " + DBCampaign.IS_ACTIVE + "='true'";
 
         open();
         Cursor c = database.rawQuery(sql, null);
@@ -181,6 +220,55 @@ public class DBApi {
         close();
 
         return new Pair<>(new Result(false, null, from, 0), result);
+
+    }
+
+    public Pair<Result, ArrayList<ItemCampaign>> getCampaignsFromID (int idCampaign) {
+
+        int from = DBVirde.FROM_SELECT_CAMPAIGNS_FROM_ID;
+        ArrayList<ItemCampaign> result = new ArrayList<>();
+        String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS + " " +
+                     "WHERE " + DBCampaign.ID + ">" + String.valueOf(idCampaign) + " " +
+                     "ORDER BY " + DBCampaign.ID + " ASC";
+
+        open();
+        Cursor c = database.rawQuery(sql, null);
+
+        if (c.moveToFirst()) {
+
+            do {
+
+                result.add(formatItemCampaignFromDB(c));
+
+            } while (c.moveToNext());
+
+        }
+
+        c.close();
+        close();
+
+        return new Pair<>(new Result(false, null, from, 0), result);
+
+    }
+
+    /**
+     * Desactiva las campañas que ya no están activas
+     * @param items Campañas que si que estan activas para comparar con la base de datos local
+     */
+    private void disableCampaigns (ArrayList<ItemCampaign> items) {
+
+        String ids = "";
+
+        for (ItemCampaign item : items) {
+            ids += String.valueOf(item.getId()) + ",";
+        }
+        ids = ids.substring(0, ids.length()-1);
+
+        String sql = "UPDATE " + DBCampaign.TABLE_CAMPAIGNS +
+                " SET " + DBCampaign.IS_ACTIVE + "='false'" +
+                " WHERE " + DBCampaign.ID + " NOT IN (" + ids + ")";
+
+        database.execSQL(sql);
 
     }
 
@@ -213,10 +301,14 @@ public class DBApi {
 
     private String dateToString(Date date) {
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        if (date != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(
+                    "yyyy-MM-dd", Locale.getDefault());
 
-        return dateFormat.format(date);
+            return dateFormat.format(date);
+        } else {
+            return "";
+        }
 
     }
 
@@ -232,6 +324,13 @@ public class DBApi {
         }
 
         return date;
+
+    }
+
+    private String getActiveServer () {
+
+        SharedPreferences sharedPref = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
+        return sharedPref.getString("server", "");
 
     }
 

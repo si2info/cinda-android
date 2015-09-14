@@ -34,7 +34,10 @@ public class Util {
 
     public static String parseDateToString (Date date) {
 
-        return DateFormat.format("dd MMM yyyy", date).toString();
+        if (date != null)
+            return DateFormat.format("dd MMM yyyy", date).toString();
+        else
+            return "";
 
     }
 

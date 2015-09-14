@@ -130,7 +130,7 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
 
                 // Text
                 holder.title.setText(item.getTitle());
-                holder.description.setText(Html.fromHtml(item.getDescription()));
+                holder.description.setText(Html.fromHtml(item.getShortDescription()));
 
                 // Suscribe button style
                 setStyleButton(item.isSuscribe(), holder.suscribe);

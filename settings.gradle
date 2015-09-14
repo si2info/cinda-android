@@ -1,2 +1,2 @@
-include ':app', ':apiclient'
+include ':app', ':apiclient', ':database'
 include ':datetimepicker'

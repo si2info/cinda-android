@@ -1,5 +1,7 @@
 package info.si2.iista.volunteernetworks.apiclient;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Pair;
 
 import com.google.gson.Gson;
@@ -7,6 +9,10 @@ import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,23 +26,27 @@ import java.util.Collections;
 public class ApiClient {
 
     // HOST
-    private static final String HOST = "http://virde.dev.si2soluciones.es/";
+    private static String HOST = "";
 
     // URLs
-    private static final String URL_CAMPAIGNS = HOST + "API/campaigns/list/";
-    private static final String URL_DATA_CAMPAIGN = HOST + "API/campaign/";
-    private static final String URL_MODEL_CAMPAIGN = HOST + "API/campaign/%s/model/";
+    private static final String URL_CAMPAIGNS = "API/campaigns/list/";
+    private static final String URL_DATA_CAMPAIGN = "API/campaign/";
+    private static final String URL_MODEL_CAMPAIGN = "API/campaign/%s/model/";
 
-
+    private static Context context;
 
     private static ApiClient INSTANCE = null;
 
-    private ApiClient() {
+    private ApiClient(Context c) {
+        context = c;
+        HOST = getActiveServer();
     }
 
     private synchronized static void createInstance() {
-        if (INSTANCE == null)
-            INSTANCE = new ApiClient();
+        if (INSTANCE == null) {
+            Context c = Virde.getActivityContext();
+            INSTANCE = new ApiClient(c);
+        }
     }
 
     public static ApiClient getInstance() {
@@ -54,7 +64,7 @@ public class ApiClient {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url(URL_CAMPAIGNS)
+                .url(HOST + URL_CAMPAIGNS)
                 .build();
 
         try {
@@ -66,14 +76,18 @@ public class ApiClient {
                     .setDateFormat("yyyy-MM-dd");
             Gson gson = gsonBuilder.create();
 
-            ItemCampaign[] items = gson.fromJson(respStr, ItemCampaign[].class);
+            if (isJSONValid(respStr)) {
+                ItemCampaign[] items = gson.fromJson(respStr, ItemCampaign[].class);
 
-            for (ItemCampaign item : items)
-                item.setType(Item.CAMPAIGN);
+                for (ItemCampaign item : items)
+                    item.setType(Item.CAMPAIGN);
 
-            Collections.addAll(result, items);
+                Collections.addAll(result, items);
 
-            return new Pair<>(new Result(false, null, from, 0), result);
+                return new Pair<>(new Result(false, null, from, 0), result);
+            } else {
+                return new Pair<>(new Result(true, message, from, 0), null);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -92,7 +106,7 @@ public class ApiClient {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url(URL_DATA_CAMPAIGN + id)
+                .url(HOST + URL_DATA_CAMPAIGN + id)
                 .build();
 
         try {
@@ -128,7 +142,7 @@ public class ApiClient {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url(String.format(URL_MODEL_CAMPAIGN, String.valueOf(id)))
+                .url(HOST + String.format(URL_MODEL_CAMPAIGN, String.valueOf(id)))
                 .build();
 
         try {
@@ -149,6 +163,28 @@ public class ApiClient {
             e.printStackTrace();
             return new Pair<>(new Result(true, message, from, 0), null);
         }
+
+    }
+
+    private boolean isJSONValid(String json) {
+        try {
+            new JSONObject(json);
+        } catch (JSONException ex) {
+            // edited, to include @Arthur's comment
+            // e.g. in case JSONArray is valid as well...
+            try {
+                new JSONArray(json);
+            } catch (JSONException ex1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static String getActiveServer () {
+
+        SharedPreferences sharedPref = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
+        return sharedPref.getString("server", "");
 
     }
 

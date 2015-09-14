@@ -12,32 +12,36 @@ import java.util.Date;
 public class ItemCampaign {
 
     private int type;
+
     @SerializedName("ID")
     private int id;
+
+    @SerializedName("color")
     private String headerColor;
+
     private String title;
+
+    @SerializedName("description_extended")
     private String description;
+
+    @SerializedName("description")
     private String shortDescription;
+
     private String scope;
     private String image;
+
     @SerializedName("is_subscribed")
     private boolean isSuscribe;
+
     @SerializedName("date_start")
     private Date dateStart;
+
     @SerializedName("date_end")
     private Date dateEnd;
+
     private boolean loaded;
 
     public ItemCampaign(){
-
-    }
-
-    public ItemCampaign(int type, String headerColor, String title, String description, boolean isSuscribe) {
-        this.type = type;
-        this.headerColor = headerColor;
-        this.title = title;
-        this.description = description;
-        this.isSuscribe = isSuscribe;
     }
 
     public int getType() {

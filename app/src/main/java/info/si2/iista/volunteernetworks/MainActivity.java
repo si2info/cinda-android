@@ -1,8 +1,11 @@
 package info.si2.iista.volunteernetworks;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,10 +32,10 @@ import info.si2.iista.volunteernetworks.database.OnDBApiResult;
 import info.si2.iista.volunteernetworks.util.Util;
 
 public class MainActivity extends AppCompatActivity implements AdapterHome.ClickListener, OnApiClientResult,
-        OnDBApiResult {
+        OnDBApiResult, SwipeRefreshLayout.OnRefreshListener {
 
     // RecyclerView
-    private RecyclerView recyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private AdapterHome adapter;
     private ArrayList<ItemCampaign> items = new ArrayList<>();
 
@@ -56,12 +59,16 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Shared Preferences
+        initSharedPreferences();
+
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Views
-        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         serverInfo = (RelativeLayout)findViewById(R.id.serverInfo);
 
         // RecyclerView
@@ -90,7 +97,12 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
             }
         });
 
-        Virde.getInstance(this).getListCampaigns();
+        // Refresh listener
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+
+        doRefresh();
+        DBVirde.getInstance(this).getCampaigns();
 
     }
 
@@ -140,6 +152,131 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
     }
 
+    @Override
+    public void onRefresh() {
+
+        mSwipeRefreshLayout.setEnabled(false);
+        Virde.getInstance(this).getListCampaigns();
+
+    }
+
+    /**
+     * Feedback to user, loading items
+     */
+    public void doRefresh () {
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+                mSwipeRefreshLayout.setEnabled(false);
+            }
+        });
+    }
+
+    /** API CLIENT **/
+    @Override
+    public void onApiClientRequestResult(Pair<Result, ArrayList> result) {
+
+        switch (result.first.getResultFrom()) {
+            case Virde.FROM_LIST_CAMPAIGNS:
+                if (result.first.isError()) {
+                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    mSwipeRefreshLayout.setEnabled(true);
+                } else {
+
+                    ArrayList<ItemCampaign> itemsResult = new ArrayList<>();
+
+                    for (Object item : result.second) {
+                        itemsResult.add((ItemCampaign) item);
+                    }
+
+                    DBVirde.getInstance(this).addCampaigns(itemsResult);
+
+                }
+                break;
+        }
+
+    }
+
+    /** DB API **/
+    @Override
+    public void onDBApiInsertResult(Result result) {
+
+        switch (result.getResultFrom()) {
+            case DBVirde.FROM_INSERT_CAMPAIGNS:
+                if (result.isError()) {
+                    Log.e("DBVirde", "Campaigns not inserted");
+                } else {
+
+                    if (items.size() > 0) { // New campaigns
+                        int idCampaign = items.get(0).getId();
+                        DBVirde.getInstance(this).getCampaignsFrom(idCampaign);
+                    } else { // All campaigns
+                        DBVirde.getInstance(this).getCampaigns();
+                    }
+
+                }
+                break;
+        }
+
+    }
+
+    @Override
+    public void onDBApiSelectResult(Pair<Result, ArrayList> result) {
+        switch (result.first.getResultFrom()) {
+            case DBVirde.FROM_SELECT_CAMPAIGNS:
+                if (result.first.isError()) {
+                    Log.e("DBVirde", "Campaigns not selected");
+                } else {
+
+                    if (items == null)
+                        items = new ArrayList<>();
+
+                    for (Object item : result.second) {
+                        addItemAndNotify((ItemCampaign) item);
+                    }
+
+                    if (items.size() == 0) {
+                        doRefresh();
+                        Virde.getInstance(this).getListCampaigns();
+                    } else {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mSwipeRefreshLayout.setEnabled(true);
+                    }
+
+                }
+                break;
+
+            case DBVirde.FROM_SELECT_CAMPAIGNS_FROM_ID:
+                if (result.first.isError()) {
+                    Log.e("DBVirde", "Campaigns not selected");
+                } else {
+
+                    if (items == null)
+                        items = new ArrayList<>();
+
+                    for (Object item : result.second) {
+                        addItemAndNotify((ItemCampaign) item);
+                    }
+
+                }
+                mSwipeRefreshLayout.setRefreshing(false);
+                mSwipeRefreshLayout.setEnabled(true);
+                break;
+        }
+    }
+
+    /**
+     * Añadir items a RecyclerView y notificar al adaptador
+     * @param item ItemCampaign a añadir
+     */
+    public void addItemAndNotify (ItemCampaign item) {
+        items.add(0, item);
+        adapter.notifyItemInserted(0);
+    }
+
+    /** Bottom Bar **/
     public void showInfoServer (View view) {
 
         if (!isAnimatingDescOut && isDescShowing) {
@@ -150,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
     }
 
-    /** Bottom bar Animations **/
+    /** Bottom Bar Animations **/
     public void animateInfoOut(View view, float size) {
 
         TranslateAnimation anim = new TranslateAnimation(0, 0, Animation.RELATIVE_TO_SELF, Util.convertDpToPixel(getApplicationContext(), size));
@@ -300,65 +437,18 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
     }
 
-    /** API CLIENT **/
-    @Override
-    public void onApiClientRequestResult(Pair<Result, ArrayList> result) {
+    /** SharedPreferences **/
 
-        switch (result.first.getResultFrom()) {
-            case Virde.FROM_LIST_CAMPAIGNS:
-                if (result.first.isError()) {
-                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
-                } else {
+    public void initSharedPreferences () {
 
-                    ArrayList<ItemCampaign> itemsResult = new ArrayList<>();
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.userPreferences), Context.MODE_PRIVATE);
 
-                    for (Object item : result.second) {
-                        itemsResult.add((ItemCampaign) item);
-                    }
-
-                    DBVirde.getInstance(this).addCampaigns(itemsResult);
-
-                }
-                break;
+        if (!sharedPref.contains(getString(R.string.server))) {
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(getString(R.string.server), "http://virde.dev.si2soluciones.es/");
+            editor.apply();
         }
 
-    }
-
-    /** DB API **/
-    @Override
-    public void onDBApiInsertResult(Result result) {
-
-        switch (result.getResultFrom()) {
-            case DBVirde.FROM_INSERT_CAMPAIGNS:
-                if (result.isError()) {
-                    Log.e("DBVirde", "Campaigns not inserted");
-                } else {
-                    DBVirde.getInstance(this).getCampaigns();
-                }
-                break;
-        }
-
-    }
-
-    @Override
-    public void onDBApiSelectResult(Pair<Result, ArrayList> result) {
-        switch (result.first.getResultFrom()) {
-            case DBVirde.FROM_SELECT_CAMPAIGNS:
-                if (result.first.isError()) {
-                    Log.e("DBVirde", "Campaigns not selected");
-                } else {
-
-                    if (items == null)
-                        items = new ArrayList<>();
-
-                    for (Object item : result.second) {
-                        items.add((ItemCampaign)item);
-                        adapter.notifyItemInserted(items.size()-1);
-                    }
-
-                }
-                break;
-        }
     }
 
 }
