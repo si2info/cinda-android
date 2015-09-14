@@ -21,4 +21,8 @@
     <color name="card_issue_1">#29b6f6</color>
     <color name="campaign">#303030</color>
 
+    <!-- Text protection scrim -->
+    <color name="gradient_start">#77000000</color>
+    <color name="gradient_end">#00000000</color>
+
 </resources>

@@ -143,11 +143,11 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
     public void onHomeItemClick(View view, int position) {
 
         // Id campaign
-        int id = items.get(position).getId();
+//        int id = items.get(position).getId();
 
         // Intent to campaign
         Intent intent = new Intent(this, Campaign.class);
-        intent.putExtra("idCampaign", id);
+        intent.putExtra("campaign", items.get(position));
         startActivity(intent);
 
     }

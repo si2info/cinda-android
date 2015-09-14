@@ -1,5 +1,8 @@
 package info.si2.iista.volunteernetworks.apiclient;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -9,7 +12,7 @@ import java.util.Date;
  * Date: 3/9/15
  * Project: Virde
  */
-public class ItemCampaign {
+public class ItemCampaign implements Parcelable {
 
     private int type;
 
@@ -139,5 +142,56 @@ public class ItemCampaign {
     public void setScope(String scope) {
         this.scope = scope;
     }
+
+    protected ItemCampaign(Parcel in) {
+        type = in.readInt();
+        id = in.readInt();
+        headerColor = in.readString();
+        title = in.readString();
+        description = in.readString();
+        shortDescription = in.readString();
+        scope = in.readString();
+        image = in.readString();
+        isSuscribe = in.readByte() != 0x00;
+        long tmpDateStart = in.readLong();
+        dateStart = tmpDateStart != -1 ? new Date(tmpDateStart) : null;
+        long tmpDateEnd = in.readLong();
+        dateEnd = tmpDateEnd != -1 ? new Date(tmpDateEnd) : null;
+        loaded = in.readByte() != 0x00;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(type);
+        dest.writeInt(id);
+        dest.writeString(headerColor);
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(shortDescription);
+        dest.writeString(scope);
+        dest.writeString(image);
+        dest.writeByte((byte) (isSuscribe ? 0x01 : 0x00));
+        dest.writeLong(dateStart != null ? dateStart.getTime() : -1L);
+        dest.writeLong(dateEnd != null ? dateEnd.getTime() : -1L);
+        dest.writeByte((byte) (loaded ? 0x01 : 0x00));
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<ItemCampaign> CREATOR = new Parcelable.Creator<ItemCampaign>() {
+        @Override
+        public ItemCampaign createFromParcel(Parcel in) {
+            return new ItemCampaign(in);
+        }
+
+        @Override
+        public ItemCampaign[] newArray(int size) {
+            return new ItemCampaign[size];
+        }
+    };
 
 }

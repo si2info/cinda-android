@@ -33,7 +33,11 @@ import info.si2.iista.volunteernetworks.util.Util;
  */
 public class Campaign extends AppCompatActivity implements OnApiClientResult {
 
+    private ItemCampaign campaign;
+
     private CollapsingToolbarLayout collapsingToolbarLayout;
+    private ImageView header;
+    private TextView title;
     private TextView objective;
     private TextView geoArea;
     private TextView dates;
@@ -52,8 +56,11 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult {
 
         // CollapsingToolbar
         collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
+        collapsingToolbarLayout.setTitle("");
 
         // Views
+        header = (ImageView)findViewById(R.id.header);
+        title = (TextView)findViewById(R.id.title);
         objective = (TextView)findViewById(R.id.objective);
         geoArea = (TextView)findViewById(R.id.geoArea);
         dates = (TextView)findViewById(R.id.dates);
@@ -78,13 +85,19 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult {
         }
 
         // Obtener datos de campaña con el ID
-        int id = -1;
         if (getIntent().getExtras() != null)
-            id = getIntent().getIntExtra("idCampaign", -1);
+            campaign = getIntent().getParcelableExtra("campaign");
 
-        // Get campaign
-        if (id != -1)
-            Virde.getInstance(this).getDataCampaign(id);
+        if (campaign != null) {
+
+            // Title Campaign
+            collapsingToolbarLayout.setTitle(campaign.getTitle());
+            title.setText(campaign.getTitle());
+
+            // Get campaign
+            Virde.getInstance(this).getDataCampaign(campaign.getId());
+
+        }
 
     }
 
@@ -122,12 +135,17 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult {
                     ItemCampaign item = (ItemCampaign) result.second.get(0);
 
                     // Data campaign
-                    collapsingToolbarLayout.setTitle(item.getTitle());
-                    objective.setText(Html.fromHtml(getString(R.string.campaign_objective) + " " + item.getDescription()));
-                    geoArea.setText(Html.fromHtml(getString(R.string.campaign_geo_area) + " " + item.getScope()));
+                    title.setText(item.getTitle());
+                    objective.setText(Html.fromHtml(String.format(getString(R.string.campaign_objective), item.getDescription())));
+                    geoArea.setText(Html.fromHtml(String.format(getString(R.string.campaign_geo_area), item.getScope())));
 
-                    String scope = Util.parseDateToString(item.getDateStart()) + " - " + Util.parseDateToString(item.getDateEnd());
-                    dates.setText(getString(R.string.campaign_dates) + " " + scope);
+                    String datesCampaigns = Util.parseDateToString(item.getDateStart()) + " - " + Util.parseDateToString(item.getDateEnd());
+                    dates.setText(String.format(getString(R.string.campaign_dates), datesCampaigns));
+
+                    // Header image
+                    Picasso.with(this)
+                            .load(item.getImage())
+                            .into(header);
 
                 }
                 break;
