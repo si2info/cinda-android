@@ -63,7 +63,7 @@ public class ApiClient {
             String respStr  = response.body().string();
 
             GsonBuilder gsonBuilder = new GsonBuilder()
-                    .setDateFormat("yyyy-MM-dd HH:mm:ss");
+                    .setDateFormat("yyyy-MM-dd");
             Gson gson = gsonBuilder.create();
 
             ItemCampaign[] items = gson.fromJson(respStr, ItemCampaign[].class);
@@ -101,7 +101,7 @@ public class ApiClient {
             String respStr  = response.body().string();
 
             GsonBuilder gsonBuilder = new GsonBuilder()
-                    .setDateFormat("yyyy-MM-dd HH:mm:ss");
+                    .setDateFormat("yyyy-MM-dd");
             Gson gson = gsonBuilder.create();
 
             ItemCampaign item = gson.fromJson(respStr, ItemCampaign.class);

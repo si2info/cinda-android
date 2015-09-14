@@ -14,7 +14,12 @@ public class ItemCampaign {
     private int type;
     @SerializedName("ID")
     private int id;
-    private String headerColor, title, description, shortDescription, scope, image;
+    private String headerColor;
+    private String title;
+    private String description;
+    private String shortDescription;
+    private String scope;
+    private String image;
     @SerializedName("is_subscribed")
     private boolean isSuscribe;
     @SerializedName("date_start")
@@ -22,6 +27,10 @@ public class ItemCampaign {
     @SerializedName("date_end")
     private Date dateEnd;
     private boolean loaded;
+
+    public ItemCampaign(){
+
+    }
 
     public ItemCampaign(int type, String headerColor, String title, String description, boolean isSuscribe) {
         this.type = type;
