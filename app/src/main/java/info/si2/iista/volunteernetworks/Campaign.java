@@ -6,6 +6,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +24,8 @@ import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 import info.si2.iista.volunteernetworks.apiclient.Virde;
+import info.si2.iista.volunteernetworks.database.DBVirde;
+import info.si2.iista.volunteernetworks.database.OnDBApiResult;
 import info.si2.iista.volunteernetworks.util.CircleTransform;
 import info.si2.iista.volunteernetworks.util.Util;
 
@@ -31,11 +34,10 @@ import info.si2.iista.volunteernetworks.util.Util;
  * Date: 4/9/15
  * Project: Virde
  */
-public class Campaign extends AppCompatActivity implements OnApiClientResult {
+public class Campaign extends AppCompatActivity implements OnApiClientResult, OnDBApiResult {
 
     private ItemCampaign campaign;
 
-    private CollapsingToolbarLayout collapsingToolbarLayout;
     private ImageView header;
     private TextView title;
     private TextView objective;
@@ -55,7 +57,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // CollapsingToolbar
-        collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
+        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
         collapsingToolbarLayout.setTitle("");
 
         // Views
@@ -147,9 +149,34 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult {
                             .load(item.getImage())
                             .into(header);
 
+                    // Update itemCampaign
+                    DBVirde.getInstance(this).updateCampaign(item);
+
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onDBApiInsertResult(Result result) {
+    }
+
+    @Override
+    public void onDBApiSelectResult(Pair<Result, ArrayList> result) {
+    }
+
+    @Override
+    public void onDBApiUpdateResult(Result result) {
+
+        switch (result.getResultFrom()) {
+            case DBVirde.FROM_UPDATE_CAMPAIGN:
+                if (result.isError()) {
+                    Log.e("DBVirde", "Campaign not updated");
+                    throw new RuntimeException("Error to update ItemCampaign");
+                }
+                break;
+        }
+
     }
 
 }

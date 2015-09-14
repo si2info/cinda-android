@@ -42,8 +42,6 @@ public class ItemCampaign implements Parcelable {
     @SerializedName("date_end")
     private Date dateEnd;
 
-    private boolean loaded;
-
     public ItemCampaign(){
     }
 
@@ -127,14 +125,6 @@ public class ItemCampaign implements Parcelable {
         this.dateEnd = dateEnd;
     }
 
-    public boolean isLoaded() {
-        return loaded;
-    }
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
-
     public String getScope() {
         return scope;
     }
@@ -157,7 +147,6 @@ public class ItemCampaign implements Parcelable {
         dateStart = tmpDateStart != -1 ? new Date(tmpDateStart) : null;
         long tmpDateEnd = in.readLong();
         dateEnd = tmpDateEnd != -1 ? new Date(tmpDateEnd) : null;
-        loaded = in.readByte() != 0x00;
     }
 
     @Override
@@ -178,7 +167,6 @@ public class ItemCampaign implements Parcelable {
         dest.writeByte((byte) (isSuscribe ? 0x01 : 0x00));
         dest.writeLong(dateStart != null ? dateStart.getTime() : -1L);
         dest.writeLong(dateEnd != null ? dateEnd.getTime() : -1L);
-        dest.writeByte((byte) (loaded ? 0x01 : 0x00));
     }
 
     @SuppressWarnings("unused")

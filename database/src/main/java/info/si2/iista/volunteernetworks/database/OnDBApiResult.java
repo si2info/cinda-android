@@ -15,5 +15,6 @@ public interface OnDBApiResult {
 
     void onDBApiInsertResult(Result result);
     void onDBApiSelectResult(Pair<Result, ArrayList> result);
+    void onDBApiUpdateResult(Result result);
 
 }

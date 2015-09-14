@@ -61,6 +61,7 @@ public class DBApi {
 
     public Result insertCampaignsToDB (ArrayList<ItemCampaign> items) {
 
+        int from = DBVirde.FROM_INSERT_CAMPAIGNS;
         String activeServer = getActiveServer();
 
         try {
@@ -104,7 +105,7 @@ public class DBApi {
                             ecodedTitle + "','" + encodedShortDesc + "','" + encodedDesc + "','" +
                             econdedScope + "','" + item.getImage() + "','" + item.isSuscribe() + "','" +
                             dateToString(item.getDateStart()) + "','" + dateToString(item.getDateEnd()) + "','" +
-                            activeServer + "','" + true + "','" + item.isLoaded() + "')";
+                            activeServer + "','" + true + "')";
 
                     database.execSQL(sql);
 
@@ -124,14 +125,16 @@ public class DBApi {
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            return new Result(true, null, DBVirde.FROM_INSERT_CAMPAIGNS, 0);
+            return new Result(true, null, from, 0);
         }
 
-        return new Result(false, null, DBVirde.FROM_INSERT_CAMPAIGNS, 0);
+        return new Result(false, null, from, 0);
 
     }
 
     public Result updateCampaign (ItemCampaign item) {
+
+        int from = DBVirde.FROM_UPDATE_CAMPAIGN;
 
         try {
 
@@ -175,8 +178,7 @@ public class DBApi {
                         DBCampaign.IMAGE + "='" + item.getImage() + "'," +
                         DBCampaign.IS_SUSCRIBE + "='" + item.isSuscribe() + "'," +
                         DBCampaign.DATE_START + "='" + dateToString(item.getDateStart()) + "'," +
-                        DBCampaign.DATE_END + "='" + dateToString(item.getDateEnd()) + "'," +
-                        DBCampaign.LOADED + "='" + item.isLoaded() + "' " +
+                        DBCampaign.DATE_END + "='" + dateToString(item.getDateEnd()) + "' " +
                         "WHERE " + DBCampaign.ID + "=" + item.getId();
 
                 database.execSQL(sql);
@@ -189,10 +191,10 @@ public class DBApi {
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            return new Result(true, null, DBVirde.FROM_UPDATE_CAMPAIGN, 0);
+            return new Result(true, null, from, 0);
         }
 
-        return new Result(false, null, DBVirde.FROM_UPDATE_CAMPAIGN, 0);
+        return new Result(false, null, from, 0);
 
     }
 
@@ -289,7 +291,6 @@ public class DBApi {
             campaign.setIsSuscribe(Boolean.valueOf(c.getString(8)));
             campaign.setDateStart(stringToDate(c.getString(9)));
             campaign.setDateEnd(stringToDate(c.getString(10)));
-            campaign.setLoaded(Boolean.valueOf(c.getString(11)));
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

@@ -97,7 +97,7 @@ public class DBVirde {
 
         @Override
         protected void onPostExecute(Result result) {
-            context.onDBApiInsertResult(result);
+            context.onDBApiUpdateResult(result);
         }
 
     }

@@ -35,8 +35,7 @@ public class DataBase extends SQLiteOpenHelper {
                     DBCampaign.DATE_START + TYPE_TEXT + COMMA_SEP +
                     DBCampaign.DATE_END + TYPE_TEXT + COMMA_SEP +
                     DBCampaign.SERVER + TYPE_TEXT + COMMA_SEP +
-                    DBCampaign.IS_ACTIVE + TYPE_BOOLEAN + COMMA_SEP +
-                    DBCampaign.LOADED + TYPE_BOOLEAN + " );";
+                    DBCampaign.IS_ACTIVE + TYPE_BOOLEAN + " );";
 
     private static final String SQL_DELETE_CAMPAIGNS =
             "DROP TABLE IF EXISTS " + DBCampaign.TABLE_CAMPAIGNS;

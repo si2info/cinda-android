@@ -267,6 +267,10 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         }
     }
 
+    @Override
+    public void onDBApiUpdateResult(Result result) {
+    }
+
     /**
      * Añadir items a RecyclerView y notificar al adaptador
      * @param item ItemCampaign a añadir
