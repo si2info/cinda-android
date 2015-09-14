@@ -11,8 +11,8 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import info.si2.iista.bolunteernetworks.apiclient.Item;
-import info.si2.iista.bolunteernetworks.apiclient.ItemServer;
+import info.si2.iista.volunteernetworks.apiclient.Item;
+import info.si2.iista.volunteernetworks.apiclient.ItemServer;
 
 /**
  * Developer: Jose Miguel Mingorance

@@ -5,23 +5,38 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
+import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
+import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
+import info.si2.iista.volunteernetworks.apiclient.Result;
+import info.si2.iista.volunteernetworks.apiclient.Virde;
 import info.si2.iista.volunteernetworks.util.CircleTransform;
+import info.si2.iista.volunteernetworks.util.Util;
 
 /**
  * Developer: Jose Miguel Mingorance
  * Date: 4/9/15
  * Project: Virde
  */
-public class Campaign extends AppCompatActivity {
+public class Campaign extends AppCompatActivity implements OnApiClientResult {
+
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private TextView objective;
+    private TextView geoArea;
+    private TextView dates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +51,12 @@ public class Campaign extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // CollapsingToolbar
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
-        collapsingToolbarLayout.setTitle("A B C D E F G H I J K L M N Ñ O P Q R S T U V W X Y Z");
+        collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
 
         // Views
-        TextView objective = (TextView)findViewById(R.id.objective);
-        TextView geoArea = (TextView)findViewById(R.id.geoArea);
-        TextView dates = (TextView)findViewById(R.id.dates);
+        objective = (TextView)findViewById(R.id.objective);
+        geoArea = (TextView)findViewById(R.id.geoArea);
+        dates = (TextView)findViewById(R.id.dates);
         LinearLayout contributions = (LinearLayout)findViewById(R.id.contributions);
 
         // TODO - Prueba para añadir contribuciones del usuario
@@ -62,6 +76,15 @@ public class Campaign extends AppCompatActivity {
 
             contributions.addView(v);
         }
+
+        // Obtener datos de campaña con el ID
+        int id = -1;
+        if (getIntent().getExtras() != null)
+            id = getIntent().getIntExtra("idCampaign", -1);
+
+        // Get campaign
+        if (id != -1)
+            Virde.getInstance(this).getDataCampaign(id);
 
     }
 
@@ -85,6 +108,30 @@ public class Campaign extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onApiClientRequestResult(Pair<Result, ArrayList> result) {
+        switch (result.first.getResultFrom()) {
+            case Virde.FROM_DATA_CAMPAIGN:
+                if (result.first.isError()) {
+                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                } else {
+
+                    // Item campaign
+                    ItemCampaign item = (ItemCampaign) result.second.get(0);
+
+                    // Data campaign
+                    collapsingToolbarLayout.setTitle(item.getTitle());
+                    objective.setText(Html.fromHtml(getString(R.string.campaign_objective) + " " + item.getDescription()));
+                    geoArea.setText(Html.fromHtml(getString(R.string.campaign_geo_area) + " " + item.getScope()));
+
+                    String scope = Util.parseDateToString(item.getDateStart()) + " - " + Util.parseDateToString(item.getDateEnd());
+                    dates.setText(getString(R.string.campaign_dates) + " " + scope);
+
+                }
+                break;
+        }
     }
 
 }

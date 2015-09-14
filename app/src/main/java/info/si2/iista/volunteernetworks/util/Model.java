@@ -7,7 +7,6 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.InputType;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,7 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import info.si2.iista.bolunteernetworks.apiclient.ItemModel;
+import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 import info.si2.iista.volunteernetworks.Contribution;
 import info.si2.iista.volunteernetworks.R;
 
@@ -224,7 +223,7 @@ public class Model {
                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
                     String stringDate = String.valueOf(dayOfMonth) + "-" + String.valueOf(monthOfYear) + "-" + String.valueOf(year);
                     Date date = sdf.parse(stringDate);
-                    stringDate = parseDateToString(date);
+                    stringDate = Util.parseDateToString(date);
 
                     ((Contribution) c).setDate(itemLabel + ": " + stringDate);
 
@@ -238,7 +237,7 @@ public class Model {
         dialog.setOnDateSetListener(dateSetListener);
 
         Date today = myCalendar.getTime();
-        String todayString = parseDateToString(today);
+        String todayString = Util.parseDateToString(today);
 
         // Texto contendor de la fecha
         TextView dateText = new TextView(c);
@@ -296,12 +295,6 @@ public class Model {
         layout.setLayoutParams(params);
 
         return layout;
-
-    }
-
-    public static String parseDateToString (Date date) {
-
-        return DateFormat.format("dd MMM yyyy", date).toString();
 
     }
 

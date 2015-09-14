@@ -17,10 +17,10 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 
-import info.si2.iista.bolunteernetworks.apiclient.ItemModel;
-import info.si2.iista.bolunteernetworks.apiclient.OnApiClientResult;
-import info.si2.iista.bolunteernetworks.apiclient.Result;
-import info.si2.iista.bolunteernetworks.apiclient.Virde;
+import info.si2.iista.volunteernetworks.apiclient.ItemModel;
+import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
+import info.si2.iista.volunteernetworks.apiclient.Result;
+import info.si2.iista.volunteernetworks.apiclient.Virde;
 import info.si2.iista.volunteernetworks.util.Model;
 
 /**

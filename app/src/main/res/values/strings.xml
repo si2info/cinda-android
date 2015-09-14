@@ -13,9 +13,9 @@
     <!-- campaign -->
     <string name="campaign_data">DATOS DE LA CAMPAÑA</string>
     <string name="campaign_my_data">DATOS CONTRIBUIDOS POR MI</string>
-    <string name="campaign_objective">Objetivo: </string>
-    <string name="campaign_geo_area">Ámbito geográfico: </string>
-    <string name="campaign_dates">Fechas: </string>
+    <string name="campaign_objective">Objetivo:</string>
+    <string name="campaign_geo_area">Ámbito geográfico:</string>
+    <string name="campaign_dates">Fechas:</string>
 
     <!-- Servers -->
     <string name="delete_text">¿Seguro que quiere eliminar este servidor?</string>

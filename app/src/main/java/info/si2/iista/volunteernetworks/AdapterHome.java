@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import info.si2.iista.bolunteernetworks.apiclient.Item;
-import info.si2.iista.bolunteernetworks.apiclient.ItemIssue;
+import info.si2.iista.volunteernetworks.apiclient.Item;
+import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.util.CircleTransform;
 
 /**
@@ -29,12 +30,12 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
 
     // Adapter
     private Context context;
-    private ArrayList<ItemIssue> items;
+    private ArrayList<ItemCampaign> items;
 
     // Listener
     private ClickListener clickListener;
 
-    AdapterHome(Context context, ArrayList<ItemIssue> items){
+    AdapterHome(Context context, ArrayList<ItemCampaign> items){
         this.context = context;
         this.items = items;
     }
@@ -50,7 +51,7 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
             super(itemView);
 
             switch (viewType) {
-                case Item.ISSUE:
+                case Item.CAMPAIGN:
                     title = (TextView)itemView.findViewById(R.id.title);
                     description = (TextView)itemView.findViewById(R.id.description);
                     topUsers = (LinearLayout)itemView.findViewById(R.id.topUsers);
@@ -87,7 +88,7 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
         View v;
 
         switch (viewType) {
-            case Item.ISSUE:
+            case Item.CAMPAIGN:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_issue, parent, false);
                 return new ViewHolder(v, viewType);
         }
@@ -99,13 +100,13 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
     @Override
     public void onBindViewHolder(final AdapterHome.ViewHolder holder, int position) {
 
-        final ItemIssue item = items.get(position);
+        final ItemCampaign item = items.get(position);
 
         switch (item.getType()) {
-            case Item.ISSUE:
+            case Item.CAMPAIGN:
 
                 // Color de cabecera
-                if (item.getHeaderColor() == null) { // Color por defecto
+                if (item.getHeaderColor() == null || item.getHeaderColor().equals("null")) { // Color por defecto
                     int color = ContextCompat.getColor(context, R.color.primary_dark);
                     holder.title.setBackgroundColor(color);
                 } else { // Color de asignado
@@ -129,7 +130,7 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
 
                 // Text
                 holder.title.setText(item.getTitle());
-                holder.description.setText(item.getDescription());
+                holder.description.setText(Html.fromHtml(item.getDescription()));
 
                 // Suscribe button style
                 setStyleButton(item.isSuscribe(), holder.suscribe);

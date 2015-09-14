@@ -1,6 +1,9 @@
 package info.si2.iista.volunteernetworks.util;
 
 import android.content.Context;
+import android.text.format.DateFormat;
+
+import java.util.Date;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -27,6 +30,12 @@ public class Util {
      */
     public static int convertDpToPixel(Context c, float dp){
         return (int) (dp * (c.getResources().getDisplayMetrics().densityDpi / 160f));
+    }
+
+    public static String parseDateToString (Date date) {
+
+        return DateFormat.format("dd MMM yyyy", date).toString();
+
     }
 
 }
