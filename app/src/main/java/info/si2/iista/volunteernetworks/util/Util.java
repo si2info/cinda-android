@@ -1,11 +1,14 @@
 package info.si2.iista.volunteernetworks.util;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.format.DateFormat;
 
 import java.util.Date;
+
+import info.si2.iista.volunteernetworks.R;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -55,6 +58,34 @@ public class Util {
 
         NetworkInfo i = conMgr.getActiveNetworkInfo();
         return i != null && i.isConnected() && i.isAvailable();
+
+    }
+
+    /**
+     * Guarda un valor asociado a una key en SharedPreferences
+     * @param c Context
+     * @param key String key del valor
+     * @param value String valor a guardar
+     */
+    public static void savePreference (Context c, String key, String value) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.userPreferences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(key, value);
+        editor.apply();
+
+    }
+
+    /**
+     * Obtiene un valor guardado en SharedPreferences
+     * @param c Context
+     * @param key key que hace referencia al valor
+     * @return String valor de la key
+     */
+    public static String getPreference (Context c, String key) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.userPreferences), Context.MODE_PRIVATE);
+        return sharedPref.getString(key, "");
 
     }
 

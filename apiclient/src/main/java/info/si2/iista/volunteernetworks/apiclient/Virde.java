@@ -19,6 +19,9 @@ public class Virde {
     public static final int FROM_LIST_CAMPAIGNS = 1;
     public static final int FROM_DATA_CAMPAIGN = 2;
     public static final int FROM_MODEL_CAMPAIGN = 3;
+    public static final int FROM_USER_REGISTER = 4;
+    public static final int FROM_SUSCRIBE = 5;
+    public static final int FROM_UNSUSCRIBE = 6;
 
     public static Virde getInstance() {
         if (context == null)
@@ -63,6 +66,10 @@ public class Virde {
         new VirdeGetModelCampaign().execute(String.valueOf(id));
     }
 
+    public void userRegister (String username, String mail, String deviceID) {
+        new VirdeUserRegister().execute(username, mail, deviceID);
+    }
+
     /** AsyncTasks **/
 
     class VirdeGetListCampaigns extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemCampaign>>> {
@@ -101,6 +108,21 @@ public class Virde {
         protected Pair<Result, ArrayList<ItemModel>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
             return apiClient.getModelCampaign(Integer.valueOf(params[0]));
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onApiClientRequestResult(result);
+        }
+
+    }
+
+    class VirdeUserRegister extends AsyncTask<String, Void, Pair<Result, ArrayList<String>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<String>> doInBackground(String... params) {
+            ApiClient apiClient = ApiClient.getInstance();
+            return apiClient.userRegister(params[0], params[1], params[2]);
         }
 
         @Override

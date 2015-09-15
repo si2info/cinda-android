@@ -6,8 +6,10 @@ import android.util.Pair;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import org.json.JSONArray;
@@ -32,6 +34,9 @@ public class ApiClient {
     private static final String URL_CAMPAIGNS = "API/campaigns/list/";
     private static final String URL_DATA_CAMPAIGN = "API/campaign/";
     private static final String URL_MODEL_CAMPAIGN = "API/campaign/%s/model/";
+    private static final String URL_REGISTER_USER = "/API/volunteer/register/";
+    private static final String URL_SUSCRIBE_CAMPAIGN = "/API/campaign/%s/suscribe/";
+    private static final String URL_UNSUSCRIBE_CAMPAIGN = "/API/campaign/%s/unsuscribe/";
 
     private static Context context;
 
@@ -166,6 +171,91 @@ public class ApiClient {
 
     }
 
+    public Pair<Result, ArrayList<String>> userRegister (String username, String mail, String deviceID) {
+
+        int from = Virde.FROM_USER_REGISTER;
+        String message = "Intente acceder más tarde";
+        ArrayList<String> result = new ArrayList<>();
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody formBody = new FormEncodingBuilder()
+                .add("nickname", username)
+                .add("email", mail)
+                .add("device_id", deviceID)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(HOST + URL_REGISTER_USER)
+                .post(formBody)
+                .build();
+
+        try {
+
+            Response response = client.newCall(request).execute();
+            String respStr  = response.body().string();
+
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            Gson gson = gsonBuilder.create();
+            String token = gson.fromJson(respStr, String.class);
+
+            result.add(token);
+
+            return new Pair<>(new Result(false, null, from, 0), result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Pair<>(new Result(true, message, from, 1), new ArrayList<String>());
+        }
+
+    }
+
+    public Pair<Result, ArrayList<Integer>> suscription (int idCampaign, String token, boolean suscribe) {
+
+        int from;
+        String message;
+        String url;
+        ArrayList<Integer> result = new ArrayList<>();
+        if (suscribe) {
+            from = Virde.FROM_SUSCRIBE;
+            message = "Intente suscribirse más tarde";
+            url = (HOST + URL_SUSCRIBE_CAMPAIGN);
+        } else {
+            from = Virde.FROM_UNSUSCRIBE;
+            message = "Intente desuscribirse más tarde";
+            url = (HOST + URL_UNSUSCRIBE_CAMPAIGN);
+        }
+
+        OkHttpClient client = new OkHttpClient();
+        RequestBody formBody = new FormEncodingBuilder()
+                .add("token", token)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(formBody)
+                .build();
+
+        try {
+
+            Response response = client.newCall(request).execute();
+            String respStr  = response.body().string();
+
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            Gson gson = gsonBuilder.create();
+            Integer respuesta = gson.fromJson(respStr, Integer.class);
+
+            result.add(respuesta);
+
+            return new Pair<>(new Result(false, null, from, 0), result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Pair<>(new Result(true, message, from, 1), new ArrayList<Integer>());
+        }
+
+    }
+
+    /** UTIL **/
     private boolean isJSONValid(String json) {
         try {
             new JSONObject(json);

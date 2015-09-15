@@ -29,6 +29,10 @@
     <!-- Shared Preferences -->
     <string name="userPreferences">userPreferences</string>
     <string name="server">server</string>
+    <string name="username">username</string>
+    <string name="mail">mail</string>
+    <string name="device_id">deviceID</string>
+    <string name="token">token</string>
 
     <!-- Test String -->
         <!-- activity_main -->

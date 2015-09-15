@@ -1,9 +1,12 @@
 package info.si2.iista.volunteernetworks;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -38,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private AdapterHome adapter;
     private ArrayList<ItemCampaign> items = new ArrayList<>();
+
+    // Flags
+    private boolean userCanOperate;
 
     // Animate server info
     private RelativeLayout serverInfo;
@@ -101,6 +107,11 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
+        // Registro de usuario
+        userCanOperate = false;
+        signUpUser();
+
+        // Get campaigns and feedback to user
         doRefresh();
         DBVirde.getInstance(this).getCampaigns();
 
@@ -178,6 +189,17 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
     public void onApiClientRequestResult(Pair<Result, ArrayList> result) {
 
         switch (result.first.getResultFrom()) {
+            case Virde.FROM_USER_REGISTER:
+                if (result.first.isError()) {
+                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    mSwipeRefreshLayout.setEnabled(true);
+                } else {
+                    userCanOperate = true;
+                    String token = (String) result.second.get(0);
+                    Util.savePreference(this, getString(R.string.token), token);
+                }
+                break;
             case Virde.FROM_LIST_CAMPAIGNS:
                 if (result.first.isError()) {
                     Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
@@ -452,6 +474,74 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
             editor.putString(getString(R.string.server), "http://virde.dev.si2soluciones.es/");
             editor.apply();
         }
+
+    }
+
+    /**
+     * Registro de usuario
+     */
+    public void signUpUser () {
+
+        // Data
+        String mail, name = "", deviceID;
+
+        // Device ID
+        deviceID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        // User data
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.userPreferences), Context.MODE_PRIVATE);
+        mail = sharedPref.getString(getString(R.string.mail), null);
+
+        if (mail == null) { // Primer registro
+
+            // Google accounts
+            AccountManager accountManager = AccountManager.get(this);
+            Account[] accounts = accountManager.getAccountsByType("com.google");
+
+            Account account;
+            if (accounts.length > 0)
+                account = accounts[0];
+            else
+                account = null;
+
+            if (account != null) {
+                mail = account.name;
+                String[] splitMail = account.name.split("@");
+                name = splitMail[0];
+            }
+
+            if (mail != null && name != null && deviceID != null) {
+                if (!mail.equals("") && !name.equals("") && !deviceID.equals("")) {
+                    userDataToPreferences(name, mail, deviceID);
+                    Virde.getInstance(this).userRegister(name, mail, deviceID);
+                }
+            }
+
+        } else {
+
+            // User data from SharedPreferences
+            name = Util.getPreference(this, getString(R.string.username));
+            mail = Util.getPreference(this, getString(R.string.mail));
+            deviceID = Util.getPreference(this, getString(R.string.device_id));
+
+            // Get token
+            Virde.getInstance(this).userRegister(name, mail, deviceID);
+
+        }
+
+    }
+
+    /**
+     * Guardado de datos de usuario a SharedPreferences
+     * @param username Nombre de usuario
+     * @param mail Mail de usuario
+     * @param deviceID ID del dispositivo en uso
+     */
+    public void userDataToPreferences (String username, String mail, String deviceID) {
+
+        Util.savePreference(this, getString(R.string.username), username);
+        Util.savePreference(this, getString(R.string.mail), mail);
+        Util.savePreference(this, getString(R.string.device_id), deviceID);
 
     }
 
