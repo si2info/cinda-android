@@ -225,6 +225,33 @@ public class DBApi {
 
     }
 
+    public Pair<Result, ArrayList<ItemCampaign>> getCampaign (int id) {
+
+        int from = DBVirde.FROM_SELECT_CAMPAIGN;
+        ArrayList<ItemCampaign> result = new ArrayList<>();
+        String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS +
+                    " WHERE " + DBCampaign.ID + "=" + id;
+
+        open();
+        Cursor c = database.rawQuery(sql, null);
+
+        if (c.moveToFirst()) {
+
+            do {
+
+                result.add(formatItemCampaignFromDB(c));
+
+            } while (c.moveToNext());
+
+        }
+
+        c.close();
+        close();
+
+        return new Pair<>(new Result(false, null, from, 0), result);
+
+    }
+
     public Pair<Result, ArrayList<ItemCampaign>> getCampaignsFromID (int idCampaign) {
 
         int from = DBVirde.FROM_SELECT_CAMPAIGNS_FROM_ID;

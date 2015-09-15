@@ -24,6 +24,7 @@ public class DBVirde {
     public static final int FROM_UPDATE_CAMPAIGN = 2;
     public static final int FROM_SELECT_CAMPAIGNS = 3;
     public static final int FROM_SELECT_CAMPAIGNS_FROM_ID = 4;
+    public static final int FROM_SELECT_CAMPAIGN = 5;
 
     public static DBVirde getInstance() {
         if (context == null)
@@ -64,6 +65,10 @@ public class DBVirde {
 
     public void getCampaigns () {
         new DBVirdeSelectCampaigns().execute();
+    }
+
+    public void getCampaign (int id) {
+        new DBVirdeSelectCampaign().execute(String.valueOf(id));
     }
 
     public void getCampaignsFrom (int idCampaign) {
@@ -108,6 +113,21 @@ public class DBVirde {
         protected Pair<Result, ArrayList<ItemCampaign>> doInBackground(String... strings) {
             DBApi apiClient = DBApi.getInstance((Context) context);
             return apiClient.getCampaigns();
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onDBApiSelectResult(result);
+        }
+
+    }
+
+    class DBVirdeSelectCampaign extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemCampaign>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<ItemCampaign>> doInBackground(String... strings) {
+            DBApi apiClient = DBApi.getInstance((Context) context);
+            return apiClient.getCampaign(Integer.valueOf(strings[0]));
         }
 
         @Override

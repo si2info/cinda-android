@@ -44,6 +44,8 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     private TextView geoArea;
     private TextView dates;
 
+    private boolean fromDB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,16 +99,49 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
             title.setText(campaign.getTitle());
 
             // Get campaign
-            Virde.getInstance(this).getDataCampaign(campaign.getId());
+            if (Util.checkInternetConnection(this)) {
+                Virde.getInstance(this).getDataCampaign(campaign.getId()); // Campaign from internet
+            } else {
+                DBVirde.getInstance(this).getCampaign(campaign.getId()); // Campaign from DB
+            }
 
         }
 
     }
 
+    /**
+     * Intent a Contribution class para añadir una nueva contribución a esta campaña
+     * @param view FloatingActionButton
+     */
     public void addContribution (View view) {
 
         Intent intent = new Intent(this, Contribution.class);
         startActivity(intent);
+
+    }
+
+    /**
+     * Actualiza la vista con la información de la campaña
+     * @param item ItemCampaign
+     */
+    public void updateActivityInfo (ItemCampaign item) {
+
+        // Data campaign
+        title.setText(item.getTitle());
+        objective.setText(Html.fromHtml(String.format(getString(R.string.campaign_objective), item.getDescription())));
+        geoArea.setText(Html.fromHtml(String.format(getString(R.string.campaign_geo_area), item.getScope())));
+
+        String datesCampaigns = Util.parseDateToString(item.getDateStart()) + " - " + Util.parseDateToString(item.getDateEnd());
+        dates.setText(String.format(getString(R.string.campaign_dates), datesCampaigns));
+
+        // Header image
+        Picasso.with(this)
+                .load(item.getImage())
+                .into(header);
+
+        // Update itemCampaign
+        if (!fromDB)
+            DBVirde.getInstance(this).updateCampaign(item);
 
     }
 
@@ -135,22 +170,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
                     // Item campaign
                     ItemCampaign item = (ItemCampaign) result.second.get(0);
-
-                    // Data campaign
-                    title.setText(item.getTitle());
-                    objective.setText(Html.fromHtml(String.format(getString(R.string.campaign_objective), item.getDescription())));
-                    geoArea.setText(Html.fromHtml(String.format(getString(R.string.campaign_geo_area), item.getScope())));
-
-                    String datesCampaigns = Util.parseDateToString(item.getDateStart()) + " - " + Util.parseDateToString(item.getDateEnd());
-                    dates.setText(String.format(getString(R.string.campaign_dates), datesCampaigns));
-
-                    // Header image
-                    Picasso.with(this)
-                            .load(item.getImage())
-                            .into(header);
-
-                    // Update itemCampaign
-                    DBVirde.getInstance(this).updateCampaign(item);
+                    updateActivityInfo(item);
 
                 }
                 break;
@@ -163,11 +183,24 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     @Override
     public void onDBApiSelectResult(Pair<Result, ArrayList> result) {
+        switch (result.first.getResultFrom()) {
+            case DBVirde.FROM_SELECT_CAMPAIGN:
+                if (result.first.isError()) {
+                    Log.e("DBVirde", "Campaign not available");
+                    throw new RuntimeException("Error to select ItemCampaign");
+                } else {
+
+                    fromDB = true;
+                    ItemCampaign item = (ItemCampaign) result.second.get(0);
+                    updateActivityInfo(item);
+
+                }
+                break;
+        }
     }
 
     @Override
     public void onDBApiUpdateResult(Result result) {
-
         switch (result.getResultFrom()) {
             case DBVirde.FROM_UPDATE_CAMPAIGN:
                 if (result.isError()) {
@@ -176,7 +209,6 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                 }
                 break;
         }
-
     }
 
 }

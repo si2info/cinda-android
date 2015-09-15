@@ -1,6 +1,8 @@
 package info.si2.iista.volunteernetworks.util;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.format.DateFormat;
 
 import java.util.Date;
@@ -38,6 +40,21 @@ public class Util {
             return DateFormat.format("dd MMM yyyy", date).toString();
         else
             return "";
+
+    }
+
+    /**
+     * Comprueba si el dispositivo dispone de internet
+     * @param c Context
+     * @return True si se dispone de internet, False si no
+     */
+    public static boolean checkInternetConnection (Context c) {
+
+        ConnectivityManager conMgr = (ConnectivityManager) c
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo i = conMgr.getActiveNetworkInfo();
+        return i != null && i.isConnected() && i.isAvailable();
 
     }
 
