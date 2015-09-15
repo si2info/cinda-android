@@ -70,6 +70,10 @@ public class Virde {
         new VirdeUserRegister().execute(username, mail, deviceID);
     }
 
+    public void suscription (int idCampaign, String token, boolean suscribe) {
+        new VirdeSuscriptionCampaign().execute(String.valueOf(idCampaign), token, String.valueOf(suscribe));
+    }
+
     /** AsyncTasks **/
 
     class VirdeGetListCampaigns extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemCampaign>>> {
@@ -123,6 +127,21 @@ public class Virde {
         protected Pair<Result, ArrayList<String>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
             return apiClient.userRegister(params[0], params[1], params[2]);
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onApiClientRequestResult(result);
+        }
+
+    }
+
+    class VirdeSuscriptionCampaign extends AsyncTask<String, Void, Pair<Result, ArrayList<Integer>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<Integer>> doInBackground(String... params) {
+            ApiClient apiClient = ApiClient.getInstance();
+            return apiClient.suscription(Integer.valueOf(params[0]), params[1], Boolean.valueOf(params[2]));
         }
 
         @Override

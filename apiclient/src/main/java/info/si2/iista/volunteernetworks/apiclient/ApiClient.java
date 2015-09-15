@@ -34,9 +34,9 @@ public class ApiClient {
     private static final String URL_CAMPAIGNS = "API/campaigns/list/";
     private static final String URL_DATA_CAMPAIGN = "API/campaign/";
     private static final String URL_MODEL_CAMPAIGN = "API/campaign/%s/model/";
-    private static final String URL_REGISTER_USER = "/API/volunteer/register/";
-    private static final String URL_SUSCRIBE_CAMPAIGN = "/API/campaign/%s/suscribe/";
-    private static final String URL_UNSUSCRIBE_CAMPAIGN = "/API/campaign/%s/unsuscribe/";
+    private static final String URL_REGISTER_USER = "API/volunteer/register/";
+    private static final String URL_SUSCRIBE_CAMPAIGN = "API/campaign/%s/suscribe/";
+    private static final String URL_UNSUSCRIBE_CAMPAIGN = "API/campaign/%s/unsuscribe/";
 
     private static Context context;
 
@@ -218,11 +218,11 @@ public class ApiClient {
         if (suscribe) {
             from = Virde.FROM_SUSCRIBE;
             message = "Intente suscribirse más tarde";
-            url = (HOST + URL_SUSCRIBE_CAMPAIGN);
+            url = (HOST + String.format(URL_SUSCRIBE_CAMPAIGN, String.valueOf(idCampaign)));
         } else {
             from = Virde.FROM_UNSUSCRIBE;
             message = "Intente desuscribirse más tarde";
-            url = (HOST + URL_UNSUSCRIBE_CAMPAIGN);
+            url = (HOST + String.format(URL_UNSUSCRIBE_CAMPAIGN, String.valueOf(idCampaign)));
         }
 
         OkHttpClient client = new OkHttpClient();
@@ -245,8 +245,12 @@ public class ApiClient {
             Integer respuesta = gson.fromJson(respStr, Integer.class);
 
             result.add(respuesta);
+            result.add(idCampaign);
 
-            return new Pair<>(new Result(false, null, from, 0), result);
+            if (respuesta == 1)
+                return new Pair<>(new Result(false, null, from, 0), result);
+            else
+                return new Pair<>(new Result(true, message, from, 1), result);
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         // RecyclerView
         recyclerView.setHasFixedSize(true);
 
-        adapter = new AdapterHome(getApplicationContext(), items);
+        adapter = new AdapterHome(this, items);
         adapter.setClickListener(this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -150,11 +150,17 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         return super.onOptionsItemSelected(item);
     }
 
+    public void suscription (int idCampaign, boolean suscribe) {
+
+        if (userCanOperate) {
+            String token = Util.getPreference(this, getString(R.string.token));
+            Virde.getInstance(this).suscription(idCampaign, token, suscribe);
+        }
+
+    }
+
     @Override
     public void onHomeItemClick(View view, int position) {
-
-        // Id campaign
-//        int id = items.get(position).getId();
 
         // Intent to campaign
         Intent intent = new Intent(this, Campaign.class);
@@ -215,6 +221,42 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
                     DBVirde.getInstance(this).addCampaigns(itemsResult);
 
+                }
+                break;
+            case Virde.FROM_SUSCRIBE:
+                if (result.first.isError()) {
+                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                } else {
+                    int idCampaign = (Integer)result.second.get(1);
+                    int position = -1;
+
+                    for (int i=0; i<items.size(); i++) {
+                        if (items.get(i).getId() == idCampaign) {
+                            position = i;
+                            items.get(i).setIsSuscribe(true);
+                            break;
+                        }
+                    }
+
+                    adapter.notifyItemChanged(position);
+                }
+                break;
+            case Virde.FROM_UNSUSCRIBE:
+                if (result.first.isError()) {
+                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                } else {
+                    int idCampaign = (Integer) result.second.get(1);
+                    int position = -1;
+
+                    for (int i = 0; i < items.size(); i++) {
+                        if (items.get(i).getId() == idCampaign) {
+                            position = i;
+                            items.get(i).setIsSuscribe(false);
+                            break;
+                        }
+                    }
+
+                    adapter.notifyItemChanged(position);
                 }
                 break;
         }
