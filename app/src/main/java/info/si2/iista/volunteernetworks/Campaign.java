@@ -145,6 +145,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     public void addContribution (View view) {
 
         Intent intent = new Intent(this, Contribution.class);
+        intent.putExtra("idCampaign", campaign.getId());
         startActivity(intent);
 
     }

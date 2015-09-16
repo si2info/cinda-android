@@ -159,8 +159,10 @@ public class ApiClient {
                     .setDateFormat("yyyy-MM-dd HH:mm:ss");
             Gson gson = gsonBuilder.create();
 
-            ItemModel[] items = gson.fromJson(respStr, ItemModel[].class);
-            Collections.addAll(result, items);
+            if (!respStr.equals("0")) {
+                ItemModel[] items = gson.fromJson(respStr, ItemModel[].class);
+                Collections.addAll(result, items);
+            }
 
             return new Pair<>(new Result(false, null, from, 0), result);
 

@@ -34,8 +34,9 @@
     <string name="device_id">deviceID</string>
     <string name="token">token</string>
 
-    <!-- userCanOperate -->
+    <!-- Errors -->
     <string name="userCantOperate">Inténtelo más tarde</string>
+    <string name="noID">Modelo no disponible</string>
 
     <!-- Test String -->
         <!-- activity_main -->

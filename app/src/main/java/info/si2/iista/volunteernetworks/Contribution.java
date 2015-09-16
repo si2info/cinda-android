@@ -43,10 +43,15 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         // Views
         layout = (RelativeLayout)findViewById(R.id.layout);
 
-        // TODO obtener id de campaña
-        Virde.getInstance(this).getModelCampaign(225);
-
-
+        if (getIntent().getExtras() != null) {
+            int id = getIntent().getIntExtra("idCampaign", -1);
+            if (id != -1) {
+                Virde.getInstance(this).getModelCampaign(id);
+            } else {
+                Toast.makeText(this, getString(R.string.noID), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
 
     }
 
