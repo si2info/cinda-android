@@ -34,6 +34,9 @@
     <string name="device_id">deviceID</string>
     <string name="token">token</string>
 
+    <!-- userCanOperate -->
+    <string name="userCantOperate">Inténtelo más tarde</string>
+
     <!-- Test String -->
         <!-- activity_main -->
         <string name="verdi_server"> </string>

@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 android {
-    compileSdkVersion 19
+    compileSdkVersion 23
     buildToolsVersion "19.1.0"
 
     defaultConfig {
@@ -18,4 +18,5 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:23.0.1'
+    compile 'com.android.support:appcompat-v7:23.0.1'
 }

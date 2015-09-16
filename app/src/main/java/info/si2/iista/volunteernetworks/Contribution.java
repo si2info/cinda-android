@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -35,7 +34,6 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     // Item Location
     private ImageView imgLocation;
-    private View dateView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +43,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         // Views
         layout = (RelativeLayout)findViewById(R.id.layout);
 
+        // TODO obtener id de campaña
         Virde.getInstance(this).getModelCampaign(225);
 
 
@@ -61,6 +60,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
                     // Google Api Client - Location
                     buildGoogleApiClient();
+                    mGoogleApiClient.connect();
 
                     // Model
                     ArrayList<ItemModel> items = new ArrayList<>();
@@ -73,10 +73,11 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
                         // Construcción de la vista
                         View view;
+                        boolean lastItem = (i == items.size()-1);
                         if (i != 0) {
-                            view = Model.getItem(Contribution.this, items.get(i), items.get(i-1).getId());
+                            view = Model.getItem(Contribution.this, items.get(i), items.get(i-1).getId(), lastItem);
                         } else {
-                            view = Model.getItem(Contribution.this, items.get(i), -1);
+                            view = Model.getItem(Contribution.this, items.get(i), -1, lastItem);
                         }
 
                         if (view != null) {
@@ -86,8 +87,6 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                             // Guardar ImageView de location para asignar después
                             if (tag.equals(ItemModel.ITEM_GEOPOS))
                                 imgLocation = (ImageView)((LinearLayout)view).getChildAt(0);
-                            else if (tag.equals(ItemModel.ITEM_DATE))
-                                dateView = view;
 
                             // Añadir view al Layout
                             layout.addView(view);
@@ -106,7 +105,6 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        mGoogleApiClient.connect();
     }
 
     @Override
@@ -133,20 +131,10 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     @Override
     public void onConnectionSuspended(int i) {
-
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
-    }
-
-    public void setDate (String date) {
-
-        LinearLayout layout = (LinearLayout)dateView;
-        TextView text = (TextView)layout.getChildAt(0);
-        text.setText(date);
-
     }
 
 }

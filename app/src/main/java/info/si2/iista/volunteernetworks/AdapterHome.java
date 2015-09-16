@@ -138,8 +138,6 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
                 holder.suscribe.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                        item.setIsSuscribe(!item.isSuscribe());
-//                        setStyleButton(item.isSuscribe(), holder.suscribe);
                         ((MainActivity)context).suscription(item.getId(), !item.isSuscribe());
                     }
                 });

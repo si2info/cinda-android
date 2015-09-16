@@ -6,9 +6,11 @@ import android.graphics.Color;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatSpinner;
 import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -22,9 +24,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import info.si2.iista.volunteernetworks.apiclient.ItemModel;
-import info.si2.iista.volunteernetworks.Contribution;
 import info.si2.iista.volunteernetworks.R;
+import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -33,38 +34,45 @@ import info.si2.iista.volunteernetworks.R;
  */
 public class Model {
 
-    public static View getItem (Context c, ItemModel item, int id) {
+    public static View getItem (Context c, ItemModel item, int id, boolean lastItem) {
 
         switch (item.getFieldType()) {
             case ItemModel.ITEM_EDIT_TEXT:
             case ItemModel.ITEM_EDIT_TEXT_BIG:
             case ItemModel.ITEM_EDIT_NUMBER:
-                return getItemEditText(c, item, id);
+                return getItemEditText(c, item, id, lastItem);
 
             case ItemModel.ITEM_DATE:
-                return getItemDate(c, item, id);
+                return getItemDate(c, item, id, lastItem);
 
             case ItemModel.ITEM_DATETIME:
                 break;
 
             case ItemModel.ITEM_GEOPOS:
-                return getItemLocation(c, item, id);
+                return getItemLocation(c, item, id, lastItem);
 
             case ItemModel.ITEM_IMAGE:
-                return getItemImage(c, item, id);
+                return getItemImage(c, item, id, lastItem);
 
             case ItemModel.ITEM_FILE:
                 break;
 
             case ItemModel.ITEM_SPINNER:
-                break;
+                return getItemSpinner(c, item, id, lastItem);
         }
 
         return null;
 
     }
 
-    public static View getItemEditText (Context c, ItemModel item, int id) {
+    /**
+     * Construye una vista de tipo LinearLayout contenedora de un EditText
+     * @param c Context donde se creará la vista
+     * @param item ItemModel que contiente los datos de la vista
+     * @param id ID de la vista anterior para situar esta debajo
+     * @return View de tipo EditText
+     */
+    public static View getItemEditText (Context c, ItemModel item, int id, boolean lastItem) {
 
         // Construct View
         TextInputLayout textInputLayout = new TextInputLayout(c);
@@ -111,6 +119,10 @@ public class Model {
         LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         p2.leftMargin = Util.convertDpToPixel(c, 16);
         p2.rightMargin = Util.convertDpToPixel(c, 16);
+
+        if (lastItem)
+            p2.bottomMargin = Util.convertDpToPixel(c, 16);
+
         textView.setLayoutParams(p2);
 
         // RelativeLayout - Params, view resultante
@@ -128,7 +140,14 @@ public class Model {
 
     }
 
-    public static View getItemLocation (Context c, ItemModel item, int id) {
+    /**
+     * Construye una vista de tipo LinearLayout contenedora de un ImageView que contendrá un tile de la posición del usuario
+     * @param c Context donde se creará la vista
+     * @param item ItemModel que contiente los datos de la vista
+     * @param id ID de la vista anterior para situar esta debajo
+     * @return View de tipo ImageView
+     */
+    public static View getItemLocation (Context c, ItemModel item, int id, boolean lastItem) {
 
         // ImageView - Map Image
         ImageView imageView = new ImageView(c);
@@ -139,6 +158,10 @@ public class Model {
         // LayoutParamas - ImageView
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         p.height = Util.convertDpToPixel(c, 220);
+
+        if (lastItem)
+            p.bottomMargin = Util.convertDpToPixel(c, 16);
+
         imageView.setLayoutParams(p);
 
         // LinearLayout - Content
@@ -166,7 +189,14 @@ public class Model {
 
     }
 
-    public static View getItemImage (Context c, ItemModel item, int id) {
+    /**
+     * Construye una vista de tipo LinearLayout contenedora de un ImageView en la que el usuario podrá seleccionar o hacer una foto
+     * @param c Context donde se creará la vista
+     * @param item ItemModel que contiente los datos de la vista
+     * @param id ID de la vista anterior para situar esta debajo
+     * @return View de tipo ImageView
+     */
+    public static View getItemImage (Context c, ItemModel item, int id, boolean lastItem) {
 
         // ImageView - Map Image
         ImageView imageView = new ImageView(c);
@@ -177,6 +207,10 @@ public class Model {
         // LayoutParamas - ImageView
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         p.height = Util.convertDpToPixel(c, 220);
+
+        if (lastItem)
+            p.bottomMargin = Util.convertDpToPixel(c, 16);
+
         imageView.setLayoutParams(p);
 
         // LinearLayout - Content
@@ -204,11 +238,110 @@ public class Model {
 
     }
 
-    public static View getItemDate (final Context c, ItemModel item, int id) {
+    /**
+     * Construye una vista de tipo LinearLayout contenedora de un Spinner
+     * @param c Context donde se creará la vista
+     * @param item ItemModel que contiente los datos de la vista
+     * @param id ID de la vista anterior para situar esta debajo
+     * @return View de tipo Spinner
+     */
+    public static View getItemSpinner (Context c, ItemModel item, int id, boolean lastItem) {
 
-        final String itemLabel = item.getFieldLabel();
+        // Spinner data
+        String[] items = item.getFieldOptions().split("\\|");
+
+        for (int i=0; i<items.length; i++) {
+            items[i] = items[i].trim();
+        }
+
+        // Spinner view
+        AppCompatSpinner spinner = new AppCompatSpinner(c);
+        spinner.setTag(item.getFieldType());
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, items);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerArrayAdapter);
+
+        // LayoutParamas - ImageView
+        LinearLayout.LayoutParams p1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        p1.topMargin = Util.convertDpToPixel(c, 16);
+        p1.leftMargin = Util.convertDpToPixel(c, 8);
+        p1.rightMargin = Util.convertDpToPixel(c, 12);
+        spinner.setLayoutParams(p1);
+
+        // View - Separator
+        View separator = new View(c);
+        separator.setBackgroundColor(ContextCompat.getColor(c, R.color.separator));
+
+        // LayoutParams - Separator
+        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        p.height = Util.convertDpToPixel(c, 1);
+        p.topMargin = Util.convertDpToPixel(c, 4);
+        p.leftMargin = Util.convertDpToPixel(c, 16);
+        p.rightMargin = Util.convertDpToPixel(c, 16);
+        separator.setLayoutParams(p);
+
+        // TextView - Description
+        TextView textView = new TextView(c);
+        textView.setText(item.getFieldLabel());
+        textView.setTextSize(12);
+
+        // LayoutParams - Description
+        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        p2.topMargin = Util.convertDpToPixel(c, 4);
+        p2.leftMargin = Util.convertDpToPixel(c, 16);
+        p2.rightMargin = Util.convertDpToPixel(c, 16);
+
+        if (lastItem)
+            p2.bottomMargin = Util.convertDpToPixel(c, 16);
+
+        textView.setLayoutParams(p2);
+
+        // LinearLayout - Content
+        LinearLayout layout = new LinearLayout(c);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setId(item.getId());
+        layout.addView(spinner);
+        layout.addView(separator);
+        layout.addView(textView);
+
+        // RelativeLayout - Params, view resultante
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        if (id == -1) {
+            params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        } else {
+            params.addRule(RelativeLayout.BELOW, id);
+        }
+        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+        layout.setLayoutParams(params);
+
+        return layout;
+
+    }
+
+    /**
+     * Construye una vista de tipo LinearLayout contenedora de un TextView que contendrá la fecha que seleccione el usuario
+     * @param c Context donde se creará la vista
+     * @param item ItemModel que contiente los datos de la vista
+     * @param id ID de la vista anterior para situar esta debajo
+     * @return View de tipo TextView
+     */
+    public static View getItemDate (final Context c, ItemModel item, int id, boolean lastItem) {
+
+        final String itemLabel = item.getFieldLabel() + ": %s";
         final Calendar myCalendar = Calendar.getInstance();
         final DatePickerDialog dialog = new DatePickerDialog();
+
+        Date today = myCalendar.getTime();
+        String todayString = Util.parseDateToString(today);
+
+        // Texto contendor de la fecha
+        final TextView dateText = new TextView(c);
+        dateText.setText(String.format(itemLabel, todayString));
+        dateText.setTag(item.getFieldType());
+        dateText.setTextSize(16);
+
         final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
 
             @Override
@@ -221,11 +354,11 @@ public class Model {
                 try { // Establecer fecha seleccionada por el usuario
 
                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-                    String stringDate = String.valueOf(dayOfMonth) + "-" + String.valueOf(monthOfYear) + "-" + String.valueOf(year);
+                    String stringDate = String.valueOf(dayOfMonth) + "-" + String.valueOf(monthOfYear+1) + "-" + String.valueOf(year);
                     Date date = sdf.parse(stringDate);
                     stringDate = Util.parseDateToString(date);
 
-                    ((Contribution) c).setDate(itemLabel + ": " + stringDate);
+                    dateText.setText(String.format(itemLabel, stringDate));
 
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -235,15 +368,6 @@ public class Model {
 
         };
         dialog.setOnDateSetListener(dateSetListener);
-
-        Date today = myCalendar.getTime();
-        String todayString = Util.parseDateToString(today);
-
-        // Texto contendor de la fecha
-        TextView dateText = new TextView(c);
-        dateText.setText(itemLabel + ": " + todayString);
-        dateText.setTag(item.getFieldType());
-        dateText.setTextSize(16);
 
         // View - Separator
         View separator = new View(c);
@@ -263,6 +387,10 @@ public class Model {
         // LayoutParams - Description
         LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         p2.topMargin = Util.convertDpToPixel(c, 4);
+
+        if (lastItem)
+            p2.bottomMargin = Util.convertDpToPixel(c, 16);
+
         textView.setLayoutParams(p2);
 
         // LinearLayout - Content
@@ -297,8 +425,6 @@ public class Model {
         return layout;
 
     }
-
-
 
 
 

@@ -155,6 +155,8 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         if (userCanOperate) {
             String token = Util.getPreference(this, getString(R.string.token));
             Virde.getInstance(this).suscription(idCampaign, token, suscribe);
+        } else {
+            Toast.makeText(this, getString(R.string.userCantOperate), Toast.LENGTH_SHORT).show();
         }
 
     }
