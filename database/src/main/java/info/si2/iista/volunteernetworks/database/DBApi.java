@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
+import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 
 /**
@@ -31,7 +32,6 @@ public class DBApi {
     private static DataBase dbHelper;
     private static DBApi INSTANCE;
     private static Context context;
-    private boolean fromInsertToUpdate;
 
     public synchronized static void createInstance (Context c) {
         if (dbHelper == null) {
@@ -52,11 +52,13 @@ public class DBApi {
     }
 
     public void open() throws SQLException {
-        database = dbHelper.getWritableDatabase();
+        if (database == null)
+            database = dbHelper.getWritableDatabase();
     }
 
     public void close() {
         dbHelper.close();
+        database = null;
     }
 
     public Result insertCampaignsToDB (ArrayList<ItemCampaign> items) {
@@ -67,7 +69,6 @@ public class DBApi {
         try {
 
             int nRows = items.size();
-            open(); // Open DB
 
             for (int i = 0; i < nRows; i++) {
 
@@ -75,6 +76,7 @@ public class DBApi {
                 String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS + " " +
                         "WHERE " + DBCampaign.ID + " = '" + items.get(i).getId() + "'";
 
+                open(); // Open DB
                 Cursor c = database.rawQuery(sql, null);
 
                 if (c.getCount() == 0) { // Si no existe la campaña, INSERT
@@ -110,7 +112,6 @@ public class DBApi {
                     database.execSQL(sql);
 
                 } else { // Si existe la campaña, UPDATE
-                    fromInsertToUpdate = true;
                     updateCampaign(items.get(i));
                 }
 
@@ -138,9 +139,7 @@ public class DBApi {
 
         try {
 
-            if (!fromInsertToUpdate) {
-                open(); // Open DB
-            }
+            open(); // Open DB
 
             // Comprobar si la campaña existe mediante su ID
             String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS + " " +
@@ -185,9 +184,7 @@ public class DBApi {
             }
 
             c.close();
-            if (!fromInsertToUpdate) {
-                close(); // Close DB
-            }
+            close(); // Close DB
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -206,6 +203,7 @@ public class DBApi {
                     " WHERE " + DBCampaign.IS_ACTIVE + "='true'";
 
         open();
+
         Cursor c = database.rawQuery(sql, null);
 
         if (c.moveToFirst()) {
@@ -231,8 +229,8 @@ public class DBApi {
         ArrayList<ItemCampaign> result = new ArrayList<>();
         String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS +
                     " WHERE " + DBCampaign.ID + "=" + id;
-
         open();
+
         Cursor c = database.rawQuery(sql, null);
 
         if (c.moveToFirst()) {
@@ -261,6 +259,7 @@ public class DBApi {
                      "ORDER BY " + DBCampaign.ID + " ASC";
 
         open();
+
         Cursor c = database.rawQuery(sql, null);
 
         if (c.moveToFirst()) {
@@ -297,7 +296,9 @@ public class DBApi {
                 " SET " + DBCampaign.IS_ACTIVE + "='false'" +
                 " WHERE " + DBCampaign.ID + " NOT IN (" + ids + ")";
 
+        open();
         database.execSQL(sql);
+        close();
 
     }
 
@@ -327,6 +328,162 @@ public class DBApi {
 
     }
 
+    /***********/
+    /** MODEL **/
+    /***********/
+
+    public Result insertModelToDB (ArrayList<ItemModel> items) {
+
+        int from = DBVirde.FROM_INSERT_MODEL;
+
+        try {
+
+            int nRows = items.size();
+
+            for (int i = 0; i < nRows; i++) {
+
+                // Comprobar si el modelo existe mediante su ID
+                String sql = "SELECT * FROM " + DBModel.TABLE_MODEL + " " +
+                        "WHERE " + DBModel.ID + " = '" + items.get(i).getId() + "'";
+
+                open(); // Open DB
+                Cursor c = database.rawQuery(sql, null);
+
+                if (c.getCount() == 0) { // Si no existe la campaña, INSERT
+
+                    ItemModel item = items.get(i);
+
+                    // Options
+                    String options = "";
+                    if (item.getFieldOptions() != null)
+                        options = URLEncoder.encode(item.getFieldOptions(), "UTF-8");
+
+                    sql = "INSERT OR REPLACE INTO " + DBModel.TABLE_MODEL + " " +
+                            "VALUES (" + item.getId() + "," + item.getIdCampaign() + "," + item.getFieldPosition() + ",'" +
+                            item.getFieldLabel() + "','" + item.getFieldName() + "','" + item.getFieldDescription() + "','" +
+                            item.getFieldType() + "','" + item.getFieldRequired() + "','" + options + "')";
+
+                    database.execSQL(sql);
+
+                } else { // Si existe la campaña, UPDATE
+                    updateModel(items.get(i));
+                }
+
+                c.close();
+
+            }
+
+            close(); // Close DB
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new Result(true, null, from, 0);
+        }
+
+        return new Result(false, null, from, 0);
+
+    }
+
+    public Result updateModel (ItemModel item) {
+
+        int from = DBVirde.FROM_UPDATE_MODEL;
+
+        try {
+
+            open(); // Open DB
+
+            // Comprobar si la campaña existe mediante su ID
+            String sql = "SELECT * FROM " + DBModel.TABLE_MODEL + " " +
+                         "WHERE " + DBModel.ID + " = '" + item.getId() + "'";
+
+            Cursor c = database.rawQuery(sql, null);
+
+            if (c.getCount() == 1) { // Si no existe la campaña, añadir
+
+                // Scope
+                String options = "";
+                if (item.getFieldOptions() != null)
+                    options = URLEncoder.encode(item.getFieldOptions(), "UTF-8");
+
+                sql = "UPDATE " + DBModel.TABLE_MODEL + " " +
+                        "SET " + DBModel.ID + "=" + item.getId() + "," +
+                        DBModel.ID_CAMPAIGN + "=" + item.getIdCampaign() + "," +
+                        DBModel.POSITION + "='" + item.getFieldPosition() + "'," +
+                        DBModel.LABEL + "='" + item.getFieldLabel() + "'," +
+                        DBModel.NAME + "='" + item.getFieldName() + "'," +
+                        DBModel.DESCRIPTION + "='" + item.getFieldDescription() + "'," +
+                        DBModel.TYPE + "='" + item.getFieldType() + "'," +
+                        DBModel.REQUIRED + "='" + item.getFieldRequired() + "'," +
+                        DBModel.OPTIONS + "='" + options + "' " +
+                        "WHERE " + DBModel.ID + "=" + item.getId();
+
+                database.execSQL(sql);
+            }
+
+            c.close();
+            close(); // Close DB
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new Result(true, null, from, 0);
+        }
+
+        return new Result(false, null, from, 0);
+
+    }
+
+    public Pair<Result, ArrayList<ItemModel>> getModel (int id) {
+
+        int from = DBVirde.FROM_SELECT_MODEL;
+        ArrayList<ItemModel> result = new ArrayList<>();
+        String sql = "SELECT * FROM " + DBModel.TABLE_MODEL +
+                " WHERE " + DBModel.ID_CAMPAIGN + "=" + id +
+                " ORDER BY " + DBModel.POSITION + " ASC";
+
+        open();
+
+        Cursor c = database.rawQuery(sql, null);
+
+        if (c.moveToFirst()) {
+
+            do {
+
+                result.add(formatItemModelFromDB(c));
+
+            } while (c.moveToNext());
+
+        }
+
+        c.close();
+        close();
+
+        return new Pair<>(new Result(false, null, from, 0), result);
+
+    }
+
+    private ItemModel formatItemModelFromDB(Cursor c) {
+
+        ItemModel model = new ItemModel();
+
+        try {
+            model.setId(c.getInt(0));
+            model.setIdCampaign(c.getInt(1));
+            model.setFieldPosition(c.getInt(2));
+            model.setFieldLabel(c.getString(3));
+            model.setFieldName(c.getString(4));
+            model.setFieldDescription(c.getString(5));
+            model.setFieldType(c.getString(6));
+            model.setFieldRequired(Boolean.valueOf(c.getString(7)));
+            model.setFieldOptions(URLDecoder.decode(c.getString(8), "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return model;
+
+    }
+
+    /** UTIL **/
     private String dateToString(Date date) {
 
         if (date != null) {

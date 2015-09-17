@@ -26,23 +26,28 @@
 
         <activity
             android:name=".Campaign"
-            android:theme="@style/AppThemeNoActionBar" />
+            android:theme="@style/AppThemeNoActionBar"
+            android:configChanges="orientation|screenSize"/>
 
         <activity
             android:name=".SyncUserData"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize"/>
 
         <activity
             android:name=".Servers"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize"/>
 
         <activity
             android:name=".Contribution"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="4af8e192cb7f8db7bb39d229cbf7bc628704d24e" />
+
     </application>
 
 </manifest>

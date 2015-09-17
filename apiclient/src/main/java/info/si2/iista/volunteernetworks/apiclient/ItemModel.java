@@ -27,7 +27,7 @@ public class ItemModel {
     private int fieldPosition;
 
     @SerializedName("field_required")
-    private int fieldRequired;
+    private boolean fieldRequired;
 
     @SerializedName("field_label")
     private String fieldLabel;
@@ -44,8 +44,10 @@ public class ItemModel {
     @SerializedName("field_options")
     private String fieldOptions;
 
+    public ItemModel () {}
+
     public ItemModel (int id, int idCampaign, int fieldPosition, String fieldLabel, String fieldName,
-                      String fieldDescription, String fieldType, int fieldRequired, String fieldOptions) {
+                      String fieldDescription, String fieldType, boolean fieldRequired, String fieldOptions) {
         this.id = id;
         this.idCampaign = idCampaign;
         this.fieldPosition = fieldPosition;
@@ -81,11 +83,11 @@ public class ItemModel {
         this.fieldPosition = fieldPosition;
     }
 
-    public int getFieldRequired() {
+    public boolean getFieldRequired() {
         return fieldRequired;
     }
 
-    public void setFieldRequired(int fieldRequired) {
+    public void setFieldRequired(boolean fieldRequired) {
         this.fieldRequired = fieldRequired;
     }
 

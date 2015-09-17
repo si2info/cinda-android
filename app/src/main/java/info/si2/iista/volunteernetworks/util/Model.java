@@ -11,9 +11,11 @@ import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.datetimepicker.date.DatePickerDialog;
@@ -24,6 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import info.si2.iista.volunteernetworks.Contribution;
 import info.si2.iista.volunteernetworks.R;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 
@@ -106,6 +109,7 @@ public class Model {
         LinearLayout layout = new LinearLayout(c);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setId(item.getId());
+        layout.setTag(item.getFieldName());
         layout.addView(textInputLayout);
         layout.addView(textView);
 
@@ -168,6 +172,7 @@ public class Model {
         LinearLayout layout = new LinearLayout(c);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setId(item.getId());
+        layout.setTag(item.getFieldName());
         layout.addView(imageView);
 
         // RelativeLayout - Params, view resultante
@@ -196,13 +201,24 @@ public class Model {
      * @param id ID de la vista anterior para situar esta debajo
      * @return View de tipo ImageView
      */
-    public static View getItemImage (Context c, ItemModel item, int id, boolean lastItem) {
+    public static View getItemImage (final Context c, ItemModel item, int id, boolean lastItem) {
+
+        final int idImage = item.getId();
 
         // ImageView - Map Image
-        ImageView imageView = new ImageView(c);
+        final ImageView imageView = new ImageView(c);
+        imageView.setId(item.getId());
         imageView.setTag(item.getFieldType());
         imageView.setBackgroundColor(Color.GRAY);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        // ImageView - OnClick
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((Contribution)c).intentCameraGallery(idImage);
+            }
+        });
 
         // LayoutParamas - ImageView
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -217,6 +233,7 @@ public class Model {
         LinearLayout layout = new LinearLayout(c);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setId(item.getId());
+        layout.setTag(item.getFieldName());
         layout.addView(imageView);
 
         // RelativeLayout - Params, view resultante
@@ -300,6 +317,7 @@ public class Model {
         LinearLayout layout = new LinearLayout(c);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setId(item.getId());
+        layout.setTag(item.getFieldName());
         layout.addView(spinner);
         layout.addView(separator);
         layout.addView(textView);
@@ -397,6 +415,7 @@ public class Model {
         LinearLayout layout = new LinearLayout(c);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setId(item.getId());
+        layout.setTag(item.getFieldName());
         layout.addView(dateText);
         layout.addView(separator);
         layout.addView(textView);
@@ -426,11 +445,62 @@ public class Model {
 
     }
 
+    /**
+     * Obtiene el valor de un campo de tipo TextInputLayout
+     * @param layout Layout contenedora de los datos
+     * @return String del TextInputLayout
+     */
+    public static String[] getEditText (LinearLayout layout) {
 
+        String[] values = new String[2];
 
+        TextInputLayout textInputLayout = (TextInputLayout) layout.getChildAt(0);
+        EditText editText = textInputLayout.getEditText();
 
+        values[0] = layout.getTag().toString();
+        if (editText != null) {
+            values[1] = editText.getText().toString();
+        } else {
+            values[1] = "";
+        }
 
+        return values;
+    }
 
+    /**
+     * Obtiene el valor de un campo de tipo fecha
+     * @param layout Layout contenedora de los datos
+     * @return String de la fecha en formato yyyy-MM-dd
+     */
+    public static String[] getDate (LinearLayout layout) {
+
+        String[] values = new String[2];
+
+        TextView text = (TextView) layout.getChildAt(0);
+
+        String parseDate = text.getText().toString();
+        int pos = parseDate.indexOf(":") + 2;
+        parseDate = parseDate.substring(pos);
+        parseDate = Util.parseDateToStringServer(Util.parseStringToDate(parseDate));
+
+        values[0] = layout.getTag().toString();
+        values[1] = parseDate;
+
+        return values;
+    }
+
+    public static String[] getStringSpinner (LinearLayout layout) {
+
+        String[] values = new String[2];
+
+        Spinner spinner = (Spinner)layout.getChildAt(0);
+        String result = spinner.getItemAtPosition(spinner.getSelectedItemPosition()).toString();
+
+        values[0] = layout.getTag().toString();
+        values[1] = result;
+
+        return values;
+    }
 
 
 

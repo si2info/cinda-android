@@ -6,6 +6,9 @@
     <string name="action_servers">Servidores</string>
     <string name="action_about">Acerca de</string>
 
+    <!-- menu_contribution -->
+    <string name="action_send">Enviar</string>
+
     <!-- item_issue -->
     <string name="suscribe">Suscribirse</string>
     <string name="unsuscribe">No me interesa</string>
@@ -33,6 +36,15 @@
     <string name="mail">mail</string>
     <string name="device_id">deviceID</string>
     <string name="token">token</string>
+
+    <string name="modelPreferences">modelPreferences</string>
+    <string name="activeModel">activeModel</string>
+    <string name="idImage">idImage</string>
+    <string name="initModel">initModel</string>
+    <string name="currentPhotoPath">currentPhotoPath</string>
+
+    <!-- Camera -->
+    <string name="album_name">Virde</string>
 
     <!-- Errors -->
     <string name="userCantOperate">Inténtelo más tarde</string>

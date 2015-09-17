@@ -37,8 +37,25 @@ public class DataBase extends SQLiteOpenHelper {
                     DBCampaign.SERVER + TYPE_TEXT + COMMA_SEP +
                     DBCampaign.IS_ACTIVE + TYPE_BOOLEAN + " );";
 
+    private static final String SQL_CREATE_MODEL =
+            "CREATE TABLE " + DBModel.TABLE_MODEL + " (" +
+                    DBModel.ID + TYPE_INT + PRIMARY_KEY + COMMA_SEP +
+                    DBModel.ID_CAMPAIGN + TYPE_INT + COMMA_SEP +
+                    DBModel.POSITION + TYPE_INT + COMMA_SEP +
+                    DBModel.LABEL + TYPE_TEXT + COMMA_SEP +
+                    DBModel.NAME + TYPE_TEXT + COMMA_SEP +
+                    DBModel.DESCRIPTION + TYPE_TEXT + COMMA_SEP +
+                    DBModel.TYPE + TYPE_TEXT + COMMA_SEP +
+                    DBModel.REQUIRED + TYPE_BOOLEAN + COMMA_SEP +
+                    DBModel.OPTIONS + TYPE_TEXT + COMMA_SEP +
+                    "FOREIGN KEY("+ DBModel.ID + ") REFERENCES " + DBCampaign.TABLE_CAMPAIGNS + "(" + DBCampaign.ID + ")" +
+                    " );";
+
     private static final String SQL_DELETE_CAMPAIGNS =
             "DROP TABLE IF EXISTS " + DBCampaign.TABLE_CAMPAIGNS;
+
+    private static final String SQL_DELETE_MODELS =
+            "DROP TABLE IF EXISTS " + DBModel.TABLE_MODEL;
 
     public DataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -47,11 +64,13 @@ public class DataBase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_CAMPAIGNS);
+        db.execSQL(SQL_CREATE_MODEL);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(SQL_DELETE_CAMPAIGNS);
+        db.execSQL(SQL_DELETE_MODELS);
         onCreate(db);
     }
 

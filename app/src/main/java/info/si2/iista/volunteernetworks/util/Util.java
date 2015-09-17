@@ -6,7 +6,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.format.DateFormat;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import info.si2.iista.volunteernetworks.R;
 
@@ -37,12 +40,48 @@ public class Util {
         return (int) (dp * (c.getResources().getDisplayMetrics().densityDpi / 160f));
     }
 
+    /**
+     * Convierte una fecha en un String con formato dd MMM yyyy
+     * @param date Fecha a convertir a String
+     * @return String de fecha con formato dd MMM yyyy
+     */
     public static String parseDateToString (Date date) {
 
         if (date != null)
             return DateFormat.format("dd MMM yyyy", date).toString();
         else
             return "";
+
+    }
+
+    /**
+     * Convierte una fecha en un String con formato yyyy-MM-dd
+     * @param date Fecha a convertir a String
+     * @return String de fecha con formato yyyy-MM-dd
+     */
+    public static String parseDateToStringServer (Date date) {
+
+        if (date != null)
+            return DateFormat.format("yyyy-MM-dd", date).toString();
+        else
+            return "";
+
+    }
+
+    /**
+     * Convierte una fecha de formato String a un objeto de tipo Date
+     * @param dateSt String a convertir a Date
+     * @return Date con la fecha especificada en dateSt
+     */
+    public static Date parseStringToDate (String dateSt) {
+
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+            return format.parse(dateSt);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
 
     }
 
@@ -86,6 +125,94 @@ public class Util {
 
         SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.userPreferences), Context.MODE_PRIVATE);
         return sharedPref.getString(key, "");
+
+    }
+
+    /**
+     * Guarda un valor asociado a una key en SharedPreferences de un modelo de campaña
+     * @param c Context
+     * @param key String key del valor
+     * @param value String valor a guardar
+     */
+    public static void saveStPreferenceModel (Context c, String key, String value) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.modelPreferences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(key, value);
+        editor.apply();
+
+    }
+
+    /**
+     * Obtiene un valor guardado en SharedPreferences
+     * @param c Context
+     * @param key key que hace referencia al valor
+     * @return String valor de la key
+     */
+    public static String getStPreferenceModel(Context c, String key) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.modelPreferences), Context.MODE_PRIVATE);
+        return sharedPref.getString(key, "");
+
+    }
+
+    /**
+     * Guarda un valor asociado a una key en SharedPreferences de un modelo de campaña
+     * @param c Context
+     * @param key String key del valor
+     * @param value Integer valor a guardar
+     */
+    public static void saveIntPreferenceModel (Context c, String key, int value) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.modelPreferences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(key, value);
+        editor.apply();
+
+    }
+
+    /**
+     * Obtiene un valor guardado en SharedPreferences
+     * @param c Context
+     * @param key key que hace referencia al valor
+     * @return Integer valor de la key
+     */
+    public static int getIntPreferenceModel(Context c, String key) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.modelPreferences), Context.MODE_PRIVATE);
+        return sharedPref.getInt(key, -1);
+
+    }
+
+    /**
+     * Guarda un valor asociado a una key en SharedPreferences de un modelo de campaña
+     * @param c Context
+     * @param key String key del valor
+     * @param value Boolean valor a guardar
+     */
+    public static void saveBoolPreferenceModel (Context c, String key, boolean value) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.modelPreferences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(key, value);
+        editor.apply();
+
+    }
+
+    /**
+     * Obtiene un valor guardado en SharedPreferences
+     * @param c Context
+     * @param key key que hace referencia al valor
+     * @return Boolean valor de la key
+     */
+    public static boolean getBoolPreferenceModel (Context c, String key) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.modelPreferences), Context.MODE_PRIVATE);
+
+        if (!sharedPref.contains(key))
+            return false;
+
+        return sharedPref.getBoolean(key, false);
 
     }
 
