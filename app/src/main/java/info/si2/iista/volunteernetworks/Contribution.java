@@ -1,8 +1,6 @@
 package info.si2.iista.volunteernetworks;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,12 +53,13 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     private RelativeLayout layout;
     private GoogleApiClient mGoogleApiClient;
 
-    // Item Location
+    // Location
+    private static final int REQUEST_MAP = 0x1;
     private ImageView imgLocation;
     private LatLng position;
 
     // Camera and gallery
-    private static final int REQUEST_IMAGE = 0x1;
+    private static final int REQUEST_IMAGE = 0x2;
     private String mCurrentPhotoPath;
     private boolean fromCamera;
 
@@ -238,14 +237,22 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
             position = new LatLng(lat, lng);
 
-            String url = "http://maps.google.com/maps/api/staticmap?center=" + lat + "," + lng
-                    + "&zoom=15&size=300x200&scale=2&sensor=false&markers=color:red%7C"+ lat + ","+ lng;
-
-            Picasso.with(getApplicationContext())
-                    .load(url)
-                    .into(imgLocation);
+            changeImgLocation(position);
 
         }
+
+    }
+
+    public void changeImgLocation (LatLng latLng) {
+
+        String url = "http://maps.google.com/maps/api/staticmap?center=" + latLng.latitude + ","
+                + latLng.longitude + "&zoom=15&size=300x200&scale=2&sensor=false&markers=color:red%7C"
+                + latLng.latitude + ","+ latLng.longitude
+                + "&key=" + getString(R.string.google_maps_key);
+
+        Picasso.with(getApplicationContext())
+                .load(url)
+                .into(imgLocation);
 
     }
 
@@ -271,7 +278,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
         switch (id) {
             case android.R.id.home:
-                restorePreferences();
+                Util.restoreModelPreferences(this);
                 finish();
                 return true;
             case R.id.action_send:
@@ -285,6 +292,17 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+    }
+
+    /** MAP **/
+
+    public void actionMap () {
+
+        Intent intent = new Intent(this, Map.class);
+        intent.putExtra("lat", position.latitude);
+        intent.putExtra("lng", position.longitude);
+        startActivityForResult(intent, REQUEST_MAP);
+
     }
 
     /** DATA BASE **/
@@ -325,6 +343,8 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     @Override
     public void onDBApiUpdateResult(Result result) {
 
+
+
     }
 
     /** CAMERA **/
@@ -332,7 +352,15 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == REQUEST_IMAGE && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_MAP && resultCode == RESULT_OK) {
+
+            Double lat = data.getDoubleExtra("lat", 0.0);
+            Double lng = data.getDoubleExtra("lng", 0.0);
+            position = new LatLng(lat, lng);
+
+            changeImgLocation(position);
+
+        } else if (requestCode == REQUEST_IMAGE && resultCode == RESULT_OK) {
 
             if (data == null) { // Camera
 
@@ -360,8 +388,6 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
                 }
             }
-
-//            newPhoto = true;
 
         } else {
             ToolCam.deleteUnusedFile(mCurrentPhotoPath);
@@ -449,22 +475,10 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         image.setImageBitmap(bitmap);
     }
 
-    public void restorePreferences () {
-
-        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.modelPreferences), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(getString(R.string.currentPhotoPath), "");
-        editor.putInt(getString(R.string.activeModel), -1);
-        editor.putInt(getString(R.string.idImage), -1);
-        editor.putBoolean(getString(R.string.isModelLoaded), false);
-        editor.apply();
-
-    }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        restorePreferences();
+        Util.restoreModelPreferences(this);
     }
 
 }

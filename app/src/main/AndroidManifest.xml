@@ -3,6 +3,7 @@
     package="info.si2.iista.volunteernetworks" >
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -44,6 +45,16 @@
             android:theme="@style/AppTheme"
             android:configChanges="orientation|screenSize"/>
 
+        <activity
+            android:name=".Map"
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize"/>
+
+        <!-- Maps -->
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key"/>
+
+        <!-- Crashlytics -->
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="4af8e192cb7f8db7bb39d229cbf7bc628704d24e" />

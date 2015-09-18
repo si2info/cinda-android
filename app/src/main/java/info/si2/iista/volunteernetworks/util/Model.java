@@ -151,13 +151,21 @@ public class Model {
      * @param id ID de la vista anterior para situar esta debajo
      * @return View de tipo ImageView
      */
-    public static View getItemLocation (Context c, ItemModel item, int id, boolean lastItem) {
+    public static View getItemLocation (final Context c, ItemModel item, int id, boolean lastItem) {
 
         // ImageView - Map Image
         ImageView imageView = new ImageView(c);
         imageView.setTag(item.getFieldType());
         imageView.setBackgroundColor(Color.GRAY);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        // ImageView - OnClick
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((Contribution) c).actionMap();
+            }
+        });
 
         // LayoutParamas - ImageView
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

@@ -216,4 +216,19 @@ public class Util {
 
     }
 
+    /**
+     * Restablece las preferencias de visualicación de un Modelo
+     */
+    public static void restoreModelPreferences(Context c) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.modelPreferences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(c.getString(R.string.currentPhotoPath), "");
+        editor.putInt(c.getString(R.string.activeModel), -1);
+        editor.putInt(c.getString(R.string.idImage), -1);
+        editor.putBoolean(c.getString(R.string.isModelLoaded), false);
+        editor.apply();
+
+    }
+
 }

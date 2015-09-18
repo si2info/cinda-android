@@ -589,4 +589,9 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Util.restoreModelPreferences(this);
+    }
 }
