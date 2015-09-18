@@ -40,7 +40,7 @@
     <string name="modelPreferences">modelPreferences</string>
     <string name="activeModel">activeModel</string>
     <string name="idImage">idImage</string>
-    <string name="initModel">initModel</string>
+    <string name="isModelLoaded">isModelLoaded</string>
     <string name="currentPhotoPath">currentPhotoPath</string>
 
     <!-- Camera -->

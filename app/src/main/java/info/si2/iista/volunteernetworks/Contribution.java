@@ -1,6 +1,8 @@
 package info.si2.iista.volunteernetworks;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,6 +26,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,18 +71,22 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contribution);
 
+        // Action bar
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         // Views
         layout = (RelativeLayout)findViewById(R.id.layout);
 
         if (getIntent().getExtras() != null) {
             int id = getIntent().getIntExtra("idCampaign", -1);
             if (id != -1) {
-                initializated = Util.getBoolPreferenceModel(this, getString(R.string.initModel));
+                initializated = Util.getBoolPreferenceModel(this, getString(R.string.isModelLoaded));
                 if (initializated) {
                     DBVirde.getInstance(this).selectModel(Util.getIntPreferenceModel(this, getString(R.string.activeModel)));
                 } else {
                     Virde.getInstance(this).getModelCampaign(id);
-                    Util.saveBoolPreferenceModel(this, getString(R.string.initModel), true);
+                    Util.saveBoolPreferenceModel(this, getString(R.string.isModelLoaded), true);
                 }
             } else {
                 Toast.makeText(this, getString(R.string.noID), Toast.LENGTH_SHORT).show();
@@ -234,9 +241,9 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
             String url = "http://maps.google.com/maps/api/staticmap?center=" + lat + "," + lng
                     + "&zoom=15&size=300x200&scale=2&sensor=false&markers=color:red%7C"+ lat + ","+ lng;
 
-//            Picasso.with(getApplicationContext())
-//                    .load(url)
-//                    .into(imgLocation);
+            Picasso.with(getApplicationContext())
+                    .load(url)
+                    .into(imgLocation);
 
         }
 
@@ -259,12 +266,14 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
         switch (id) {
+            case android.R.id.home:
+                restorePreferences();
+                finish();
+                return true;
             case R.id.action_send:
                 getDataFromLayout();
                 return true;
@@ -413,13 +422,13 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         int targetW = image.getWidth();
         int targetH = image.getHeight();
 
-        Log.i("CONTRIBUTION", "W " + String.valueOf(targetW));
-        Log.i("CONTRIBUTION", "h " + String.valueOf(targetH));
-
         if (targetW == 0 && targetH == 0) {
             targetW = 600;
             targetH = 220;
         }
+
+        if (mCurrentPhotoPath == null)
+            mCurrentPhotoPath = Util.getStPreferenceModel(this, getString(R.string.currentPhotoPath));
 
         // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -438,6 +447,24 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
         image.setImageBitmap(bitmap);
+    }
+
+    public void restorePreferences () {
+
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.modelPreferences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.currentPhotoPath), "");
+        editor.putInt(getString(R.string.activeModel), -1);
+        editor.putInt(getString(R.string.idImage), -1);
+        editor.putBoolean(getString(R.string.isModelLoaded), false);
+        editor.apply();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        restorePreferences();
     }
 
 }
