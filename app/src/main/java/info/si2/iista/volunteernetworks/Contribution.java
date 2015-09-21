@@ -36,6 +36,7 @@ import java.util.List;
 
 import info.si2.iista.volunteernetworks.apiclient.ItemFormContribution;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
+import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
 import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 import info.si2.iista.volunteernetworks.apiclient.Virde;
@@ -53,8 +54,14 @@ import info.si2.iista.volunteernetworks.util.Util;
 public class Contribution extends AppCompatActivity implements OnApiClientResult, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, OnDBApiResult {
 
+    // Model
+    private ArrayList<ItemModel> model;
+
+    // Views
     private RelativeLayout layout;
     private LinearLayout loading;
+
+    // Google Services
     private GoogleApiClient mGoogleApiClient;
 
     // Location
@@ -127,23 +134,22 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     buildGoogleApiClient();
                     mGoogleApiClient.connect();
 
-                    // Model
-                    ArrayList<ItemModel> items = new ArrayList<>();
+                    model = new ArrayList<>();
 
                     for (Object object : result.second) {
-                        items.add((ItemModel) object);
+                        model.add((ItemModel) object);
                     }
 
                     // Active Model to Preferences
-                    if (items.size() > 0) {
-                        Util.saveIntPreferenceModel(this, getString(R.string.activeModel), items.get(0).getIdCampaign());
+                    if (model.size() > 0) {
+                        Util.saveIntPreferenceModel(this, getString(R.string.activeModel), model.get(0).getIdCampaign());
                     }
 
                     // Model to DB
-                    DBVirde.getInstance(this).insertModel(items);
+                    DBVirde.getInstance(this).insertModel(model);
 
                     // Draw model
-                    drawModel(items);
+                    drawModel(model);
 
                 }
                 break;
@@ -248,9 +254,16 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
                     key = view.getTag().toString();
 
-                    if (mCurrentPhotoPath != null)
-                        if (!mCurrentPhotoPath.equals(""))
+                    if (mCurrentPhotoPath != null) {
+                        if (!mCurrentPhotoPath.equals("")) {
                             values.add(new ItemFormContribution(key, mCurrentPhotoPath, true));
+                        } else {
+                            values.add(new ItemFormContribution(key, "", false));
+                        }
+                    } else {
+                        values.add(new ItemFormContribution(key, "", false));
+                    }
+
                     break;
 
                 case ItemModel.ITEM_FILE:
@@ -264,7 +277,27 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
         }
 
+        saveContributionToDB(model, values);
         Virde.getInstance(this).sendContribution(values);
+
+    }
+
+    /**
+     * Guarda los datos contribuidos a la campaña en DB
+     * @param model Modelo de la campaña para contribuir datos
+     * @param data Datos del usuario
+     */
+    public void saveContributionToDB (ArrayList<ItemModel> model, ArrayList<ItemFormContribution> data) {
+
+        ArrayList<ItemModelValue> values = new ArrayList<>();
+
+        for (int i=2; i<model.size(); i++) {
+            ItemModel itemModel = model.get(i-2);
+            ItemFormContribution itemForm = data.get(i);
+            values.add(new ItemModelValue(itemModel.getIdCampaign(), itemForm.getValue(), i));
+        }
+
+        DBVirde.getInstance(this).insertModelValue(values);
 
     }
 

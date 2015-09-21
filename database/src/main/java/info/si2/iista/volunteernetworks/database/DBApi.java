@@ -18,6 +18,7 @@ import java.util.Locale;
 
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
+import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 
 /**
@@ -480,6 +481,148 @@ public class DBApi {
         }
 
         return model;
+
+    }
+
+    /****************/
+    /** MODEL_ITEM **/
+    /****************/
+
+    public Result insertModelValueToDB (ArrayList<ItemModelValue> items) {
+
+        int from = DBVirde.FROM_INSERT_MODELITEM;
+
+        try {
+
+            int nRows = items.size();
+
+            for (int i = 0; i < nRows; i++) {
+
+                // Comprobar si el modelo existe mediante su ID
+                String sql = "SELECT * FROM " + DBModelValue.TABLE_MODEL_VALUE + " " +
+                        "WHERE " + DBModelValue.ID + " = '" + items.get(i).getId() + "'";
+
+                open(); // Open DB
+                Cursor c = database.rawQuery(sql, null);
+
+                if (c.getCount() == 0) { // Si no existe la campaña, INSERT
+
+                    ItemModelValue item = items.get(i);
+
+                    // Options
+                    String value = "";
+                    if (item.getValue() != null)
+                        value = URLEncoder.encode(item.getValue(), "UTF-8");
+
+                    sql = "INSERT OR REPLACE INTO " + DBModelValue.TABLE_MODEL_VALUE + " " +
+                            "VALUES (" + item.getId() + "," + item.getIdModel() + ",'" +
+                            value + "'," + item.getOrder() + ")";
+
+                    database.execSQL(sql);
+
+                }
+
+                c.close();
+
+            }
+
+            close(); // Close DB
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new Result(true, null, from, 0);
+        }
+
+        return new Result(false, null, from, 0);
+
+    }
+
+    public Result updateModelValue (ItemModelValue item) {
+
+        int from = DBVirde.FROM_UPDATE_MODELITEM;
+
+        try {
+
+            open(); // Open DB
+
+            // Comprobar si la campaña existe mediante su ID
+            String sql = "SELECT * FROM " + DBModelValue.TABLE_MODEL_VALUE + " " +
+                    "WHERE " + DBModelValue.ID + " = '" + item.getId() + "'";
+
+            Cursor c = database.rawQuery(sql, null);
+
+            if (c.getCount() == 1) { // Si no existe la campaña, añadir
+
+                // Scope
+                String value = "";
+                if (item.getValue() != null)
+                    value = URLEncoder.encode(item.getValue(), "UTF-8");
+
+                sql = "UPDATE " + DBModelValue.TABLE_MODEL_VALUE + " " +
+                        "SET " + DBModelValue.ID + "=" + item.getId() + "," +
+                        DBModelValue.ID_MODEL + "=" + item.getIdModel() + "," +
+                        DBModelValue.VALUE + "='" + value + "'," +
+                        DBModelValue.ORDER + "='" + item.getOrder() + " " +
+                        "WHERE " + DBModelValue.ID + "=" + item.getId();
+
+                database.execSQL(sql);
+            }
+
+            c.close();
+            close(); // Close DB
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new Result(true, null, from, 0);
+        }
+
+        return new Result(false, null, from, 0);
+
+    }
+
+    public Pair<Result, ArrayList<ItemModelValue>> selectModelValues (int id) {
+
+        int from = DBVirde.FROM_SELECT_MODELITEM;
+        ArrayList<ItemModelValue> result = new ArrayList<>();
+        String sql = "SELECT * FROM " + DBModel.TABLE_MODEL +
+                " WHERE " + DBModel.ID_CAMPAIGN + "=" + id +
+                " ORDER BY " + DBModel.POSITION + " ASC";
+
+        open();
+
+        Cursor c = database.rawQuery(sql, null);
+
+        if (c.moveToFirst()) {
+
+            do {
+
+                result.add(formatItemModelValueFromDB(c));
+
+            } while (c.moveToNext());
+
+        }
+
+        c.close();
+        close();
+
+        return new Pair<>(new Result(false, null, from, 0), result);
+
+    }
+
+    private ItemModelValue formatItemModelValueFromDB(Cursor c) {
+
+        ItemModelValue value = new ItemModelValue();
+
+        try {
+            value.setId(c.getInt(0));
+            value.setIdModel(c.getInt(1));
+            value.setValue(URLDecoder.decode(c.getString(2), "UTF-8"));
+            value.setOrder(c.getInt(3));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return value;
 
     }
 

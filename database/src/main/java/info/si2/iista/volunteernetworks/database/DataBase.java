@@ -16,7 +16,8 @@ public class DataBase extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "Virde.db";
 
     private static final String PRIMARY_KEY = " PRIMARY KEY";
-    private static final String TYPE_INT = " INTEGER";
+    private static final String AUTOINCREMENT = " AUTOINCREMENT";
+    private static final String TYPE_INT = " INTEGER ";
     private static final String TYPE_TEXT = " TEXT";
     private static final String TYPE_BOOLEAN = " BOOLEAN";
     private static final String COMMA_SEP = ",";
@@ -51,11 +52,23 @@ public class DataBase extends SQLiteOpenHelper {
                     "FOREIGN KEY("+ DBModel.ID + ") REFERENCES " + DBCampaign.TABLE_CAMPAIGNS + "(" + DBCampaign.ID + ")" +
                     " );";
 
+    private static final String SQL_CREATE_MODEL_VALUE =
+            "CREATE TABLE " + DBModelValue.TABLE_MODEL_VALUE + " (" +
+                    DBModelValue.ID + TYPE_INT + PRIMARY_KEY + AUTOINCREMENT + COMMA_SEP +
+                    DBModelValue.ID_MODEL + TYPE_INT + COMMA_SEP +
+                    DBModelValue.VALUE + TYPE_TEXT + COMMA_SEP +
+                    DBModelValue.ORDER + TYPE_INT + COMMA_SEP +
+                    "FOREIGN KEY("+ DBModelValue.ID_MODEL + ") REFERENCES " + DBModel.TABLE_MODEL + "(" + DBModel.ID + ")" +
+                    ");";
+
     private static final String SQL_DELETE_CAMPAIGNS =
             "DROP TABLE IF EXISTS " + DBCampaign.TABLE_CAMPAIGNS;
 
     private static final String SQL_DELETE_MODELS =
             "DROP TABLE IF EXISTS " + DBModel.TABLE_MODEL;
+
+    private static final String SQL_DELETE_MODELS_ITEM =
+            "DROP TABLE IF EXISTS " + DBModelValue.TABLE_MODEL_VALUE;
 
     public DataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -65,12 +78,14 @@ public class DataBase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_CAMPAIGNS);
         db.execSQL(SQL_CREATE_MODEL);
+        db.execSQL(SQL_CREATE_MODEL_VALUE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(SQL_DELETE_CAMPAIGNS);
         db.execSQL(SQL_DELETE_MODELS);
+        db.execSQL(SQL_DELETE_MODELS_ITEM);
         onCreate(db);
     }
 
