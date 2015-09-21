@@ -1,5 +1,8 @@
 package info.si2.iista.volunteernetworks;
 
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -64,7 +67,11 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     private String mCurrentPhotoPath;
     private boolean fromCamera;
 
+    // Flags
     private boolean initializated;
+
+    // ProgresDialog
+    private ProgressDialogFragment dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +147,16 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
                 }
                 break;
+
+            case Virde.FROM_SEND_CONTRIBUTION:
+                if (result.first.isError()) {
+                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, getString(R.string.contributionSended), Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                dialog.dismiss();
+                break;
         }
     }
 
@@ -180,6 +197,9 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     public void getDataFromLayout () {
 
+        dialog = new ProgressDialogFragment();
+        dialog.show(getFragmentManager(), "Sending contribution");
+
         ArrayList<ItemFormContribution> values = new ArrayList<>();
 
         // Id Campaign
@@ -191,7 +211,8 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         values.add(new ItemFormContribution("idCampaign", String.valueOf(id)));
         values.add(new ItemFormContribution("token", Util.getPreference(this, getString(R.string.token))));
 
-        for (int i=0; i<layout.getChildCount(); i++) {
+        // i=0 => LinearLayout loading
+        for (int i=1; i<layout.getChildCount(); i++) {
 
             LinearLayout view = (LinearLayout) layout.getChildAt(i);
             String tag = view.getChildAt(0).getTag().toString();
@@ -363,6 +384,9 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     Log.e("DBVirde", "Model not selected");
                 } else {
 
+                    // Hide loading feedback
+                    loading.setVisibility(View.GONE);
+
                     // Google Api Client - Location
                     buildGoogleApiClient();
                     mGoogleApiClient.connect();
@@ -523,6 +547,27 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     public void onBackPressed() {
         super.onBackPressed();
         Util.restoreModelPreferences(this);
+    }
+
+    public static class ProgressDialogFragment extends DialogFragment {
+
+//        static ProgressDialogFragment frag;
+//
+//        public static ProgressDialogFragment newInstance() {
+//            frag = new ProgressDialogFragment();
+//            return frag;
+//        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            final ProgressDialog dialog = new ProgressDialog(getActivity());
+            dialog.setMessage(getString(R.string.sendingContribution));
+            dialog.setIndeterminate(true);
+            this.setCancelable(false);
+            return dialog;
+        }
+
     }
 
 }
