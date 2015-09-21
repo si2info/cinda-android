@@ -51,6 +51,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         GoogleApiClient.OnConnectionFailedListener, OnDBApiResult {
 
     private RelativeLayout layout;
+    private LinearLayout loading;
     private GoogleApiClient mGoogleApiClient;
 
     // Location
@@ -76,6 +77,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
         // Views
         layout = (RelativeLayout)findViewById(R.id.layout);
+        loading = (LinearLayout)findViewById(R.id.loading);
 
         // Position
         double lat = Util.getDoublePreferenceModel(this, getString(R.string.latModel));
@@ -110,6 +112,9 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 if (result.first.isError()) {
                     Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
                 } else {
+
+                    // Hide loading feedback
+                    loading.setVisibility(View.GONE);
 
                     // Google Api Client - Location
                     buildGoogleApiClient();

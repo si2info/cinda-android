@@ -8,6 +8,28 @@
         android:layout_height="wrap_content"
         android:id="@+id/layout">
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/loading">
+
+            <ProgressBar
+                style="?android:attr/android:progressBarStyleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/progressBar"
+                android:indeterminate="true"
+                android:paddingTop="16dp" />
+
+            <TextView
+                style="@style/loading"
+                android:text="@string/loading"
+                android:id="@+id/textView"
+                android:gravity="center_horizontal" />
+
+        </LinearLayout>
+
     </RelativeLayout>
 
 </ScrollView>
