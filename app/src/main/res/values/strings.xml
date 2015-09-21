@@ -42,6 +42,8 @@
     <string name="idImage">idImage</string>
     <string name="isModelLoaded">isModelLoaded</string>
     <string name="currentPhotoPath">currentPhotoPath</string>
+    <string name="latModel">latModel</string>
+    <string name="lngModel">lngModel</string>
 
     <!-- Camera -->
     <string name="album_name">Virde</string>

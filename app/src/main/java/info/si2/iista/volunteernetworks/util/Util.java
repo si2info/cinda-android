@@ -217,6 +217,38 @@ public class Util {
     }
 
     /**
+     * Guarda un valor asociado a una key en SharedPreferences de un modelo de campaña
+     * @param c Context
+     * @param key String key del valor
+     * @param value Double valor a guardar
+     */
+    public static void saveDoublePreferenceModel (Context c, String key, double value) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.modelPreferences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putFloat(key, (float)value);
+        editor.apply();
+
+    }
+
+    /**
+     * Obtiene un valor guardado en SharedPreferences
+     * @param c Context
+     * @param key key que hace referencia al valor
+     * @return Double valor de la key
+     */
+    public static double getDoublePreferenceModel (Context c, String key) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.modelPreferences), Context.MODE_PRIVATE);
+
+        if (!sharedPref.contains(key))
+            return 0.0;
+
+        return sharedPref.getFloat(key, (float) 0.0);
+
+    }
+
+    /**
      * Restablece las preferencias de visualicación de un Modelo
      */
     public static void restoreModelPreferences(Context c) {
@@ -227,6 +259,8 @@ public class Util {
         editor.putInt(c.getString(R.string.activeModel), -1);
         editor.putInt(c.getString(R.string.idImage), -1);
         editor.putBoolean(c.getString(R.string.isModelLoaded), false);
+        editor.putFloat(c.getString(R.string.latModel), 0.0f);
+        editor.putFloat(c.getString(R.string.lngModel), 0.0f);
         editor.apply();
 
     }

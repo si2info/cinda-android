@@ -8,11 +8,21 @@ package info.si2.iista.volunteernetworks.apiclient;
 public class ItemFormContribution {
 
     private String key, value;
+    private boolean withImage;
 
     public ItemFormContribution (String key, String value) {
 
         this.key = key;
         this.value = value;
+        this.withImage = false;
+
+    }
+
+    public ItemFormContribution (String key, String value, boolean withImage) {
+
+        this.key = key;
+        this.value = value;
+        this.withImage = withImage;
 
     }
 
@@ -22,6 +32,10 @@ public class ItemFormContribution {
 
     public String getValue() {
         return value;
+    }
+
+    public boolean isWithImage() {
+        return withImage;
     }
 
 }

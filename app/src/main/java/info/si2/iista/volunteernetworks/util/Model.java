@@ -497,6 +497,11 @@ public class Model {
         return values;
     }
 
+    /**
+     * Obtiene el valor seleccionado del Spinner
+     * @param layout Layout contenedora de los datos
+     * @return Opción seleccionada
+     */
     public static String[] getStringSpinner (LinearLayout layout) {
 
         String[] values = new String[2];
@@ -509,8 +514,6 @@ public class Model {
 
         return values;
     }
-
-
 
 
 

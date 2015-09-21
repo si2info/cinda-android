@@ -22,6 +22,7 @@ public class Virde {
     public static final int FROM_USER_REGISTER = 4;
     public static final int FROM_SUSCRIBE = 5;
     public static final int FROM_UNSUSCRIBE = 6;
+    public static final int FROM_SEND_CONTRIBUTION = 7;
 
     public static Virde getInstance() {
         if (context == null)
@@ -72,6 +73,11 @@ public class Virde {
 
     public void suscription (int idCampaign, String token, boolean suscribe) {
         new VirdeSuscriptionCampaign().execute(String.valueOf(idCampaign), token, String.valueOf(suscribe));
+    }
+
+    @SuppressWarnings("unchecked")
+    public void sendContribution (ArrayList<ItemFormContribution> values) {
+        new VirdeSendContribution().execute(values);
     }
 
     /** AsyncTasks **/
@@ -142,6 +148,22 @@ public class Virde {
         protected Pair<Result, ArrayList<Integer>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
             return apiClient.suscription(Integer.valueOf(params[0]), params[1], Boolean.valueOf(params[2]));
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onApiClientRequestResult(result);
+        }
+
+    }
+
+    class VirdeSendContribution extends AsyncTask<ArrayList<ItemFormContribution>, Void, Pair<Result, ArrayList<Integer>>> {
+
+        @SafeVarargs
+        @Override
+        protected final Pair<Result, ArrayList<Integer>> doInBackground(ArrayList<ItemFormContribution>... params) {
+            ApiClient apiClient = ApiClient.getInstance();
+            return apiClient.sendContribution(params[0]);
         }
 
         @Override

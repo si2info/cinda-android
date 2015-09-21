@@ -7,6 +7,8 @@ import android.util.Pair;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.MultipartBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
@@ -16,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,6 +40,7 @@ public class ApiClient {
     private static final String URL_REGISTER_USER = "API/volunteer/register/";
     private static final String URL_SUSCRIBE_CAMPAIGN = "API/campaign/%s/suscribe/";
     private static final String URL_UNSUSCRIBE_CAMPAIGN = "API/campaign/%s/unsuscribe/";
+    private static final String URL_SEND_CONTRIBUTION = "API/campaign/%S/sendData/";
 
     private static Context context;
 
@@ -253,6 +257,51 @@ public class ApiClient {
                 return new Pair<>(new Result(false, null, from, 0), result);
             else
                 return new Pair<>(new Result(true, message, from, 1), result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Pair<>(new Result(true, message, from, 1), new ArrayList<Integer>());
+        }
+
+    }
+
+    public Pair<Result, ArrayList<Integer>> sendContribution (ArrayList<ItemFormContribution> values) {
+
+        int from = Virde.FROM_SEND_CONTRIBUTION;
+        String message = "Intente enviar la contribución más tarde";
+        OkHttpClient client = new OkHttpClient();
+
+        // Id Campaign
+        int idCampaign = Integer.valueOf(values.get(0).getValue());
+
+        // Añadir valores de la campaña al formulario para enviarlos
+        MultipartBuilder formEncodingBuilder = new MultipartBuilder();
+        formEncodingBuilder.type(MultipartBuilder.FORM);
+        for (int i=1; i<values.size()-1; i++) {
+            ItemFormContribution item = values.get(i);
+            if (!item.isWithImage()) {
+                formEncodingBuilder.addFormDataPart(item.getKey(), item.getValue());
+            } else {
+                File image = new File(item.getValue());
+                formEncodingBuilder.addFormDataPart(item.getKey(), image.getName(),
+                        RequestBody.create(MediaType.parse("image/jpg"), image));
+            }
+        }
+
+        Request request = new Request.Builder()
+                .url(HOST + String.format(URL_SEND_CONTRIBUTION, String.valueOf(idCampaign)))
+                        .post(formEncodingBuilder.build())
+                        .build();
+
+        try {
+
+            Response response = client.newCall(request).execute();
+            String respStr  = response.body().string();
+
+            if (respStr.equals("1"))
+                return new Pair<>(new Result(false, null, from, 0), new ArrayList<Integer>());
+            else
+                return new Pair<>(new Result(true, message, from, 1), new ArrayList<Integer>());
 
         } catch (IOException e) {
             e.printStackTrace();

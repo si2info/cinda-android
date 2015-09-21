@@ -77,6 +77,14 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         // Views
         layout = (RelativeLayout)findViewById(R.id.layout);
 
+        // Position
+        double lat = Util.getDoublePreferenceModel(this, getString(R.string.latModel));
+        double lng = Util.getDoublePreferenceModel(this, getString(R.string.lngModel));
+
+        if (lat != 0.0 && lng != 0.0)
+            position = new LatLng(lat, lng);
+
+        // Get model
         if (getIntent().getExtras() != null) {
             int id = getIntent().getIntExtra("idCampaign", -1);
             if (id != -1) {
@@ -169,11 +177,21 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
         ArrayList<ItemFormContribution> values = new ArrayList<>();
 
+        // Id Campaign
+        int id = -1;
+        if (getIntent().getExtras() != null)
+            id = getIntent().getIntExtra("idCampaign", -1);
+
+        // Add idCampaign and Token
+        values.add(new ItemFormContribution("idCampaign", String.valueOf(id)));
+        values.add(new ItemFormContribution("token", Util.getPreference(this, getString(R.string.token))));
+
         for (int i=0; i<layout.getChildCount(); i++) {
 
             LinearLayout view = (LinearLayout) layout.getChildAt(i);
             String tag = view.getChildAt(0).getTag().toString();
             String[] data;
+            String key;
 
             switch (tag) {
                 case ItemModel.ITEM_EDIT_TEXT:
@@ -194,13 +212,19 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 case ItemModel.ITEM_GEOPOS:
 
                     String userPosition = String.valueOf(position.latitude) + "," + String.valueOf(position.longitude);
-                    String keyPosition = view.getTag().toString();
+                    key = view.getTag().toString();
 
-                    values.add(new ItemFormContribution(keyPosition, userPosition));
+                    values.add(new ItemFormContribution(key, userPosition));
 
                     break;
 
                 case ItemModel.ITEM_IMAGE:
+
+                    key = view.getTag().toString();
+
+                    if (mCurrentPhotoPath != null)
+                        if (!mCurrentPhotoPath.equals(""))
+                            values.add(new ItemFormContribution(key, mCurrentPhotoPath, true));
                     break;
 
                 case ItemModel.ITEM_FILE:
@@ -213,6 +237,8 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
             }
 
         }
+
+        Virde.getInstance(this).sendContribution(values);
 
     }
 
@@ -235,7 +261,8 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
             double lat = mLastLocation.getLatitude();
             double lng = mLastLocation.getLongitude();
 
-            position = new LatLng(lat, lng);
+            if (position == null)
+                position = new LatLng(lat, lng);
 
             changeImgLocation(position);
 
@@ -250,9 +277,10 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 + latLng.latitude + ","+ latLng.longitude
                 + "&key=" + getString(R.string.google_maps_key);
 
-        Picasso.with(getApplicationContext())
-                .load(url)
-                .into(imgLocation);
+        if (imgLocation != null)
+            Picasso.with(getApplicationContext())
+                    .load(url)
+                    .into(imgLocation);
 
     }
 
@@ -299,8 +327,12 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     public void actionMap () {
 
         Intent intent = new Intent(this, Map.class);
-        intent.putExtra("lat", position.latitude);
-        intent.putExtra("lng", position.longitude);
+
+        if (position != null) {
+            intent.putExtra("lat", position.latitude);
+            intent.putExtra("lng", position.longitude);
+        }
+
         startActivityForResult(intent, REQUEST_MAP);
 
     }
@@ -325,6 +357,10 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 if (result.first.isError()) {
                     Log.e("DBVirde", "Model not selected");
                 } else {
+
+                    // Google Api Client - Location
+                    buildGoogleApiClient();
+                    mGoogleApiClient.connect();
 
                     // Model
                     ArrayList<ItemModel> items = new ArrayList<>();
@@ -357,6 +393,9 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
             Double lat = data.getDoubleExtra("lat", 0.0);
             Double lng = data.getDoubleExtra("lng", 0.0);
             position = new LatLng(lat, lng);
+
+            Util.saveDoublePreferenceModel(this, getString(R.string.latModel), lat);
+            Util.saveDoublePreferenceModel(this, getString(R.string.lngModel), lng);
 
             changeImgLocation(position);
 

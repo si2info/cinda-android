@@ -2,10 +2,6 @@ package info.si2.iista.volunteernetworks;
 
 import android.app.Application;
 
-import com.crashlytics.android.Crashlytics;
-
-import io.fabric.sdk.android.Fabric;
-
 /**
  * Developer: Jose Miguel Mingorance
  * Date: 16/9/15
@@ -18,7 +14,7 @@ public class ApplicationVirde extends Application {
         super.onCreate();
 
         // Crashlytics
-        Fabric.with(this, new Crashlytics());
+//        Fabric.with(this, new Crashlytics());
 
     }
 }
