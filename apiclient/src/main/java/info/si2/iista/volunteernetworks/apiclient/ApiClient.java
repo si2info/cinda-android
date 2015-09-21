@@ -277,7 +277,7 @@ public class ApiClient {
         // Añadir valores de la campaña al formulario para enviarlos
         MultipartBuilder formEncodingBuilder = new MultipartBuilder();
         formEncodingBuilder.type(MultipartBuilder.FORM);
-        for (int i=1; i<values.size()-1; i++) {
+        for (int i=0; i<values.size(); i++) {
             ItemFormContribution item = values.get(i);
             if (!item.isWithImage()) {
                 formEncodingBuilder.addFormDataPart(item.getKey(), item.getValue());
