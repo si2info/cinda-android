@@ -104,6 +104,15 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@color/primary_dark</item>
+        <!-- Used for the title and text -->
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <!-- Used for the background -->
+        <item name="android:background">@android:color/white</item>
+    </style>
+
     <!-- Buttons -->
     <style name="suscribirse" parent="Widget.AppCompat.Button">
         <item name="android:layout_width">wrap_content</item>

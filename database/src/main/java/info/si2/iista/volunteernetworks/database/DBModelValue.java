@@ -10,8 +10,10 @@ public class DBModelValue {
     // Table Model
     public static final String TABLE_MODEL_VALUE = "modelValue";
     public static final String ID = "id";
-    public static final String ID_MODEL = "idModel";
+    public static final String ID_CAMP = "idCampaign";
+    public static final String FIELD = "field";
     public static final String VALUE = "value";
     public static final String ORDER = "nOrder";
+    public static final String IS_SYNC = "isSync";
 
 }

@@ -24,15 +24,18 @@
     <string name="delete_text">¿Seguro que quiere eliminar este servidor?</string>
     <string name="new_server">Nuevo servidor</string>
     <string name="name_server">Url de servidor</string>
+    <string name="ok">OK</string>
     <string name="yes">Si</string>
     <string name="no">No</string>
     <string name="add">Añadir</string>
     <string name="cancel">Cancelar</string>
+    <string name="sendAgain">Volver a intentar</string>
 
     <!-- contribution -->
     <string name="loading">Cargando modelo de campaña</string>
     <string name="sendingContribution">Enviado su contribución&#8230;</string>
     <string name="contributionSended">Contribución enviada</string>
+    <string name="contributionNoSend">No ha sido posible enviar su contribución, ha quedado guardada para una posterior sincronización desde la opción \"Sincronizar\".</string>
 
     <!-- Shared Preferences -->
     <string name="userPreferences">userPreferences</string>

@@ -1,3 +1,9 @@
 <resources>
+
     <string name="app_name">Data Base</string>
+
+    <!-- Shared Preferences -->
+    <string name="DBPreferences">DBPreferences</string>
+    <string name="nModelValue">nModelValue</string>
+
 </resources>

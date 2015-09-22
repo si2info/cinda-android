@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;
@@ -43,6 +44,7 @@ import info.si2.iista.volunteernetworks.apiclient.Virde;
 import info.si2.iista.volunteernetworks.camera.ToolCam;
 import info.si2.iista.volunteernetworks.database.DBVirde;
 import info.si2.iista.volunteernetworks.database.OnDBApiResult;
+import info.si2.iista.volunteernetworks.util.ContributionDialog;
 import info.si2.iista.volunteernetworks.util.Model;
 import info.si2.iista.volunteernetworks.util.Util;
 
@@ -52,10 +54,12 @@ import info.si2.iista.volunteernetworks.util.Util;
  * Project: Virde
  */
 public class Contribution extends AppCompatActivity implements OnApiClientResult, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, OnDBApiResult {
+        OnConnectionFailedListener, OnDBApiResult, ContributionDialog.ContributionDialogListener {
 
     // Model
     private ArrayList<ItemModel> model;
+    private ArrayList<ItemFormContribution> values;
+    private ArrayList<ItemModelValue> dbValues;
 
     // Views
     private RelativeLayout layout;
@@ -156,8 +160,11 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
             case Virde.FROM_SEND_CONTRIBUTION:
                 if (result.first.isError()) {
-                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                    ContributionDialog dialog = new ContributionDialog();
+                    dialog.show(getFragmentManager(), "Contribution dialog");
                 } else {
+                    DBVirde.getInstance(this).updateModelValue(dbValues);
+                    Util.restoreModelPreferences(this);
                     Toast.makeText(this, getString(R.string.contributionSended), Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -206,12 +213,13 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         dialog = new ProgressDialogFragment();
         dialog.show(getFragmentManager(), "Sending contribution");
 
-        ArrayList<ItemFormContribution> values = new ArrayList<>();
-
         // Id Campaign
         int id = -1;
         if (getIntent().getExtras() != null)
             id = getIntent().getIntExtra("idCampaign", -1);
+
+        // Init ArrayList
+        values = new ArrayList<>();
 
         // Add idCampaign and Token
         values.add(new ItemFormContribution("idCampaign", String.valueOf(id)));
@@ -277,9 +285,6 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
         }
 
-        saveContributionToDB(model, values);
-        Virde.getInstance(this).sendContribution(values);
-
     }
 
     /**
@@ -287,17 +292,19 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
      * @param model Modelo de la campaña para contribuir datos
      * @param data Datos del usuario
      */
-    public void saveContributionToDB (ArrayList<ItemModel> model, ArrayList<ItemFormContribution> data) {
+    public void saveContributionToDB (ArrayList<ItemModel> model, ArrayList<ItemFormContribution> data, boolean isSync) {
 
-        ArrayList<ItemModelValue> values = new ArrayList<>();
+        dbValues = new ArrayList<>();
 
         for (int i=2; i<model.size(); i++) {
             ItemModel itemModel = model.get(i-2);
             ItemFormContribution itemForm = data.get(i);
-            values.add(new ItemModelValue(itemModel.getIdCampaign(), itemForm.getValue(), i));
+
+            dbValues.add(new ItemModelValue(itemModel.getIdCampaign(), itemModel.getFieldName(),
+                    itemForm.getValue(), itemModel.getFieldPosition(), isSync));
         }
 
-        DBVirde.getInstance(this).insertModelValue(values);
+        DBVirde.getInstance(this).insertModelValue(dbValues);
 
     }
 
@@ -370,6 +377,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 return true;
             case R.id.action_send:
                 getDataFromLayout();
+                saveContributionToDB(model, values, false);
                 return true;
         }
 
@@ -406,6 +414,20 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     Log.e("DBVirde", "Model not inserted");
                 }
                 break;
+            case DBVirde.FROM_INSERT_MODELITEM:
+                if (result.isError()) {
+                    Log.e("DBVirde", "ModelValue not inserted");
+                } else {
+
+                    for (int i=0; i<dbValues.size(); i++) {
+                        dbValues.get(i).setId(result.getCodigoError()); // Campo "CodigoError" reutilizado para enviar el id asignado
+                        dbValues.get(i).setIsSync(true);
+                    }
+
+                    Virde.getInstance(this).sendContribution(values);
+                }
+
+                break;
         }
     }
 
@@ -440,9 +462,13 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     @Override
     public void onDBApiUpdateResult(Result result) {
-
-
-
+        switch (result.getResultFrom()) {
+            case DBVirde.FROM_UPDATE_MODELITEM:
+                if (result.isError()) {
+                    Log.e("DBVirde", "ModelValue not updated");
+                }
+                break;
+        }
     }
 
     /** CAMERA **/
@@ -582,14 +608,23 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         Util.restoreModelPreferences(this);
     }
 
-    public static class ProgressDialogFragment extends DialogFragment {
+    @Override
+    public void onContributionDialogPositiveClick() {
+        Util.restoreModelPreferences(this);
+        finish();
+    }
 
-//        static ProgressDialogFragment frag;
-//
-//        public static ProgressDialogFragment newInstance() {
-//            frag = new ProgressDialogFragment();
-//            return frag;
-//        }
+    @Override
+    public void onContributionDialogAgainClick() {
+        dialog = new ProgressDialogFragment();
+        dialog.show(getFragmentManager(), "Sending contribution");
+        Virde.getInstance(this).sendContribution(values);
+    }
+
+    /**
+     * Diálogo de progreso al enviar una contribución
+     */
+    public static class ProgressDialogFragment extends DialogFragment {
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {

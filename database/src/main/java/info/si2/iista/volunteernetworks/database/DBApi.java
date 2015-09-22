@@ -484,13 +484,52 @@ public class DBApi {
 
     }
 
-    /****************/
-    /** MODEL_ITEM **/
-    /****************/
+    /**********************/
+    /** MODEL_ITEM_VALUE **/
+    /**********************/
 
     public Result insertModelValueToDB (ArrayList<ItemModelValue> items) {
 
         int from = DBVirde.FROM_INSERT_MODELITEM;
+        int id = getIdForModelValue();
+
+        try {
+
+            int nRows = items.size();
+
+            open();
+
+            for (int i = 0; i < nRows; i++) {
+
+                ItemModelValue item = items.get(i);
+
+                // Options
+                String value = "";
+                if (item.getValue() != null)
+                    value = URLEncoder.encode(item.getValue(), "UTF-8");
+
+                String sql = "INSERT OR REPLACE INTO " + DBModelValue.TABLE_MODEL_VALUE + " " +
+                             "VALUES (" + id + "," + item.getIdModel() + ",'" + item.getField() + "','" +
+                             value + "'," + item.getOrder() + ",'" + item.isSync() + "')";
+
+                database.execSQL(sql);
+
+            }
+
+            close(); // Close DB
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new Result(true, null, from, 0);
+        }
+
+        return new Result(false, null, from, id);
+
+    }
+
+    public Result updateModelValue (ArrayList<ItemModelValue> items) {
+
+        int from = DBVirde.FROM_UPDATE_MODELITEM;
 
         try {
 
@@ -498,25 +537,32 @@ public class DBApi {
 
             for (int i = 0; i < nRows; i++) {
 
-                // Comprobar si el modelo existe mediante su ID
+                ItemModelValue item = items.get(i);
+
+                // Comprobar si el valor del modelo existe mediante su ID y Field
                 String sql = "SELECT * FROM " + DBModelValue.TABLE_MODEL_VALUE + " " +
-                        "WHERE " + DBModelValue.ID + " = '" + items.get(i).getId() + "'";
+                        "WHERE " + DBModelValue.ID + " = '" + item.getId() + "' " +
+                        "AND " + DBModelValue.FIELD + " = '" + item.getField() + "'";
 
                 open(); // Open DB
                 Cursor c = database.rawQuery(sql, null);
 
-                if (c.getCount() == 0) { // Si no existe la campaña, INSERT
+                if (c.getCount() == 1) { // Si existe la contribución, update
 
-                    ItemModelValue item = items.get(i);
-
-                    // Options
+                    // Value
                     String value = "";
                     if (item.getValue() != null)
                         value = URLEncoder.encode(item.getValue(), "UTF-8");
 
-                    sql = "INSERT OR REPLACE INTO " + DBModelValue.TABLE_MODEL_VALUE + " " +
-                            "VALUES (" + item.getId() + "," + item.getIdModel() + ",'" +
-                            value + "'," + item.getOrder() + ")";
+                    sql = "UPDATE " + DBModelValue.TABLE_MODEL_VALUE + " " +
+                            "SET " + DBModelValue.ID + "=" + item.getId() + "," +
+                            DBModelValue.ID_CAMP + "=" + item.getIdModel() + "," +
+                            DBModelValue.FIELD + "='" + item.getField() + "'," +
+                            DBModelValue.VALUE + "='" + value + "'," +
+                            DBModelValue.ORDER + "=" + item.getOrder() + ", " +
+                            DBModelValue.IS_SYNC + "='" + item.isSync() + "' " +
+                            "WHERE " + DBModelValue.ID + "=" + item.getId() + " " +
+                            "AND " + DBModelValue.FIELD + "='" + item.getField() + "'";
 
                     database.execSQL(sql);
 
@@ -537,56 +583,13 @@ public class DBApi {
 
     }
 
-    public Result updateModelValue (ItemModelValue item) {
-
-        int from = DBVirde.FROM_UPDATE_MODELITEM;
-
-        try {
-
-            open(); // Open DB
-
-            // Comprobar si la campaña existe mediante su ID
-            String sql = "SELECT * FROM " + DBModelValue.TABLE_MODEL_VALUE + " " +
-                    "WHERE " + DBModelValue.ID + " = '" + item.getId() + "'";
-
-            Cursor c = database.rawQuery(sql, null);
-
-            if (c.getCount() == 1) { // Si no existe la campaña, añadir
-
-                // Scope
-                String value = "";
-                if (item.getValue() != null)
-                    value = URLEncoder.encode(item.getValue(), "UTF-8");
-
-                sql = "UPDATE " + DBModelValue.TABLE_MODEL_VALUE + " " +
-                        "SET " + DBModelValue.ID + "=" + item.getId() + "," +
-                        DBModelValue.ID_MODEL + "=" + item.getIdModel() + "," +
-                        DBModelValue.VALUE + "='" + value + "'," +
-                        DBModelValue.ORDER + "='" + item.getOrder() + " " +
-                        "WHERE " + DBModelValue.ID + "=" + item.getId();
-
-                database.execSQL(sql);
-            }
-
-            c.close();
-            close(); // Close DB
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return new Result(true, null, from, 0);
-        }
-
-        return new Result(false, null, from, 0);
-
-    }
-
     public Pair<Result, ArrayList<ItemModelValue>> selectModelValues (int id) {
 
         int from = DBVirde.FROM_SELECT_MODELITEM;
         ArrayList<ItemModelValue> result = new ArrayList<>();
-        String sql = "SELECT * FROM " + DBModel.TABLE_MODEL +
-                " WHERE " + DBModel.ID_CAMPAIGN + "=" + id +
-                " ORDER BY " + DBModel.POSITION + " ASC";
+        String sql = "SELECT * FROM " + DBModelValue.TABLE_MODEL_VALUE +
+                " WHERE " + DBModelValue.ID + "=" + id +
+                " ORDER BY " + DBModelValue.ORDER + " ASC";
 
         open();
 
@@ -618,11 +621,38 @@ public class DBApi {
             value.setIdModel(c.getInt(1));
             value.setValue(URLDecoder.decode(c.getString(2), "UTF-8"));
             value.setOrder(c.getInt(3));
+            value.setIsSync(Boolean.valueOf(c.getString(4)));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
         return value;
+
+    }
+
+    /**
+     * Genera un número entero obtenido de SharedPreferences para asignárselo como id a los
+     * valores de una contribución
+     * @return Integer id
+     */
+    private int getIdForModelValue () {
+
+        SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.DBPreferences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        String key = context.getString(R.string.nModelValue);
+        int nKey;
+
+        if (!sharedPref.contains(key)) {
+            editor.putInt(key, 0);
+            nKey = 0;
+        } else {
+            nKey = sharedPref.getInt(key, -1) + 1;
+            editor.putInt(key, nKey);
+        }
+
+        editor.apply();
+
+        return nKey;
 
     }
 

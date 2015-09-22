@@ -54,11 +54,14 @@ public class DataBase extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_MODEL_VALUE =
             "CREATE TABLE " + DBModelValue.TABLE_MODEL_VALUE + " (" +
-                    DBModelValue.ID + TYPE_INT + PRIMARY_KEY + AUTOINCREMENT + COMMA_SEP +
-                    DBModelValue.ID_MODEL + TYPE_INT + COMMA_SEP +
+                    DBModelValue.ID + TYPE_INT + COMMA_SEP +
+                    DBModelValue.ID_CAMP + TYPE_INT + COMMA_SEP +
+                    DBModelValue.FIELD + TYPE_TEXT + COMMA_SEP +
                     DBModelValue.VALUE + TYPE_TEXT + COMMA_SEP +
                     DBModelValue.ORDER + TYPE_INT + COMMA_SEP +
-                    "FOREIGN KEY("+ DBModelValue.ID_MODEL + ") REFERENCES " + DBModel.TABLE_MODEL + "(" + DBModel.ID + ")" +
+                    DBModelValue.IS_SYNC + TYPE_BOOLEAN + COMMA_SEP +
+                    PRIMARY_KEY + "(" + DBModelValue.ID + "," + DBModelValue.FIELD + ")" + COMMA_SEP +
+                    "FOREIGN KEY("+ DBModelValue.ID_CAMP + ") REFERENCES " + DBModel.TABLE_MODEL + "(" + DBModel.ID + ")" +
                     ");";
 
     private static final String SQL_DELETE_CAMPAIGNS =

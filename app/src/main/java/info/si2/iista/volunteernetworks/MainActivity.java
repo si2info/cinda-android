@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        toolbar.setLogo(R.drawable.logo_virde_blanco);
         setSupportActionBar(toolbar);
 
         // Views

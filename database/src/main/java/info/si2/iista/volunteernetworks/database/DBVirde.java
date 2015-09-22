@@ -103,8 +103,8 @@ public class DBVirde {
     }
 
         /** MODEL VALUE **/
-    public void selectModelValue (int idCampaign) {
-        new DBVirdeSelectModelValue().execute(idCampaign);
+    public void selectModelValue (int idModelValue) {
+        new DBVirdeSelectModelValue().execute(String.valueOf(idModelValue));
     }
 
     @SuppressWarnings("unchecked")
@@ -112,8 +112,9 @@ public class DBVirde {
         new DBVirdeInsertModelValue().execute(items);
     }
 
-    public void updateModelValue(ItemModelValue item) {
-        new DBVirdeUpdateModelValue().execute(item);
+    @SuppressWarnings("unchecked")
+    public void updateModelValue(ArrayList<ItemModelValue> items) {
+        new DBVirdeUpdateModelValue().execute(items);
     }
 
     /** AsyncTasks **/
@@ -244,12 +245,12 @@ public class DBVirde {
 
         /** MODEL VALUE **/
 
-    class DBVirdeSelectModelValue extends AsyncTask<Integer, Void, Pair<Result, ArrayList<ItemModelValue>>> {
+    class DBVirdeSelectModelValue extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemModelValue>>> {
 
         @Override
-        protected Pair<Result, ArrayList<ItemModelValue>> doInBackground(Integer... integers) {
+        protected Pair<Result, ArrayList<ItemModelValue>> doInBackground(String... strings) {
             DBApi apiClient = DBApi.getInstance((Context) context);
-            return apiClient.selectModelValues(integers[0]);
+            return apiClient.selectModelValues(Integer.valueOf(strings[0]));
         }
 
         @Override
@@ -274,10 +275,10 @@ public class DBVirde {
 
     }
 
-    class DBVirdeUpdateModelValue extends AsyncTask<ItemModelValue, Void, Result> {
+    class DBVirdeUpdateModelValue extends AsyncTask<ArrayList<ItemModelValue>, Void, Result> {
 
         @Override
-        protected Result doInBackground(ItemModelValue... ItemModels) {
+        protected Result doInBackground(ArrayList<ItemModelValue>... ItemModels) {
             DBApi apiClient = DBApi.getInstance((Context) context);
             return apiClient.updateModelValue(ItemModels[0]);
         }
