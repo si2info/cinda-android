@@ -112,7 +112,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 if (initializated) {
                     DBVirde.getInstance(this).selectModel(Util.getIntPreferenceModel(this, getString(R.string.activeModel)));
                 } else {
-                    Virde.getInstance(this).getModelCampaign(id);
+                    getModelCampaign(id);
                     Util.saveBoolPreferenceModel(this, getString(R.string.isModelLoaded), true);
                 }
             } else {
@@ -121,6 +121,14 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
             }
         }
 
+    }
+
+    public void getModelCampaign (int id) {
+        if (Util.checkInternetConnection(this)) {
+            Virde.getInstance(this).getModelCampaign(id); // Model campaign from internet
+        } else {
+            DBVirde.getInstance(this).selectModel(id); // Model campaign from DB
+        }
     }
 
     @Override
@@ -447,13 +455,13 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     mGoogleApiClient.connect();
 
                     // Model
-                    ArrayList<ItemModel> items = new ArrayList<>();
+                    model = new ArrayList<>();
 
                     for (Object object : result.second) {
-                        items.add((ItemModel) object);
+                        model.add((ItemModel) object);
                     }
 
-                    drawModel(items);
+                    drawModel(model);
 
                 }
                 break;
