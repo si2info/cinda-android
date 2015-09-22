@@ -133,6 +133,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     public void getCampaign (int id) {
         if (Util.checkInternetConnection(this)) {
             Virde.getInstance(this).getDataCampaign(id); // Campaign from internet
+            Virde.getInstance(this).getContributions(id);
         } else {
             DBVirde.getInstance(this).getCampaign(id); // Campaign from DB
         }

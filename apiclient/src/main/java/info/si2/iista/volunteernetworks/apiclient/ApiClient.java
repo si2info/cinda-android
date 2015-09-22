@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -40,7 +41,8 @@ public class ApiClient {
     private static final String URL_REGISTER_USER = "API/volunteer/register/";
     private static final String URL_SUSCRIBE_CAMPAIGN = "API/campaign/%s/suscribe/";
     private static final String URL_UNSUSCRIBE_CAMPAIGN = "API/campaign/%s/unsuscribe/";
-    private static final String URL_SEND_CONTRIBUTION = "API/campaign/%S/sendData/";
+    private static final String URL_SEND_CONTRIBUTION = "API/campaign/%s/sendData/";
+    private static final String URL_GET_CONTRIBUTIONS = "API/campaign/%s/listData/";
 
     private static Context context;
 
@@ -310,13 +312,61 @@ public class ApiClient {
 
     }
 
+    public Pair<Result, ArrayList<ItemModelValue>> getContributions (int id) {
+
+        // FROM
+        int from = Virde.FROM_GET_CONTRIBUTIONS;
+        String message = "Contribuciones no disponibles";
+
+        ArrayList<ItemModelValue> result = new ArrayList<>();
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(HOST + String.format(URL_GET_CONTRIBUTIONS, String.valueOf(id)))
+                .build();
+
+        try {
+
+            Response response = client.newCall(request).execute();
+            String respStr  = response.body().string();
+
+            JSONArray array = new JSONArray(respStr);
+
+            for (int i=0; i<array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+
+                Iterator iterator = object.keys();
+
+                while(iterator.hasNext()){
+                    String key = (String)iterator.next();
+                    String value = object.getString(key);
+
+                    result.add(new ItemModelValue(key, value));
+
+                    int a = 4;
+                    a = 7;
+                }
+
+            }
+
+            return new Pair<>(new Result(false, null, from, 0), result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Pair<>(new Result(true, message, from, 0), null);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return new Pair<>(new Result(true, message, from, 0), null);
+        }
+
+    }
+
     /** UTIL **/
     private boolean isJSONValid(String json) {
         try {
             new JSONObject(json);
         } catch (JSONException ex) {
-            // edited, to include @Arthur's comment
-            // e.g. in case JSONArray is valid as well...
+            // in case JSONArray is valid as well...
             try {
                 new JSONArray(json);
             } catch (JSONException ex1) {

@@ -21,6 +21,12 @@ public class ItemModelValue {
         this.isSync = isSync;
     }
 
+    public ItemModelValue(String field, String value) {
+        this.field = field;
+        this.value = value;
+        this.isSync = true;
+    }
+
     public int getId() {
         return id;
     }
