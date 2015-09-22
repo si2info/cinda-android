@@ -50,8 +50,13 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback, Google
 
         mMap = map;
 
-        if (position.latitude == 0.0 && position.longitude == 0.0)
+        if (position != null) {
+            if (position.latitude == 0.0 && position.longitude == 0.0) {
+                position = new LatLng(37.157827, -3.585572);
+            }
+        } else {
             position = new LatLng(37.157827, -3.585572);
+        }
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(position)           // Sets the center of the map to user location
