@@ -9,7 +9,7 @@
     <!-- menu_contribution -->
     <string name="action_send">Enviar</string>
 
-    <!-- item_issue -->
+    <!-- item_campaign -->
     <string name="suscribe">Suscribirse</string>
     <string name="unsuscribe">No me interesa</string>
 
@@ -66,7 +66,7 @@
         <string name="verdi_server_url"> </string>
         <string name="verdi_server_desc"> </string>
 
-        <!-- item_issue -->
+        <!-- item_campaign -->
         <string name="issue_title"> </string>
         <string name="issue_description"> </string>
 

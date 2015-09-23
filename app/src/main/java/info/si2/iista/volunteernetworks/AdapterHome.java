@@ -2,8 +2,7 @@ package info.si2.iista.volunteernetworks;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -37,9 +36,12 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
     // Listener
     private ClickListener clickListener;
 
+    ArrayList<Drawable> circles;
+
     AdapterHome(Context context, ArrayList<ItemCampaign> items){
         this.context = context;
         this.items = items;
+        this.circles = new ArrayList<>();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -97,7 +99,7 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
 
         switch (viewType) {
             case Item.CAMPAIGN:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_issue, parent, false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_campaign, parent, false);
                 return new ViewHolder(v, viewType);
         }
 
@@ -119,8 +121,13 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
                         .into(holder.imgCampaign);
 
                 // Circle image go
-                int color = Color.parseColor(item.getHeaderColor());
-                holder.backGoToCampaign.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+//                int color = Color.parseColor(item.getHeaderColor());
+//                holder.backGoToCampaign.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+
+//                int color = Color.parseColor(item.getHeaderColor());
+//                Drawable circle = ContextCompat.getDrawable(context, R.drawable.circle);
+//                circle.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+//                holder.backGoToCampaign.setImageDrawable(circle);
 
                 Picasso.with(context)
                         .load(R.drawable.ic_arrow_right_white_24dp)

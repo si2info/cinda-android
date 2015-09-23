@@ -29,44 +29,49 @@
         android:id="@+id/serverInfo"
         android:background="@color/primary"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="-42dp"
-        android:onClick="showInfoServer">
+        android:onClick="showInfoServer"
+        android:layout_marginBottom="-40dp">
 
-        <TextView
-            style="@style/text"
-            android:text="@string/verdi_server"
-            android:id="@+id/server"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:textSize="16sp" />
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:id="@+id/imageServer"
+            android:src="@drawable/ic_phonelink_white_24dp"
+            android:contentDescription="@string/app_name"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp" />
 
         <TextView
             style="@style/text.url"
+            android:layout_height="28dp"
             android:text="@string/verdi_server_url"
             android:id="@+id/serverUrl"
-            android:layout_below="@+id/server"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
+            android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:maxLines="1"
-            android:ellipsize="end"/>
+            android:ellipsize="end"
+            android:layout_toEndOf="@+id/imageServer"
+            android:layout_toRightOf="@+id/imageServer"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical" />
 
         <TextView
             style="@style/text.14"
             android:text="@string/verdi_server_desc"
             android:id="@+id/serverDesc"
-            android:layout_below="@+id/serverUrl"
+            android:layout_below="@+id/imageServer"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="12dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="16dp"
             android:maxLines="2"
             android:ellipsize="end"
             android:paddingBottom="8dp" />

@@ -9,6 +9,9 @@
     <color name="error">#CD382E</color>
     <color name="text">#313131</color>
 
+    <!-- Link BottomBar -->
+    <color name="link">#C4E6C6</color>
+
     <!-- Separator -->
     <color name="separator">#999999</color>
 

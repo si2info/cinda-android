@@ -41,7 +41,7 @@
     </style>
 
     <style name="text.url">
-        <item name="android:textColor">@color/accent</item>
+        <item name="android:textColor">@color/link</item>
         <item name="android:textSize">14sp</item>
     </style>
 
