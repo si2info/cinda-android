@@ -25,6 +25,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
+import info.si2.iista.volunteernetworks.apiclient.ItemFormContribution;
 import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 import info.si2.iista.volunteernetworks.apiclient.Virde;
@@ -53,6 +54,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     private TextView objective;
     private TextView geoArea;
     private TextView dates;
+    private LinearLayout contributions;
 
     // Flag
     private boolean fromDB;
@@ -82,29 +84,11 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         objective = (TextView)findViewById(R.id.objective);
         geoArea = (TextView)findViewById(R.id.geoArea);
         dates = (TextView)findViewById(R.id.dates);
-        LinearLayout contributions = (LinearLayout)findViewById(R.id.contributions);
+        contributions = (LinearLayout)findViewById(R.id.contributions);
 
         // Refresh listener
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-
-        // TODO - Prueba para añadir contribuciones del usuario
-        for (int i=0; i<5; i++) {
-            View v = getLayoutInflater().inflate(R.layout.item_campaign_user, null);
-
-            // Views
-            ImageView imgUser = (ImageView)v.findViewById(R.id.imgUser);
-            TextView title = (TextView)v.findViewById(R.id.title);
-            TextView description = (TextView)v.findViewById(R.id.description);
-
-            Picasso.with(this)
-                    .load(R.drawable.test_logo_si2)
-                    .transform(new CircleTransform())
-                    .resize(150, 150)
-                    .into(imgUser);
-
-            contributions.addView(v);
-        }
 
         // Obtener datos de campaña con el ID
         if (getIntent().getExtras() != null)
@@ -133,7 +117,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     public void getCampaign (int id) {
         if (Util.checkInternetConnection(this)) {
             Virde.getInstance(this).getDataCampaign(id); // Campaign from internet
-            Virde.getInstance(this).getContributions(id);
+//            Virde.getInstance(this).getContributions(id); // TODO
         } else {
             DBVirde.getInstance(this).getCampaign(id); // Campaign from DB
         }
@@ -193,6 +177,31 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     }
 
+    public void drawContributions (ArrayList<ItemFormContribution> contribution) {
+
+        // TODO
+        for (int i=0; i<5; i++) {
+            View v = getLayoutInflater().inflate(R.layout.item_campaign_user, null);
+
+            // Views
+            ImageView imgUser = (ImageView)v.findViewById(R.id.imgUser);
+            TextView title = (TextView)v.findViewById(R.id.title);
+            TextView description = (TextView)v.findViewById(R.id.description);
+
+            title.setText(contribution.get(5).getValue());
+
+
+            Picasso.with(this)
+                    .load(R.drawable.test_logo_si2)
+                    .transform(new CircleTransform())
+                    .resize(150, 150)
+                    .into(imgUser);
+
+            contributions.addView(v);
+        }
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
@@ -240,6 +249,18 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                     updateActivityInfo(item);
 
                 }
+                break;
+            case Virde.FROM_GET_CONTRIBUTIONS:
+
+                ArrayList<ArrayList<ItemFormContribution>> contributions = result.second;
+
+                for (ArrayList<ItemFormContribution> itemFormContributions : contributions) {
+
+
+
+                }
+
+
                 break;
         }
         mSwipeRefreshLayout.setEnabled(true);

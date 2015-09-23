@@ -312,13 +312,14 @@ public class ApiClient {
 
     }
 
-    public Pair<Result, ArrayList<ItemModelValue>> getContributions (int id) {
+    public Pair<Result, ArrayList<ArrayList<ItemFormContribution>>> getContributions (int id) {
 
         // FROM
         int from = Virde.FROM_GET_CONTRIBUTIONS;
         String message = "Contribuciones no disponibles";
 
-        ArrayList<ItemModelValue> result = new ArrayList<>();
+        ArrayList<ArrayList<ItemFormContribution>> result = new ArrayList<>();
+        ArrayList<ItemFormContribution> item;
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -333,19 +334,20 @@ public class ApiClient {
             JSONArray array = new JSONArray(respStr);
 
             for (int i=0; i<array.length(); i++) {
-                JSONObject object = array.getJSONObject(i);
 
+                item = new ArrayList<>();
+
+                JSONObject object = array.getJSONObject(i);
                 Iterator iterator = object.keys();
 
                 while(iterator.hasNext()){
                     String key = (String)iterator.next();
                     String value = object.getString(key);
 
-                    result.add(new ItemModelValue(key, value));
-
-                    int a = 4;
-                    a = 7;
+                    item.add(new ItemFormContribution(key, value));
                 }
+
+                result.add(item);
 
             }
 

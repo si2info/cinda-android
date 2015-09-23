@@ -55,6 +55,20 @@ public class Util {
     }
 
     /**
+     * Convierte una fecha en String utilizado en las contribuciones
+     * @param date Date a convertir
+     * @return String de la fecha deseada
+     */
+    public static String parseDateHourToString (Date date) {
+
+        if (date != null)
+            return DateFormat.format("dd, MMM yyyy", date).toString();
+        else
+            return "";
+
+    }
+
+    /**
      * Convierte una fecha en un String con formato yyyy-MM-dd
      * @param date Fecha a convertir a String
      * @return String de fecha con formato yyyy-MM-dd
