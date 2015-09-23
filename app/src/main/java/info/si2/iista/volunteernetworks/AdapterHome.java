@@ -1,7 +1,9 @@
 package info.si2.iista.volunteernetworks;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -42,6 +44,9 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        ImageView imgCampaign;
+        ImageView backGoToCampaign;
+        ImageView goToCampaign;
         TextView title;
         TextView description;
         LinearLayout topUsers;
@@ -52,6 +57,9 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
 
             switch (viewType) {
                 case Item.CAMPAIGN:
+                    imgCampaign = (ImageView)itemView.findViewById(R.id.imgCampaign);
+                    backGoToCampaign = (ImageView)itemView.findViewById(R.id.backGoToCampaign);
+                    goToCampaign = (ImageView)itemView.findViewById(R.id.goToCampaign);
                     title = (TextView)itemView.findViewById(R.id.title);
                     description = (TextView)itemView.findViewById(R.id.description);
                     topUsers = (LinearLayout)itemView.findViewById(R.id.topUsers);
@@ -100,21 +108,26 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
     @Override
     public void onBindViewHolder(final AdapterHome.ViewHolder holder, int position) {
 
-        final ItemCampaign item = items.get(position);
+        ItemCampaign item = items.get(position);
 
         switch (item.getType()) {
             case Item.CAMPAIGN:
 
-                // Color de cabecera
-                if (item.getHeaderColor() == null || item.getHeaderColor().equals("null")) { // Color por defecto
-                    int color = ContextCompat.getColor(context, R.color.primary_dark);
-                    holder.title.setBackgroundColor(color);
-                } else { // Color de asignado
-                    int color = Color.parseColor(item.getHeaderColor());
-                    holder.title.setBackgroundColor(color);
-                }
+                // Header image
+                Picasso.with(context)
+                        .load(item.getImage())
+                        .into(holder.imgCampaign);
 
-                // Imágenes de Top Users
+                // Circle image go
+                int color = Color.parseColor(item.getHeaderColor());
+                holder.backGoToCampaign.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+
+                Picasso.with(context)
+                        .load(R.drawable.ic_arrow_right_white_24dp)
+                        .transform(new CircleTransform())
+                        .into(holder.goToCampaign);
+
+                // Images Top Users
                 int topUsers = holder.topUsers.getChildCount();
                 for (int i=0; i<topUsers; i++) {
 
@@ -135,10 +148,11 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
                 // Suscribe button style
                 setStyleButton(item.isSuscribe(), holder.suscribe);
 
+                final int pos = position;
                 holder.suscribe.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ((MainActivity)context).suscription(item.getId(), !item.isSuscribe());
+                        ((MainActivity)context).suscription(items.get(pos).getId(), !items.get(pos).isSuscribe());
                     }
                 });
 
@@ -151,11 +165,49 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
 
         if (isSuscribe) {
             view.setBackgroundResource(R.drawable.button_unsuscribe);
+            view.setTextColor(getStatesUnsuscribe());
             view.setText(context.getString(R.string.unsuscribe));
         } else {
             view.setBackgroundResource(R.drawable.button_suscribe);
+            view.setTextColor(getStatesSuscribe());
             view.setText(context.getString(R.string.suscribe));
         }
+
+    }
+
+    public ColorStateList getStatesSuscribe () {
+
+        int[][] states = new int[][] {
+                new int[] {android.R.attr.state_pressed},
+                new int[] {android.R.attr.state_focused},
+                new int[] {android.R.attr.state_enabled}
+        };
+
+        int[] colors = new int[] {
+                ContextCompat.getColor(context, R.color.white),
+                ContextCompat.getColor(context, R.color.white),
+                ContextCompat.getColor(context, R.color.primary)
+        };
+
+        return new ColorStateList(states, colors);
+
+    }
+
+    public ColorStateList getStatesUnsuscribe () {
+
+        int[][] states = new int[][] {
+                new int[] {android.R.attr.state_pressed},
+                new int[] {android.R.attr.state_focused},
+                new int[] {android.R.attr.state_enabled}
+        };
+
+        int[] colors = new int[] {
+                ContextCompat.getColor(context, R.color.white),
+                ContextCompat.getColor(context, R.color.white),
+                ContextCompat.getColor(context, R.color.unsuscribe)
+        };
+
+        return new ColorStateList(states, colors);
 
     }
 

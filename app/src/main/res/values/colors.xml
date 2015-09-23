@@ -12,13 +12,16 @@
     <!-- Separator -->
     <color name="separator">#999999</color>
 
+    <!-- Text Item Campaign -->
+    <color name="homeText">#7F7E7F</color>
+
     <!-- Button suscribe/unsuscribe -->
     <color name="unsuscribe">#CD382E</color>
     <color name="unsuscribe_pressed">#EE4E43</color>
     <color name="disable">#B8B8B8</color>
 
     <!-- Test colors -->
-    <color name="card_issue_1">#29b6f6</color>
+    <color name="card_campaign">#AA000000</color>
     <color name="campaign">#303030</color>
 
     <!-- Text protection scrim -->
