@@ -211,16 +211,12 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="2dp" />
 
-            <LinearLayout
+            <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/contributions"
-                android:layout_below="@+id/separator3">
-
-                <!-- include layout item_campaign_user -->
-
-            </LinearLayout>
+                android:id="@+id/recyclerContributions"
+                android:layout_below="@+id/separator3"
+                android:layout_marginTop="8dp" />
 
         </RelativeLayout>
 

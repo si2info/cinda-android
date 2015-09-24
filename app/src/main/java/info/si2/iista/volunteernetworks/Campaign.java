@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
@@ -18,7 +20,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
@@ -29,15 +30,17 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import info.si2.iista.volunteernetworks.AdapterContributions.ClickListener;
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.apiclient.ItemFormContribution;
+import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
 import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 import info.si2.iista.volunteernetworks.apiclient.Virde;
 import info.si2.iista.volunteernetworks.database.DBVirde;
 import info.si2.iista.volunteernetworks.database.OnDBApiResult;
-import info.si2.iista.volunteernetworks.util.CircleTransform;
 import info.si2.iista.volunteernetworks.util.Util;
+import info.si2.iista.volunteernetworks.util.WrappingLinearLayoutManager;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -45,7 +48,7 @@ import info.si2.iista.volunteernetworks.util.Util;
  * Project: Virde
  */
 public class Campaign extends AppCompatActivity implements OnApiClientResult, OnDBApiResult,
-        AppBarLayout.OnOffsetChangedListener, SwipeRefreshLayout.OnRefreshListener {
+        AppBarLayout.OnOffsetChangedListener, SwipeRefreshLayout.OnRefreshListener, ClickListener {
 
     // Data
     private ItemCampaign campaign;
@@ -60,12 +63,16 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     private TextSwitcher description;
     private TextView geoArea;
     private TextView dates;
-    private LinearLayout contributions;
     private Button suscription;
 
     // Flag
     private boolean fromDB;
     private boolean buttonSuscribeTouch;
+
+    // Contributions
+    private RecyclerView recyclerContributions;
+    private AdapterContributions adapter;
+    private ArrayList<ItemModelValue> items = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +99,8 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         description = (TextSwitcher)findViewById(R.id.description);
         geoArea = (TextView)findViewById(R.id.campaign_geo);
         dates = (TextView)findViewById(R.id.campaign_dates);
-        contributions = (LinearLayout)findViewById(R.id.contributions);
         suscription = (Button)findViewById(R.id.suscriptionButton);
+        recyclerContributions = (RecyclerView)findViewById(R.id.recyclerContributions);
 
         // Refresh listener
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
@@ -130,6 +137,19 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
             }
         });
+
+        items.add(new ItemModelValue("key", "value"));
+        items.add(new ItemModelValue("key", "value"));
+        items.add(new ItemModelValue("key", "value"));
+
+        adapter = new AdapterContributions(this, items);
+        adapter.setClickListener(this);
+//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerContributions.setLayoutManager(new WrappingLinearLayoutManager(this));
+        recyclerContributions.setNestedScrollingEnabled(false);
+        recyclerContributions.setHasFixedSize(false);
+        recyclerContributions.setAdapter(adapter);
+
 
         // Obtener datos de campaña con el ID
         if (getIntent().getExtras() != null) {
@@ -254,6 +274,9 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
             }
         });
 
+        NestedScrollView scroll = (NestedScrollView)findViewById(R.id.nestedScroll);
+        scroll.smoothScrollTo(0, 0);
+
     }
 
     /**
@@ -270,31 +293,6 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
             descriptionText = text;
 
         return Html.fromHtml(descriptionText);
-
-    }
-
-    public void drawContributions (ArrayList<ItemFormContribution> contribution) {
-
-        // TODO
-        for (int i=0; i<5; i++) {
-            View v = getLayoutInflater().inflate(R.layout.item_campaign_user, null);
-
-            // Views
-            ImageView imgUser = (ImageView)v.findViewById(R.id.imgUser);
-            TextView title = (TextView)v.findViewById(R.id.title);
-            TextView description = (TextView)v.findViewById(R.id.description);
-
-            title.setText(contribution.get(5).getValue());
-
-
-            Picasso.with(this)
-                    .load(R.drawable.test_logo_si2)
-                    .transform(new CircleTransform())
-                    .resize(150, 150)
-                    .into(imgUser);
-
-            contributions.addView(v);
-        }
 
     }
 
@@ -445,6 +443,11 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     @Override
     public void onBackPressed() {
         finishActivity();
+    }
+
+    @Override
+    public void onContributionItemClick(View view, int position) {
+
     }
 
 }
