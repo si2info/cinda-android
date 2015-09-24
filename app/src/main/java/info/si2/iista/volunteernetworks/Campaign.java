@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
@@ -17,8 +19,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.squareup.picasso.Picasso;
 
@@ -42,6 +47,10 @@ import info.si2.iista.volunteernetworks.util.Util;
 public class Campaign extends AppCompatActivity implements OnApiClientResult, OnDBApiResult,
         AppBarLayout.OnOffsetChangedListener, SwipeRefreshLayout.OnRefreshListener {
 
+
+    private NestedScrollView nestedScroll;
+
+
     // Data
     private ItemCampaign campaign;
 
@@ -49,9 +58,9 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private AppBarLayout appBarLayout;
     private ImageView header;
-    private LinearLayout infoCampaign;
+    private RelativeLayout infoCampaign;
     private TextView title;
-    private TextView objective;
+    private TextSwitcher description;
     private TextView geoArea;
     private TextView dates;
     private LinearLayout contributions;
@@ -80,15 +89,30 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         header = (ImageView)findViewById(R.id.header);
         title = (TextView)findViewById(R.id.title);
-        infoCampaign = (LinearLayout)findViewById(R.id.infoCampaign);
-        objective = (TextView)findViewById(R.id.objective);
-        geoArea = (TextView)findViewById(R.id.geoArea);
-        dates = (TextView)findViewById(R.id.dates);
+        infoCampaign = (RelativeLayout)findViewById(R.id.infoCampaign);
+        description = (TextSwitcher)findViewById(R.id.description);
+        geoArea = (TextView)findViewById(R.id.campaign_geo);
+        dates = (TextView)findViewById(R.id.campaign_dates);
         contributions = (LinearLayout)findViewById(R.id.contributions);
 
         // Refresh listener
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
         mSwipeRefreshLayout.setOnRefreshListener(this);
+
+        // Set the factory used to create TextViews to switch between.
+        description.setFactory(mFactory);
+
+        /*
+         * Set the in and out animations. Using the fade_in/out animations
+         * provided by the framework.
+         */
+        Animation in = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
+        Animation out = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
+        description.setInAnimation(in);
+        description.setOutAnimation(out);
+
+        // Set the initial text without an animation
+        description.setCurrentText(" ");
 
         // Obtener datos de campaña con el ID
         if (getIntent().getExtras() != null)
@@ -109,6 +133,23 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         }
 
     }
+
+    /**
+     * The {@link android.widget.ViewSwitcher.ViewFactory} used to create {@link android.widget.TextView}s that the
+     * {@link android.widget.TextSwitcher} will switch between.
+     */
+    private ViewSwitcher.ViewFactory mFactory = new ViewSwitcher.ViewFactory() {
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public View makeView() {
+
+            // Create a new TextView
+            TextView t = new TextView(getApplicationContext());
+            t.setTextAppearance(getApplicationContext(), R.style.campaign);
+            return t;
+        }
+    };
 
     /**
      * Obtiene la campaña seleccionada desde Internet si se dispone de él o desde DB
@@ -139,15 +180,17 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
      * Actualiza la vista con la información de la campaña
      * @param item ItemCampaign
      */
-    public void updateActivityInfo (ItemCampaign item) {
+    public void updateActivityInfo (final ItemCampaign item) {
 
         // Data campaign
         title.setText(item.getTitle());
-        objective.setText(Html.fromHtml(String.format(getString(R.string.campaign_objective), item.getDescription())));
-        geoArea.setText(Html.fromHtml(String.format(getString(R.string.campaign_geo_area), item.getScope())));
+
+        description.setText(formatDescription(item.getDescription()));
+        description.setTag(0);
+        geoArea.setText(Html.fromHtml(item.getScope()));
 
         String datesCampaigns = Util.parseDateToString(item.getDateStart()) + " - " + Util.parseDateToString(item.getDateEnd());
-        dates.setText(String.format(getString(R.string.campaign_dates), datesCampaigns));
+        dates.setText(datesCampaigns);
 
         // Header image
         Picasso.with(this)
@@ -159,7 +202,36 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
             DBVirde.getInstance(this).updateCampaign(item);
 
         // Animation
-        animateActivityInfo();
+//        animateActivityInfo();
+
+        description.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (description.getTag() == 0) { // Expand
+
+                    description.setText(item.getDescription());
+                    description.setTag(1);
+
+                } else { // Collapse
+
+                    description.setText(formatDescription(item.getDescription()));
+                    description.setTag(0);
+
+                }
+            }
+        });
+
+    }
+
+    public Spanned formatDescription (String text) {
+
+        String descriptionText;
+        if (text.length() > 250)
+            descriptionText = text.substring(0, 250) + "... <font color=\"#333333\">" + getString(R.string.continue_reading) + "</font>";
+        else
+            descriptionText = text;
+
+        return Html.fromHtml(descriptionText);
 
     }
 

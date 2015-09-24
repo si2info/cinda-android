@@ -16,7 +16,8 @@
     <color name="separator">#999999</color>
 
     <!-- Text Item Campaign -->
-    <color name="homeText">#7F7E7F</color>
+    <color name="defaultColor">#7F7E7F</color>
+    <color name="continueReading">#333333</color>
 
     <!-- Button suscribe/unsuscribe -->
     <color name="unsuscribe">#CD382E</color>

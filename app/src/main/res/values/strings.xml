@@ -14,11 +14,15 @@
     <string name="unsuscribe">No me interesa</string>
 
     <!-- campaign -->
-    <string name="campaign_data">DATOS DE LA CAMPAÑA</string>
+    <string name="campaignDateTitle">FECHAS</string>
+    <string name="campaignGeoTitle">ÁMBITO GEOGRÁFICO</string>
+
     <string name="campaign_my_data">DATOS CONTRIBUIDOS POR MI</string>
-    <string name="campaign_objective">Objetivo: %1$s</string>
-    <string name="campaign_geo_area">Ámbito geográfico: %1$s</string>
-    <string name="campaign_dates">Fechas: %1$s</string>
+    <string name="campaign_desc"> </string>
+    <string name="campaign_date"> </string>
+    <string name="campaign_geo"> </string>
+
+    <string name="continue_reading">Continuar leyendo</string>
 
     <!-- Servers -->
     <string name="delete_text">¿Seguro que quiere eliminar este servidor?</string>

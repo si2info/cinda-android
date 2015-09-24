@@ -48,7 +48,7 @@ public class Util {
     public static String parseDateToString (Date date) {
 
         if (date != null)
-            return DateFormat.format("dd MMM yyyy", date).toString();
+            return DateFormat.format("dd, MMM yyyy", date).toString();
         else
             return "";
 
@@ -240,7 +240,7 @@ public class Util {
 
         SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.modelPreferences), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putFloat(key, (float)value);
+        editor.putFloat(key, (float) value);
         editor.apply();
 
     }

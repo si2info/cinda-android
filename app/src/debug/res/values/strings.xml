@@ -10,6 +10,11 @@
     <string name="issue_description">Praesent felis dolor, tristique ut vehicula id, egestas eget eros. Etiam vitae tortor quis dui efficitur semper. Nulla tristique facilisis maximus.</string>
 
     <!-- campaign -->
+    <string name="campaign_desc">Praesent felis dolor, tristique ut vehicula id, egestas eget eros. Etiam vitae tortor quis dui efficitur semper. Nulla tristique facilisis maximus. Praesent felis dolor, tristique ut vehicula id, egestas eget eros. Etiam vitae tortor quis dui efficitur semper. Nulla tristique facilisis maximus. Praesent felis dolor, tristique ut vehicula</string>
+    <string name="campaign_date">1, Sep 2015 &#8211; 1, Sep 2016</string>
+    <string name="campaign_geo">España</string>
+
+    <!-- campaign -->
     <!--<string name="campaign_objective">Objetivo: Tomar fotos y aportar la posición GPS de todas las mariposas que se observen en el campo.</string>-->
     <!--<string name="campaign_geo_area">Ámbito geográfico: GRANADA</string>-->
     <!--<string name="campaign_dates">Fechas: 01 Sep 2015 &#8211; 31 Ago 2016</string>-->
