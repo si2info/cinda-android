@@ -2,6 +2,8 @@ package info.si2.iista.volunteernetworks;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -124,10 +127,8 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
 //                int color = Color.parseColor(item.getHeaderColor());
 //                holder.backGoToCampaign.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
 
-//                int color = Color.parseColor(item.getHeaderColor());
-//                Drawable circle = ContextCompat.getDrawable(context, R.drawable.circle);
-//                circle.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-//                holder.backGoToCampaign.setImageDrawable(circle);
+                int color = Color.parseColor(item.getHeaderColor());
+                holder.backGoToCampaign.getDrawable().mutate().setColorFilter(color, PorterDuff.Mode.SRC_IN);
 
                 Picasso.with(context)
                         .load(R.drawable.ic_arrow_right_white_24dp)
@@ -138,7 +139,9 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
                 int topUsers = holder.topUsers.getChildCount();
                 for (int i=0; i<topUsers; i++) {
 
-                    ImageView image = (ImageView)holder.topUsers.getChildAt(i);
+                    RelativeLayout layout = (RelativeLayout) holder.topUsers.getChildAt(i);
+
+                    ImageView image = (ImageView)layout.getChildAt(1);
 
                     Picasso.with(context)
                             .load(R.drawable.test_logo_si2)
