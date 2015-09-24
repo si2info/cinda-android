@@ -65,17 +65,22 @@ public class ApiClient {
         return INSTANCE;
     }
 
-    public Pair<Result, ArrayList<ItemCampaign>> getListCampaigns () {
+    public Pair<Result, ArrayList<ItemCampaign>> getListCampaigns (String token) {
 
         // FROM
         int from = Virde.FROM_LIST_CAMPAIGNS;
         String message = "No se pudieron obtener las campañas, inténtelo más tarde";
 
         ArrayList<ItemCampaign> result = new ArrayList<>();
+
         OkHttpClient client = new OkHttpClient();
+        RequestBody formBody = new FormEncodingBuilder()
+                .add("token", token)
+                .build();
 
         Request request = new Request.Builder()
                 .url(HOST + URL_CAMPAIGNS)
+                .post(formBody)
                 .build();
 
         try {
@@ -107,17 +112,22 @@ public class ApiClient {
 
     }
 
-    public Pair<Result, ArrayList<ItemCampaign>> getDataCampaign (int id) {
+    public Pair<Result, ArrayList<ItemCampaign>> getDataCampaign (int id, String token) {
 
         // FROM
         int from = Virde.FROM_DATA_CAMPAIGN;
         String message = "No se pudo obtener la campaña, inténtelo más tarde";
 
         ArrayList<ItemCampaign> result = new ArrayList<>();
+
         OkHttpClient client = new OkHttpClient();
+        RequestBody formBody = new FormEncodingBuilder()
+                .add("token", token)
+                .build();
 
         Request request = new Request.Builder()
                 .url(HOST + URL_DATA_CAMPAIGN + id)
+                .post(formBody)
                 .build();
 
         try {

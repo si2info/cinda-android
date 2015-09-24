@@ -56,12 +56,12 @@ public class Virde {
 
     /** Peticiones a servidor **/
 
-    public void getListCampaigns() {
-        new VirdeGetListCampaigns().execute();
+    public void getListCampaigns(String token) {
+        new VirdeGetListCampaigns().execute(token);
     }
 
-    public void getDataCampaign (int id) {
-        new VirdeGetDataCampaign().execute(String.valueOf(id));
+    public void getDataCampaign (int id, String token) {
+        new VirdeGetDataCampaign().execute(String.valueOf(id), token);
     }
 
     public void getModelCampaign (int id) {
@@ -92,7 +92,7 @@ public class Virde {
         @Override
         protected Pair<Result, ArrayList<ItemCampaign>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
-            return apiClient.getListCampaigns();
+            return apiClient.getListCampaigns(params[0]);
         }
 
         @Override
@@ -107,7 +107,7 @@ public class Virde {
         @Override
         protected Pair<Result, ArrayList<ItemCampaign>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
-            return apiClient.getDataCampaign(Integer.valueOf(params[0]));
+            return apiClient.getDataCampaign(Integer.valueOf(params[0]), params[1]);
         }
 
         @Override

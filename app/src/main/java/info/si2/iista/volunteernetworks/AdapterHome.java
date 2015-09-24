@@ -1,11 +1,9 @@
 package info.si2.iista.volunteernetworks;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -24,6 +22,7 @@ import java.util.ArrayList;
 import info.si2.iista.volunteernetworks.apiclient.Item;
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.util.CircleTransform;
+import info.si2.iista.volunteernetworks.util.Util;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -175,49 +174,13 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
 
         if (isSuscribe) {
             view.setBackgroundResource(R.drawable.button_unsuscribe);
-            view.setTextColor(getStatesUnsuscribe());
+            view.setTextColor(Util.getStatesUnsuscribe(context));
             view.setText(context.getString(R.string.unsuscribe));
         } else {
             view.setBackgroundResource(R.drawable.button_suscribe);
-            view.setTextColor(getStatesSuscribe());
+            view.setTextColor(Util.getStatesSuscribe(context));
             view.setText(context.getString(R.string.suscribe));
         }
-
-    }
-
-    public ColorStateList getStatesSuscribe () {
-
-        int[][] states = new int[][] {
-                new int[] {android.R.attr.state_pressed},
-                new int[] {android.R.attr.state_focused},
-                new int[] {android.R.attr.state_enabled}
-        };
-
-        int[] colors = new int[] {
-                ContextCompat.getColor(context, R.color.white),
-                ContextCompat.getColor(context, R.color.white),
-                ContextCompat.getColor(context, R.color.primary)
-        };
-
-        return new ColorStateList(states, colors);
-
-    }
-
-    public ColorStateList getStatesUnsuscribe () {
-
-        int[][] states = new int[][] {
-                new int[] {android.R.attr.state_pressed},
-                new int[] {android.R.attr.state_focused},
-                new int[] {android.R.attr.state_enabled}
-        };
-
-        int[] colors = new int[] {
-                ContextCompat.getColor(context, R.color.white),
-                ContextCompat.getColor(context, R.color.white),
-                ContextCompat.getColor(context, R.color.unsuscribe)
-        };
-
-        return new ColorStateList(states, colors);
 
     }
 

@@ -2,8 +2,10 @@ package info.si2.iista.volunteernetworks.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
 
 import java.text.ParseException;
@@ -276,6 +278,42 @@ public class Util {
         editor.putFloat(c.getString(R.string.latModel), 0.0f);
         editor.putFloat(c.getString(R.string.lngModel), 0.0f);
         editor.apply();
+
+    }
+
+    public static ColorStateList getStatesSuscribe (Context context) {
+
+        int[][] states = new int[][] {
+                new int[] {android.R.attr.state_pressed},
+                new int[] {android.R.attr.state_focused},
+                new int[] {android.R.attr.state_enabled}
+        };
+
+        int[] colors = new int[] {
+                ContextCompat.getColor(context, R.color.white),
+                ContextCompat.getColor(context, R.color.white),
+                ContextCompat.getColor(context, R.color.primary)
+        };
+
+        return new ColorStateList(states, colors);
+
+    }
+
+    public static ColorStateList getStatesUnsuscribe (Context context) {
+
+        int[][] states = new int[][] {
+                new int[] {android.R.attr.state_pressed},
+                new int[] {android.R.attr.state_focused},
+                new int[] {android.R.attr.state_enabled}
+        };
+
+        int[] colors = new int[] {
+                ContextCompat.getColor(context, R.color.white),
+                ContextCompat.getColor(context, R.color.white),
+                ContextCompat.getColor(context, R.color.unsuscribe)
+        };
+
+        return new ColorStateList(states, colors);
 
     }
 

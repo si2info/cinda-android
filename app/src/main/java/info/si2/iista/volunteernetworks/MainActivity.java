@@ -37,6 +37,9 @@ import info.si2.iista.volunteernetworks.util.Util;
 public class MainActivity extends AppCompatActivity implements AdapterHome.ClickListener, OnApiClientResult,
         OnDBApiResult, SwipeRefreshLayout.OnRefreshListener {
 
+    // OnActivityResult
+    private static final int FROM_SEE_CAMPAIGN = 1;
+
     // RecyclerView
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private AdapterHome adapter;
@@ -169,7 +172,26 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         // Intent to campaign
         Intent intent = new Intent(this, Campaign.class);
         intent.putExtra("campaign", items.get(position));
-        startActivity(intent);
+        intent.putExtra("position", position);
+        startActivityForResult(intent, FROM_SEE_CAMPAIGN);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == FROM_SEE_CAMPAIGN && resultCode == RESULT_OK) { // El usuario se suscribrió a la campaña desde el detalle de la misma
+
+            boolean isSuscribed = data.getBooleanExtra("isSuscribed", false);
+            int position = data.getIntExtra("position", -1);
+
+            if (position != -1) {
+                items.get(position).setIsSuscribe(isSuscribed);
+                adapter.notifyItemChanged(position);
+            }
+
+        }
 
     }
 
@@ -177,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
     public void onRefresh() {
 
         mSwipeRefreshLayout.setEnabled(false);
-        Virde.getInstance(this).getListCampaigns();
+        Virde.getInstance(this).getListCampaigns(Util.getPreference(this, getString(R.string.token)));
 
     }
 
@@ -307,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
                     if (items.size() == 0) {
                         doRefresh();
-                        Virde.getInstance(this).getListCampaigns();
+                        Virde.getInstance(this).getListCampaigns(Util.getPreference(this, getString(R.string.token)));
                     } else {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mSwipeRefreshLayout.setEnabled(true);

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -47,12 +47,9 @@ import info.si2.iista.volunteernetworks.util.Util;
 public class Campaign extends AppCompatActivity implements OnApiClientResult, OnDBApiResult,
         AppBarLayout.OnOffsetChangedListener, SwipeRefreshLayout.OnRefreshListener {
 
-
-    private NestedScrollView nestedScroll;
-
-
     // Data
     private ItemCampaign campaign;
+    private int position;
 
     // View
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -64,9 +61,11 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     private TextView geoArea;
     private TextView dates;
     private LinearLayout contributions;
+    private Button suscription;
 
     // Flag
     private boolean fromDB;
+    private boolean buttonSuscribeTouch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +93,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         geoArea = (TextView)findViewById(R.id.campaign_geo);
         dates = (TextView)findViewById(R.id.campaign_dates);
         contributions = (LinearLayout)findViewById(R.id.contributions);
+        suscription = (Button)findViewById(R.id.suscriptionButton);
 
         // Refresh listener
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
@@ -114,9 +114,28 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         // Set the initial text without an animation
         description.setCurrentText(" ");
 
+        // Suscribe / Unsuscribe
+        suscription.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                setStyleButton(!campaign.isSuscribe(), suscription);
+
+                Virde.getInstance(Campaign.this)
+                        .suscription(campaign.getId(),
+                                Util.getPreference(getApplicationContext(), getString(R.string.token)),
+                                !campaign.isSuscribe());
+
+                buttonSuscribeTouch = true;
+
+            }
+        });
+
         // Obtener datos de campaña con el ID
-        if (getIntent().getExtras() != null)
+        if (getIntent().getExtras() != null) {
             campaign = getIntent().getParcelableExtra("campaign");
+            position = getIntent().getIntExtra("position", -1);
+        }
 
         if (campaign != null) {
 
@@ -151,13 +170,27 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         }
     };
 
+    public void setStyleButton (boolean isSuscribe, Button view) {
+
+        if (isSuscribe) {
+            view.setBackgroundResource(R.drawable.button_unsuscribe);
+            view.setTextColor(Util.getStatesUnsuscribe(this));
+            view.setText(getString(R.string.unsuscribe));
+        } else {
+            view.setBackgroundResource(R.drawable.button_suscribe);
+            view.setTextColor(Util.getStatesSuscribe(this));
+            view.setText(getString(R.string.suscribe));
+        }
+
+    }
+
     /**
      * Obtiene la campaña seleccionada desde Internet si se dispone de él o desde DB
      * @param id ID de la campaña que se quiere
      */
     public void getCampaign (int id) {
         if (Util.checkInternetConnection(this)) {
-            Virde.getInstance(this).getDataCampaign(id); // Campaign from internet
+            Virde.getInstance(this).getDataCampaign(id, Util.getPreference(this, getString(R.string.token))); // Campaign from internet
 //            Virde.getInstance(this).getContributions(id); // TODO
         } else {
             DBVirde.getInstance(this).getCampaign(id); // Campaign from DB
@@ -182,6 +215,9 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
      */
     public void updateActivityInfo (final ItemCampaign item) {
 
+        // Button suscribe / unsuscribe style
+        setStyleButton(item.isSuscribe(), suscription);
+
         // Data campaign
         title.setText(item.getTitle());
 
@@ -200,9 +236,6 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         // Update itemCampaign
         if (!fromDB)
             DBVirde.getInstance(this).updateCampaign(item);
-
-        // Animation
-//        animateActivityInfo();
 
         description.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,6 +256,11 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     }
 
+    /**
+     * Formatea el texto reduciéndolo a 250 caracteres y añadiendo un "Continuar leyendo"
+     * @param text Texto a reducir
+     * @return String texto reducido + "Continuar leyendo"
+     */
     public Spanned formatDescription (String text) {
 
         String descriptionText;
@@ -232,20 +270,6 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
             descriptionText = text;
 
         return Html.fromHtml(descriptionText);
-
-    }
-
-    /**
-     * Animación de info de campaña
-     */
-    public void animateActivityInfo () {
-
-        infoCampaign.setVisibility(View.VISIBLE);
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.anim_info_campaign);
-        animation.setDuration(400);
-        infoCampaign.setAnimation(animation);
-        infoCampaign.animate();
-        animation.start();
 
     }
 
@@ -283,10 +307,25 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                finishActivity();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void finishActivity () {
+
+        Intent returnIntent = new Intent();
+
+        if (buttonSuscribeTouch) {
+            returnIntent.putExtra("isSuscribed", campaign.isSuscribe());
+            returnIntent.putExtra("position", position);
+            setResult(RESULT_OK, returnIntent);
+        } else {
+            setResult(RESULT_CANCELED, returnIntent);
+        }
+
+        finish();
     }
 
     @Override
@@ -333,6 +372,17 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                 }
 
 
+                break;
+            case Virde.FROM_SUSCRIBE:
+            case Virde.FROM_UNSUSCRIBE:
+                if (result.first.isError()) {
+                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                    setStyleButton(campaign.isSuscribe(), suscription);
+                } else {
+
+                    campaign.setIsSuscribe(!campaign.isSuscribe());
+
+                }
                 break;
         }
         mSwipeRefreshLayout.setEnabled(true);
@@ -390,6 +440,11 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     protected void onPause() {
         super.onPause();
         appBarLayout.removeOnOffsetChangedListener(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finishActivity();
     }
 
 }
