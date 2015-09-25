@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:background="@android:color/white">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -188,35 +189,21 @@
 
             </RelativeLayout>
 
-            <TextView
-                style="@style/campaign.title"
-                android:id="@+id/myCampaignData"
-                android:text="@string/campaign_my_data"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_below="@+id/infoCampaign"/>
-
-            <View
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:id="@+id/separator3"
-                android:background="@color/primary_dark"
-                android:layout_below="@+id/myCampaignData"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="2dp" />
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:layout_below="@+id/infoCampaign"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                android:layout_marginTop="16dp" />
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/recyclerContributions"
-                android:layout_below="@+id/separator3"
-                android:layout_marginTop="8dp" />
+                android:layout_below="@+id/tab_layout" />
 
         </RelativeLayout>
 

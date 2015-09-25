@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -48,13 +50,14 @@ import info.si2.iista.volunteernetworks.util.WrappingLinearLayoutManager;
  * Project: Virde
  */
 public class Campaign extends AppCompatActivity implements OnApiClientResult, OnDBApiResult,
-        AppBarLayout.OnOffsetChangedListener, SwipeRefreshLayout.OnRefreshListener, ClickListener {
+        AppBarLayout.OnOffsetChangedListener, SwipeRefreshLayout.OnRefreshListener, ClickListener, TabLayout.OnTabSelectedListener {
 
     // Data
     private ItemCampaign campaign;
     private int position;
 
     // View
+    private NestedScrollView nestedScroll;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private AppBarLayout appBarLayout;
     private ImageView header;
@@ -91,6 +94,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         collapsingToolbarLayout.setTitle("");
 
         // Views
+        nestedScroll = (NestedScrollView)findViewById(R.id.nestedScroll);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         header = (ImageView)findViewById(R.id.header);
@@ -101,6 +105,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         dates = (TextView)findViewById(R.id.campaign_dates);
         suscription = (Button)findViewById(R.id.suscriptionButton);
         recyclerContributions = (RecyclerView)findViewById(R.id.recyclerContributions);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 
         // Refresh listener
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
@@ -138,6 +143,19 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
             }
         });
 
+        // Tabs
+        tabLayout.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
+        tabLayout.setTabTextColors(ContextCompat.getColor(this, R.color.defaultColor), ContextCompat.getColor(this, R.color.primary));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.myShipments)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.other)));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        tabLayout.setOnTabSelectedListener(this);
+
+        /** Data test **/
+        items.add(new ItemModelValue("key", "value"));
+        items.add(new ItemModelValue("key", "value"));
+        items.add(new ItemModelValue("key", "value"));
+        items.add(new ItemModelValue("key", "value"));
         items.add(new ItemModelValue("key", "value"));
         items.add(new ItemModelValue("key", "value"));
         items.add(new ItemModelValue("key", "value"));
@@ -274,8 +292,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
             }
         });
 
-        NestedScrollView scroll = (NestedScrollView)findViewById(R.id.nestedScroll);
-        scroll.smoothScrollTo(0, 0);
+        nestedScroll.smoothScrollTo(0, 0);
 
     }
 
@@ -447,6 +464,22 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     @Override
     public void onContributionItemClick(View view, int position) {
+
+    }
+
+    /** TABS **/
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        tab.getPosition();
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
 
     }
 

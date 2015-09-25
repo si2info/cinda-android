@@ -41,11 +41,11 @@ public class AdapterContributions extends RecyclerView.Adapter<AdapterContributi
         TextView title;
         TextView description;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, int viewType) {
             super(itemView);
-            image = (ImageView)itemView.findViewById(R.id.imgUser);
-            title = (TextView)itemView.findViewById(R.id.title);
-            description = (TextView)itemView.findViewById(R.id.description);
+            image = (ImageView) itemView.findViewById(R.id.imgUser);
+            title = (TextView) itemView.findViewById(R.id.title);
+            description = (TextView) itemView.findViewById(R.id.description);
             itemView.setOnClickListener(this);
         }
 
@@ -72,15 +72,16 @@ public class AdapterContributions extends RecyclerView.Adapter<AdapterContributi
     @Override
     public AdapterContributions.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
+
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_campaign_user, parent, false);
-        return new ViewHolder(v);
+        return new ViewHolder(v, viewType);
 
     }
 
     @Override
     public void onBindViewHolder(final AdapterContributions.ViewHolder holder, int position) {
 
-
+        ItemModelValue item = items.get(position);
 
     }
 
