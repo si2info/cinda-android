@@ -10,8 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
+import info.si2.iista.volunteernetworks.util.Util;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -82,6 +84,15 @@ public class AdapterContributions extends RecyclerView.Adapter<AdapterContributi
     public void onBindViewHolder(final AdapterContributions.ViewHolder holder, int position) {
 
         ItemModelValue item = items.get(position);
+
+        holder.title.setText(item.getField());
+
+        // Date
+        Date date = Util.parseDateHourStringToDate(item.getValue());
+        String dateSt = Util.parseDateHourToString(date);
+
+        holder.description.setText(dateSt);
+
 
     }
 

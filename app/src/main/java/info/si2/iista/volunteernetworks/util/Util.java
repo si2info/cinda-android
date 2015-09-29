@@ -71,6 +71,23 @@ public class Util {
     }
 
     /**
+     * Convierte una fecha de formato String a un objeto de tipo Date
+     * @param dateSt String a convertir a Date
+     * @return Date con la fecha especificada en dateSt
+     */
+    public static Date parseDateHourStringToDate (String dateSt) {
+
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            return format.parse(dateSt);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    /**
      * Convierte una fecha en un String con formato yyyy-MM-dd
      * @param date Fecha a convertir a String
      * @return String de fecha con formato yyyy-MM-dd

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -17,7 +18,10 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -35,6 +39,7 @@ import java.util.ArrayList;
 import info.si2.iista.volunteernetworks.AdapterContributions.ClickListener;
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.apiclient.ItemFormContribution;
+import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
 import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
 import info.si2.iista.volunteernetworks.apiclient.Result;
@@ -57,7 +62,9 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     private int position;
 
     // View
+    private CoordinatorLayout coordinatorLayout;
     private NestedScrollView nestedScroll;
+    private RelativeLayout content;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private AppBarLayout appBarLayout;
     private ImageView header;
@@ -71,8 +78,10 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     // Flag
     private boolean fromDB;
     private boolean buttonSuscribeTouch;
+    private boolean isTabsStick;
 
     // Contributions
+    private TabLayout tabLayout;
     private RecyclerView recyclerContributions;
     private AdapterContributions adapter;
     private ArrayList<ItemModelValue> items = new ArrayList<>();
@@ -94,7 +103,9 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         collapsingToolbarLayout.setTitle("");
 
         // Views
+        coordinatorLayout = (CoordinatorLayout)findViewById(R.id.layout);
         nestedScroll = (NestedScrollView)findViewById(R.id.nestedScroll);
+        content = (RelativeLayout)findViewById(R.id.content);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         header = (ImageView)findViewById(R.id.header);
@@ -105,7 +116,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         dates = (TextView)findViewById(R.id.campaign_dates);
         suscription = (Button)findViewById(R.id.suscriptionButton);
         recyclerContributions = (RecyclerView)findViewById(R.id.recyclerContributions);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 
         // Refresh listener
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
@@ -144,25 +155,10 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         });
 
         // Tabs
-        tabLayout.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
-        tabLayout.setTabTextColors(ContextCompat.getColor(this, R.color.defaultColor), ContextCompat.getColor(this, R.color.primary));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.myShipments)));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.other)));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        tabLayout.setOnTabSelectedListener(this);
-
-        /** Data test **/
-        items.add(new ItemModelValue("key", "value"));
-        items.add(new ItemModelValue("key", "value"));
-        items.add(new ItemModelValue("key", "value"));
-        items.add(new ItemModelValue("key", "value"));
-        items.add(new ItemModelValue("key", "value"));
-        items.add(new ItemModelValue("key", "value"));
-        items.add(new ItemModelValue("key", "value"));
+        initTabs();
 
         adapter = new AdapterContributions(this, items);
         adapter.setClickListener(this);
-//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerContributions.setLayoutManager(new WrappingLinearLayoutManager(this));
         recyclerContributions.setNestedScrollingEnabled(false);
         recyclerContributions.setHasFixedSize(false);
@@ -188,6 +184,123 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
             doRefresh();
 
         }
+
+        nestedScroll.setOnTouchListener(new View.OnTouchListener() {
+            private ViewTreeObserver observer;
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (observer == null) {
+                    observer = nestedScroll.getViewTreeObserver();
+                    observer.addOnScrollChangedListener(onScrollChangedListener);
+                } else if (!observer.isAlive()) {
+                    observer.removeOnScrollChangedListener(onScrollChangedListener);
+                    observer = nestedScroll.getViewTreeObserver();
+                    observer.addOnScrollChangedListener(onScrollChangedListener);
+                }
+
+                return false;
+            }
+
+            });
+
+    }
+
+    /**
+     * Listener para comprobar la posición de las Views y hacer que las tabs permanezcan debajo del
+     * ActionBar
+     */
+    final ViewTreeObserver.OnScrollChangedListener onScrollChangedListener = new
+            ViewTreeObserver.OnScrollChangedListener() {
+
+                @Override
+                public void onScrollChanged() {
+
+                    int[] tabsLocation = {0,0};
+                    int[] recyLocation = {0,0};
+                    tabLayout.getLocationOnScreen(tabsLocation);
+                    recyclerContributions.getLocationOnScreen(recyLocation);
+                    int posTabs = Util.convertPixelsToDp(Campaign.this, tabsLocation[1]);
+                    int posRecy = Util.convertPixelsToDp(Campaign.this, recyLocation[1]);
+
+//                    Log.d("TABS Y - ITEMS Y", String.valueOf(posRecy) + " - " + String.valueOf(posRecy));
+
+                    if (posTabs <= 85 && !isTabsStick) {
+
+                        coordinatorLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                // New LayoutParams and position
+                                CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                params.topMargin = Util.convertDpToPixel(Campaign.this, 54);
+                                tabLayout.setLayoutParams(params);
+
+                                // Move view
+                                content.removeView(tabLayout);
+                                coordinatorLayout.addView(tabLayout);
+
+                                // Recycler position
+                                RelativeLayout.LayoutParams recyclerParams = (RelativeLayout.LayoutParams) recyclerContributions.getLayoutParams();
+                                recyclerParams.addRule(RelativeLayout.BELOW, infoCampaign.getId());
+                                recyclerParams.topMargin = Util.convertDpToPixel(Campaign.this, 54);
+                                recyclerContributions.setLayoutParams(recyclerParams);
+
+                                isTabsStick = true;
+
+                            }
+                        });
+
+                    } else if (posRecy >= 125 && isTabsStick) {
+
+                        content.post(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                // Remove View from parent
+                                coordinatorLayout.removeView(tabLayout);
+
+                                // Restore TabLayout
+                                tabLayout = new TabLayout(Campaign.this);
+                                tabLayout.setId(R.id.tab_layout);
+                                initTabs();
+
+                                // Move view
+                                content.addView(tabLayout);
+
+                                // New LayoutParams and position
+                                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                params.topMargin = Util.convertDpToPixel(Campaign.this, 16);
+                                params.addRule(RelativeLayout.BELOW, infoCampaign.getId());
+                                tabLayout.setLayoutParams(params);
+
+                                // Recycler position
+                                RelativeLayout.LayoutParams recyclerParams = (RelativeLayout.LayoutParams) recyclerContributions.getLayoutParams();
+                                recyclerParams.addRule(RelativeLayout.BELOW, tabLayout.getId());
+                                recyclerParams.topMargin = Util.convertDpToPixel(Campaign.this, 0);
+                                recyclerContributions.setLayoutParams(recyclerParams);
+
+                                isTabsStick = false;
+//
+                            }
+                        });
+
+                    }
+
+                }
+            };
+
+    /**
+     * Inicialización de las tabs de contribuciones
+     */
+    private void initTabs () {
+
+        tabLayout.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
+        tabLayout.setTabTextColors(ContextCompat.getColor(this, R.color.defaultColor), ContextCompat.getColor(this, R.color.primary));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.myShipments)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.other)));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        tabLayout.setOnTabSelectedListener(this);
 
     }
 
@@ -229,7 +342,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     public void getCampaign (int id) {
         if (Util.checkInternetConnection(this)) {
             Virde.getInstance(this).getDataCampaign(id, Util.getPreference(this, getString(R.string.token))); // Campaign from internet
-//            Virde.getInstance(this).getContributions(id); // TODO
+            Virde.getInstance(this).getContributions(id);
         } else {
             DBVirde.getInstance(this).getCampaign(id); // Campaign from DB
         }
@@ -380,12 +493,16 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
                 ArrayList<ArrayList<ItemFormContribution>> contributions = result.second;
 
-                for (ArrayList<ItemFormContribution> itemFormContributions : contributions) {
+                if (contributions != null) {
+                    for (ArrayList<ItemFormContribution> itemFormContribution : contributions) {
 
+                        addToContributions(itemFormContribution);
 
+                    }
 
+                    adapter = new AdapterContributions(Campaign.this, items);
+                    recyclerContributions.setAdapter(adapter);
                 }
-
 
                 break;
             case Virde.FROM_SUSCRIBE:
@@ -402,6 +519,37 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         }
         mSwipeRefreshLayout.setEnabled(true);
         mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void addToContributions (ArrayList<ItemFormContribution> itemFormContribution) {
+
+        // Create date
+        String createDate = findCreateDate(itemFormContribution);
+        if (createDate != null)
+            items.add(new ItemModelValue("Title", createDate));
+
+    }
+
+    private String findCreateDate (ArrayList<ItemFormContribution> itemFormContribution) {
+
+        for (ItemFormContribution item : itemFormContribution) {
+            if (item.getKey().equals(ItemModel.ITEM_CREATE_DATE))
+                return item.getValue();
+        }
+
+        return null;
+
+    }
+
+    private ItemFormContribution findFirstLabel (ArrayList<ItemFormContribution> itemFormContribution) {
+
+        for (ItemFormContribution item : itemFormContribution) {
+            if (item.getKey().equals(ItemModel.ITEM_EDIT_TEXT))
+                return item;
+        }
+
+        return null;
+
     }
 
     @Override
