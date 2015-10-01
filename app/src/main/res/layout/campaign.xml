@@ -55,10 +55,9 @@
                     android:textColor="@android:color/white"
                     android:textSize="24sp"
                     android:layout_gravity="bottom"
-                    android:layout_marginBottom="36dp"
-                    android:paddingLeft="16dp"
-                    android:paddingTop="16dp"
-                    android:paddingRight="16dp"
+                    android:layout_marginBottom="@dimen/campaignBottomTitle"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
                     android:textStyle="bold" />
 
             </FrameLayout>
@@ -82,135 +81,213 @@
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/nestedScroll">
-
-        <RelativeLayout
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/content">
+            android:layout_height="match_parent"
+            android:id="@+id/nestedScroll">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/infoCampaign">
+                android:id="@+id/content">
 
-                <TextSwitcher
-                    style="@style/campaign"
-                    android:id="@+id/description"
-                    android:measureAllChildren="false"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    android:minHeight="30dp"/>
-
-                <Button
-                    style="@style/suscribirse"
-                    android:text="@string/suscribe"
-                    android:id="@+id/suscriptionButton"
-                    android:layout_below="@+id/description"
-                    android:layout_marginTop="16dp"
-                    android:layout_centerHorizontal="true" />
-
-                <TextView
-                    style="@style/campaign.title"
-                    android:id="@+id/campaignDates"
-                    android:text="@string/campaignDateTitle"
-                    android:layout_below="@+id/suscriptionButton"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"/>
-
-                <View
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:id="@+id/separator1"
-                    android:background="@color/primary_dark"
-                    android:layout_below="@+id/campaignDates"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="2dp" />
+                    android:layout_height="wrap_content"
+                    android:id="@+id/infoCampaign">
 
-                <TextView
-                    style="@style/campaign"
-                    android:id="@+id/campaign_dates"
-                    android:text="@string/campaign_date"
-                    android:layout_below="@+id/separator1"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    android:maxLines="7"
-                    android:ellipsize="end"/>
+                    <TextSwitcher
+                        style="@style/campaign"
+                        android:id="@+id/description"
+                        android:measureAllChildren="false"
+                        android:layout_marginTop="36dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginRight="16dp"
+                        android:minHeight="30dp"/>
 
-                <TextView
-                    style="@style/campaign.title"
-                    android:id="@+id/campaignGeo"
-                    android:text="@string/campaignGeoTitle"
-                    android:layout_below="@+id/campaign_dates"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"/>
+                    <Button
+                        style="@style/suscribirse"
+                        android:text="@string/suscribe"
+                        android:id="@+id/suscriptionButton"
+                        android:layout_below="@+id/description"
+                        android:layout_marginTop="16dp"
+                        android:layout_centerHorizontal="true" />
 
-                <View
+                    <TextView
+                        style="@style/campaign.title"
+                        android:id="@+id/campaignDates"
+                        android:text="@string/campaignDateTitle"
+                        android:layout_below="@+id/suscriptionButton"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginRight="16dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:id="@+id/separator1"
+                        android:background="@color/primary_dark"
+                        android:layout_below="@+id/campaignDates"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="2dp" />
+
+                    <TextView
+                        style="@style/campaign"
+                        android:id="@+id/campaign_dates"
+                        android:text="@string/campaign_date"
+                        android:layout_below="@+id/separator1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginRight="16dp"
+                        android:maxLines="7"
+                        android:ellipsize="end"/>
+
+                    <TextView
+                        style="@style/campaign.title"
+                        android:id="@+id/campaignGeo"
+                        android:text="@string/campaignGeoTitle"
+                        android:layout_below="@+id/campaign_dates"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginRight="16dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:id="@+id/separator2"
+                        android:background="@color/primary_dark"
+                        android:layout_below="@+id/campaignGeo"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="2dp" />
+
+                    <TextView
+                        style="@style/campaign"
+                        android:id="@+id/campaign_geo"
+                        android:text="@string/campaign_geo"
+                        android:layout_below="@+id/separator2"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginRight="16dp"
+                        android:maxLines="7"
+                        android:ellipsize="end"/>
+
+                </RelativeLayout>
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tab_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:id="@+id/separator2"
-                    android:background="@color/primary_dark"
-                    android:layout_below="@+id/campaignGeo"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="2dp" />
+                    android:layout_height="wrap_content"
+                    android:background="?attr/colorPrimary"
+                    android:layout_below="@+id/infoCampaign"
+                    android:minHeight="?attr/actionBarSize"
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                    android:layout_marginTop="16dp" />
 
-                <TextView
-                    style="@style/campaign"
-                    android:id="@+id/campaign_geo"
-                    android:text="@string/campaign_geo"
-                    android:layout_below="@+id/separator2"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    android:maxLines="7"
-                    android:ellipsize="end"/>
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/recyclerContributions"
+                    android:layout_below="@+id/tab_layout" />
 
             </RelativeLayout>
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                android:layout_below="@+id/infoCampaign"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                android:layout_marginTop="16dp" />
+        </android.support.v4.widget.NestedScrollView>
 
-            <android.support.v7.widget.RecyclerView
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:id="@+id/topUsers"
+        app:layout_anchor="@id/appbar"
+        app:layout_anchorGravity="bottom|end">
+
+        <com.joooonho.SelectableRoundedImageView
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:id="@+id/topUser1"
+            android:src="@drawable/test_logo_si2"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            app:sriv_border_width="4dp"
+            app:sriv_border_color="@color/white"
+            app:sriv_oval="true" />
+
+        <com.joooonho.SelectableRoundedImageView
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:id="@+id/topUser2"
+            android:src="@drawable/test_logo_si2"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            app:sriv_border_width="4dp"
+            app:sriv_border_color="@color/white"
+            app:sriv_oval="true" />
+
+        <com.joooonho.SelectableRoundedImageView
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:id="@+id/topUser3"
+            android:src="@drawable/test_logo_si2"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            app:sriv_border_width="4dp"
+            app:sriv_border_color="@color/white"
+            app:sriv_oval="true" />
+
+        <RelativeLayout
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp">
+
+            <com.joooonho.SelectableRoundedImageView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/recyclerContributions"
-                android:layout_below="@+id/tab_layout" />
+                android:layout_height="match_parent"
+                android:id="@+id/topUser4"
+                android:src="@drawable/circle_black"
+                android:scaleType="centerCrop"
+                app:sriv_border_width="4dp"
+                app:sriv_border_color="@color/white"
+                app:sriv_oval="true" />
+
+            <TextView
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:text="@string/moreUsers"
+                android:textColor="@color/white"
+                android:layout_alignTop="@+id/topUser4"
+                android:layout_alignBottom="@+id/topUser4"
+                android:layout_alignStart="@+id/topUser4"
+                android:layout_alignLeft="@+id/topUser4"
+                android:layout_alignEnd="@+id/topUser4"
+                android:layout_alignRight="@+id/topUser4"
+                android:gravity="center_vertical|center_horizontal"
+                android:textStyle="bold"
+                android:textSize="18sp" />
 
         </RelativeLayout>
 
-    </android.support.v4.widget.NestedScrollView>
-
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/myFAB"

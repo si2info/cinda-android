@@ -24,14 +24,17 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.joooonho.SelectableRoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -63,6 +66,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     // View
     private CoordinatorLayout coordinatorLayout;
+    private LinearLayout topUsers;
     private NestedScrollView nestedScroll;
     private RelativeLayout content;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -79,6 +83,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     private boolean fromDB;
     private boolean buttonSuscribeTouch;
     private boolean isTabsStick;
+    private boolean isTopUsersVisible = true;
 
     // Contributions
     private TabLayout tabLayout;
@@ -104,6 +109,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
         // Views
         coordinatorLayout = (CoordinatorLayout)findViewById(R.id.layout);
+        topUsers = (LinearLayout)findViewById(R.id.topUsers);
         nestedScroll = (NestedScrollView)findViewById(R.id.nestedScroll);
         content = (RelativeLayout)findViewById(R.id.content);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
@@ -204,6 +210,18 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
             });
 
+        // Top users
+        initTopUsers();
+
+    }
+
+    public void initTopUsers () {
+
+        int size = topUsers.getChildCount();
+        RelativeLayout moreUsers = (RelativeLayout) topUsers.getChildAt(size-1);
+        SelectableRoundedImageView view = (SelectableRoundedImageView) moreUsers.getChildAt(0);
+        Util.tintDrawable(view.getDrawable(), ContextCompat.getColor(this, R.color.moreUsers));
+
     }
 
     /**
@@ -218,14 +236,17 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
                     int[] tabsLocation = {0,0};
                     int[] recyLocation = {0,0};
+                    int[] scrollLocation = {0,0};
                     tabLayout.getLocationOnScreen(tabsLocation);
                     recyclerContributions.getLocationOnScreen(recyLocation);
+                    description.getLocationOnScreen(scrollLocation);
                     int posTabs = Util.convertPixelsToDp(Campaign.this, tabsLocation[1]);
                     int posRecy = Util.convertPixelsToDp(Campaign.this, recyLocation[1]);
+                    int posScroll = Util.convertPixelsToDp(Campaign.this, scrollLocation[1]);
 
-//                    Log.d("TABS Y - ITEMS Y", String.valueOf(posRecy) + " - " + String.valueOf(posRecy));
+                    Log.d("TABS Y", String.valueOf(posScroll));
 
-                    if (posTabs <= 85 && !isTabsStick) {
+                    if (posTabs <= 85 && !isTabsStick) { // Sticky Tabs
 
                         coordinatorLayout.post(new Runnable() {
                             @Override
@@ -251,7 +272,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                             }
                         });
 
-                    } else if (posRecy >= 125 && isTabsStick) {
+                    } else if (posRecy >= 125 && isTabsStick) { // Restore Tabs
 
                         content.post(new Runnable() {
                             @Override
@@ -281,7 +302,45 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                                 recyclerContributions.setLayoutParams(recyclerParams);
 
                                 isTabsStick = false;
-//
+
+                            }
+                        });
+
+                    } else if (posScroll < 105 && isTopUsersVisible) {
+
+                        coordinatorLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                ScaleAnimation reduce =  new ScaleAnimation(1f, 0f, 1f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                                reduce.setDuration(300);
+                                reduce.setFillAfter(true);
+
+                                for (int i=0; i<topUsers.getChildCount(); i++) {
+                                    topUsers.getChildAt(i).startAnimation(reduce);
+                                }
+
+                                isTopUsersVisible = false;
+
+                            }
+                        });
+
+                    } else if (posScroll > 110 && !isTopUsersVisible) {
+
+                        coordinatorLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                ScaleAnimation grow =  new ScaleAnimation(0f, 1f, 0f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                                grow.setDuration(300);
+                                grow.setFillAfter(true);
+
+                                for (int i=0; i<topUsers.getChildCount(); i++) {
+                                    topUsers.getChildAt(i).startAnimation(grow);
+                                }
+
+                                isTopUsersVisible = true;
+
                             }
                         });
 

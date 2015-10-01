@@ -24,6 +24,8 @@
 
     <string name="continue_reading">Continuar leyendo</string>
 
+    <string name="moreUsers"> </string>
+
     <!-- Servers -->
     <string name="delete_text">¿Seguro que quiere eliminar este servidor?</string>
     <string name="new_server">Nuevo servidor</string>

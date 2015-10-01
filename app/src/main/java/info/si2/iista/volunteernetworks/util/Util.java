@@ -3,8 +3,11 @@ package info.si2.iista.volunteernetworks.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
 
@@ -331,6 +334,24 @@ public class Util {
         };
 
         return new ColorStateList(states, colors);
+
+    }
+
+    /**
+     * Cambia de color un drawable
+     * @param drawable Drawable a modificar
+     * @param color Color a aplicar al drawable
+     * @return Drawable modificado
+     */
+    public static Drawable tintDrawable (Drawable drawable, int color) {
+
+        if (Build.VERSION.SDK_INT < 21) {
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            return drawable;
+        } else {
+            drawable.setTint(color);
+            return drawable;
+        }
 
     }
 

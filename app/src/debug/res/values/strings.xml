@@ -13,6 +13,7 @@
     <string name="campaign_desc">Praesent felis dolor, tristique ut vehicula id, egestas eget eros. Etiam vitae tortor quis dui efficitur semper. Nulla tristique facilisis maximus. Praesent felis dolor, tristique ut vehicula id, egestas eget eros. Etiam vitae tortor quis dui efficitur semper. Nulla tristique facilisis maximus. Praesent felis dolor, tristique ut vehicula</string>
     <string name="campaign_date">1, Sep 2015 &#8211; 1, Sep 2016</string>
     <string name="campaign_geo">España</string>
+    <string name="moreUsers">+23</string>
 
     <!-- campaign -->
     <!--<string name="campaign_objective">Objetivo: Tomar fotos y aportar la posición GPS de todas las mariposas que se observen en el campo.</string>-->

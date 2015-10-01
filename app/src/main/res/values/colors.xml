@@ -24,9 +24,10 @@
     <color name="unsuscribe_pressed">#EE4E43</color>
     <color name="disable">#B8B8B8</color>
 
-    <!-- Test colors -->
+    <!-- Campaign -->
     <color name="card_campaign">#AA000000</color>
     <color name="campaign">#303030</color>
+    <color name="moreUsers">#ff3300</color>
 
     <!-- Text protection scrim -->
     <color name="gradient_start">#77000000</color>
