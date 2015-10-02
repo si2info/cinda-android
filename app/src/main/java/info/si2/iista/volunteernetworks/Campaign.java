@@ -28,6 +28,7 @@ import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
@@ -41,9 +42,9 @@ import java.util.ArrayList;
 
 import info.si2.iista.volunteernetworks.AdapterContributions.ClickListener;
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
+import info.si2.iista.volunteernetworks.apiclient.ItemContribution;
 import info.si2.iista.volunteernetworks.apiclient.ItemFormContribution;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
-import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
 import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 import info.si2.iista.volunteernetworks.apiclient.Virde;
@@ -78,18 +79,26 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     private TextView geoArea;
     private TextView dates;
     private Button suscription;
+    private ProgressBar contributeProgress;
+    private TextView contributeText;
 
     // Flag
     private boolean fromDB;
     private boolean buttonSuscribeTouch;
     private boolean isTabsStick;
     private boolean isTopUsersVisible = true;
+    private int fromTab = 0;
 
     // Contributions
     private TabLayout tabLayout;
     private RecyclerView recyclerContributions;
     private AdapterContributions adapter;
-    private ArrayList<ItemModelValue> items = new ArrayList<>();
+    private ArrayList<ItemContribution> myContributions = new ArrayList<>();
+    private ArrayList<ItemContribution> otherContributions = new ArrayList<>();
+    private int myID;
+
+    // Model
+    private ArrayList<ItemModel> model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +132,8 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         suscription = (Button)findViewById(R.id.suscriptionButton);
         recyclerContributions = (RecyclerView)findViewById(R.id.recyclerContributions);
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        contributeProgress = (ProgressBar)findViewById(R.id.progressBarContributions);
+        contributeText = (TextView)findViewById(R.id.textContribute);
 
         // Refresh listener
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
@@ -161,9 +172,9 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         });
 
         // Tabs
-        initTabs();
+        initTabs(0);
 
-        adapter = new AdapterContributions(this, items);
+        adapter = new AdapterContributions(this, myContributions);
         adapter.setClickListener(this);
         recyclerContributions.setLayoutManager(new WrappingLinearLayoutManager(this));
         recyclerContributions.setNestedScrollingEnabled(false);
@@ -213,15 +224,36 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         // Top users
         initTopUsers();
 
+        // Obtener modelo de la campaña
+        getModelCampaign(campaign.getId());
+
     }
 
     public void initTopUsers () {
 
         int size = topUsers.getChildCount();
-        RelativeLayout moreUsers = (RelativeLayout) topUsers.getChildAt(size-1);
-        SelectableRoundedImageView view = (SelectableRoundedImageView) moreUsers.getChildAt(0);
-        Util.tintDrawable(view.getDrawable(), ContextCompat.getColor(this, R.color.moreUsers));
+        RelativeLayout moreUsersView = (RelativeLayout) topUsers.getChildAt(size-1);
+        SelectableRoundedImageView moreUsers = (SelectableRoundedImageView) moreUsersView.getChildAt(0);
+        Util.tintDrawable(moreUsers.getDrawable(), ContextCompat.getColor(this, R.color.moreUsers));
 
+    }
+
+    public void seeMoreTopUsers (View view) {
+
+        // TODO Intent a recyclerview para ver todos los usuarios
+
+    }
+
+    /**
+     * Obtiene el modelo de la campaña por internet si lo hay y si no de base de datos si ya se visualizó
+     * @param id ID del modelo de la campaña a obtener
+     */
+    public void getModelCampaign (int id) {
+        if (Util.checkInternetConnection(this)) {
+            Virde.getInstance(this).getModelCampaign(id); // Model campaign from internet
+        } else {
+            DBVirde.getInstance(this).selectModel(id); // Model campaign from DB
+        }
     }
 
     /**
@@ -234,7 +266,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                 @Override
                 public void onScrollChanged() {
 
-                    int[] tabsLocation = {0,0};
+                    final int[] tabsLocation = {0,0};
                     int[] recyLocation = {0,0};
                     int[] scrollLocation = {0,0};
                     tabLayout.getLocationOnScreen(tabsLocation);
@@ -243,8 +275,6 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                     int posTabs = Util.convertPixelsToDp(Campaign.this, tabsLocation[1]);
                     int posRecy = Util.convertPixelsToDp(Campaign.this, recyLocation[1]);
                     int posScroll = Util.convertPixelsToDp(Campaign.this, scrollLocation[1]);
-
-                    Log.d("TABS Y", String.valueOf(posScroll));
 
                     if (posTabs <= 85 && !isTabsStick) { // Sticky Tabs
 
@@ -282,9 +312,10 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                                 coordinatorLayout.removeView(tabLayout);
 
                                 // Restore TabLayout
+                                int selectedTab = tabLayout.getSelectedTabPosition();
                                 tabLayout = new TabLayout(Campaign.this);
                                 tabLayout.setId(R.id.tab_layout);
-                                initTabs();
+                                initTabs(selectedTab);
 
                                 // Move view
                                 content.addView(tabLayout);
@@ -352,12 +383,15 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     /**
      * Inicialización de las tabs de contribuciones
      */
-    private void initTabs () {
+    private void initTabs (int selectedTab) {
 
         tabLayout.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
         tabLayout.setTabTextColors(ContextCompat.getColor(this, R.color.defaultColor), ContextCompat.getColor(this, R.color.primary));
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.myShipments)));
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.other)));
+        TabLayout.Tab tab = tabLayout.getTabAt(selectedTab);
+        if (tab != null)
+            tab.select();
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.setOnTabSelectedListener(this);
 
@@ -401,7 +435,6 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     public void getCampaign (int id) {
         if (Util.checkInternetConnection(this)) {
             Virde.getInstance(this).getDataCampaign(id, Util.getPreference(this, getString(R.string.token))); // Campaign from internet
-            Virde.getInstance(this).getContributions(id);
         } else {
             DBVirde.getInstance(this).getCampaign(id); // Campaign from DB
         }
@@ -522,7 +555,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     }
 
     /**
-     * Feedback to user, loading items
+     * Feedback to user, loading myContributions
      */
     public void doRefresh () {
         mSwipeRefreshLayout.post(new Runnable() {
@@ -549,19 +582,49 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                 }
                 break;
             case Virde.FROM_GET_CONTRIBUTIONS:
+                if (result.first.isError()) {
+                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                } else {
 
-                ArrayList<ArrayList<ItemFormContribution>> contributions = result.second;
+                    ArrayList<ArrayList<ItemFormContribution>> contributions = result.second;
 
-                if (contributions != null) {
-                    for (ArrayList<ItemFormContribution> itemFormContribution : contributions) {
+                    if (fromTab == 0) {
 
-                        addToContributions(itemFormContribution);
+                        if (contributions != null) {
+
+                            if (contributions.size() > 0)
+                                myID = findIdAuthor(contributions.get(0));
+                            else
+                                myID = -2;
+
+                            for (ArrayList<ItemFormContribution> itemFormContribution : contributions) {
+                                addToContributions(myContributions, itemFormContribution, myID);
+                            }
+                            adapter = new AdapterContributions(Campaign.this, myContributions);
+                            recyclerContributions.setAdapter(adapter);
+
+                            contributeText.setText(getString(R.string.my_contribute));
+
+                        }
+
+                    } else {
+
+                        if (contributions != null) {
+                            for (ArrayList<ItemFormContribution> itemFormContribution : contributions) {
+                                addToContributions(otherContributions, itemFormContribution, myID);
+                            }
+                            adapter = new AdapterContributions(Campaign.this, otherContributions);
+                            recyclerContributions.setAdapter(adapter);
+
+                            contributeText.setText(getString(R.string.other_contribute));
+
+                        }
 
                     }
 
-                    adapter = new AdapterContributions(Campaign.this, items);
-                    recyclerContributions.setAdapter(adapter);
                 }
+
+                showRecyclerContributions();
 
                 break;
             case Virde.FROM_SUSCRIBE:
@@ -575,17 +638,71 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
                 }
                 break;
+            case Virde.FROM_MODEL_CAMPAIGN:
+                if (result.first.isError()) {
+                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                } else {
+
+                    model = new ArrayList<>();
+
+                    for (Object object : result.second) {
+                        model.add((ItemModel) object);
+                    }
+
+                    // Model to DB
+                    DBVirde.getInstance(this).insertModel(model);
+
+                    // Get contributions
+                    hideRecyclerContributions();
+                    Virde.getInstance(this).getContributions(campaign.getId(), Util.getToken(getApplicationContext()));
+
+                }
+                break;
         }
         mSwipeRefreshLayout.setEnabled(true);
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
-    private void addToContributions (ArrayList<ItemFormContribution> itemFormContribution) {
+    private void addToContributions (ArrayList<ItemContribution> array, ArrayList<ItemFormContribution> itemFormContribution, int idAuthor) {
 
-        // Create date
-        String createDate = findCreateDate(itemFormContribution);
-        if (createDate != null)
-            items.add(new ItemModelValue("Title", createDate));
+        // My Contributions
+        if (fromTab == 0) {
+            String createDate = findCreateDate(itemFormContribution);
+            String description = findFirstDescription(itemFormContribution);
+            if (createDate != null)
+                array.add(new ItemContribution(true, "", description, createDate));
+        }
+
+        // Other Contributions
+        if (fromTab == 1 && findIdAuthor(itemFormContribution) != idAuthor) {
+            String authorName = findAuthorName(itemFormContribution);
+            String createDate = findCreateDate(itemFormContribution);
+            String description = findFirstDescription(itemFormContribution);
+            if (createDate != null)
+                array.add(new ItemContribution(false, authorName, description, createDate));
+        }
+
+    }
+
+    private Integer findIdAuthor (ArrayList<ItemFormContribution> itemFormContribution) {
+
+        for (ItemFormContribution item : itemFormContribution) {
+            if (item.getKey().equals(ItemModel.ITEM_ID_AUTHOR))
+                return Integer.valueOf(item.getValue());
+        }
+
+        return -1;
+
+    }
+
+    private String findAuthorName (ArrayList<ItemFormContribution> itemFormContribution) {
+
+        for (ItemFormContribution item : itemFormContribution) {
+            if (item.getKey().equals(ItemModel.ITEM_AUTHOR_NAME))
+                return item.getValue();
+        }
+
+        return null;
 
     }
 
@@ -600,14 +717,21 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     }
 
-    private ItemFormContribution findFirstLabel (ArrayList<ItemFormContribution> itemFormContribution) {
+    private String findFirstDescription (ArrayList<ItemFormContribution> itemFormContribution) {
 
-        for (ItemFormContribution item : itemFormContribution) {
-            if (item.getKey().equals(ItemModel.ITEM_EDIT_TEXT))
-                return item;
+        String identifier = "";
+
+        for (ItemModel item : model) {
+            if (item.getFieldType().equals(ItemModel.ITEM_EDIT_TEXT_BIG))
+                identifier = item.getFieldName();
         }
 
-        return null;
+        for (ItemFormContribution item : itemFormContribution) {
+            if (item.getKey().equals(identifier))
+                return item.getValue();
+        }
+
+        return "";
 
     }
 
@@ -627,6 +751,24 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                     fromDB = true;
                     ItemCampaign item = (ItemCampaign) result.second.get(0);
                     updateActivityInfo(item);
+
+                }
+                break;
+            case DBVirde.FROM_SELECT_MODEL:
+                if (result.first.isError()) {
+                    Log.e("DBVirde", "Model not selected");
+                } else {
+
+                    // Model
+                    model = new ArrayList<>();
+
+                    for (Object object : result.second) {
+                        model.add((ItemModel) object);
+                    }
+
+                    // Get contributions
+                    hideRecyclerContributions();
+                    Virde.getInstance(this).getContributions(campaign.getId(), Util.getToken(getApplicationContext()));
 
                 }
                 break;
@@ -677,7 +819,29 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     /** TABS **/
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
-        tab.getPosition();
+
+        hideRecyclerContributions();
+
+        if (tab.getPosition() == 0) {
+            fromTab = 0;
+            if (myContributions.size() == 0) {
+                Virde.getInstance(this).getContributions(campaign.getId(), Util.getToken(getApplicationContext()));
+            } else  {
+                adapter = new AdapterContributions(Campaign.this, myContributions);
+                recyclerContributions.setAdapter(adapter);
+                showRecyclerContributions();
+            }
+        } else {
+            fromTab = 1;
+            if (otherContributions.size() == 0) {
+                Virde.getInstance(this).getContributions(campaign.getId(), "");
+            } else {
+                adapter = new AdapterContributions(Campaign.this, otherContributions);
+                recyclerContributions.setAdapter(adapter);
+                showRecyclerContributions();
+            }
+        }
+
     }
 
     @Override
@@ -687,6 +851,35 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
+
+    }
+
+    public void showRecyclerContributions () {
+
+        recyclerContributions.setVisibility(View.VISIBLE);
+
+        if (fromTab == 0) {
+            if (myContributions.size() == 0) {
+                contributeText.setVisibility(View.VISIBLE);
+            } else {
+                contributeText.setVisibility(View.GONE);
+            }
+        } else {
+            if (otherContributions.size() == 0) {
+                contributeText.setVisibility(View.VISIBLE);
+            } else {
+                contributeText.setVisibility(View.GONE);
+            }
+        }
+        contributeProgress.setVisibility(View.GONE);
+
+    }
+
+    public void hideRecyclerContributions () {
+
+        recyclerContributions.setVisibility(View.GONE);
+        contributeText.setVisibility(View.GONE);
+        contributeProgress.setVisibility(View.VISIBLE);
 
     }
 

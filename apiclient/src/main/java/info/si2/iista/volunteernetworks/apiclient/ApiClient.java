@@ -322,7 +322,7 @@ public class ApiClient {
 
     }
 
-    public Pair<Result, ArrayList<ArrayList<ItemFormContribution>>> getContributions (int id) {
+    public Pair<Result, ArrayList<ArrayList<ItemFormContribution>>> getContributions (int id, String token) {
 
         // FROM
         int from = Virde.FROM_GET_CONTRIBUTIONS;
@@ -332,14 +332,29 @@ public class ApiClient {
         ArrayList<ItemFormContribution> item;
         OkHttpClient client = new OkHttpClient();
 
-        Request request = new Request.Builder()
-                .url(HOST + String.format(URL_GET_CONTRIBUTIONS, String.valueOf(id)))
-                .build();
+
+        Request request;
+        if (!token.equals("")) { // Contribuciones propias del usuario
+            RequestBody formBody = new FormEncodingBuilder()
+                    .add("token", token)
+                    .build();
+            request = new Request.Builder()
+                    .url(HOST + String.format(URL_GET_CONTRIBUTIONS, String.valueOf(id)))
+                    .post(formBody)
+                    .build();
+        } else { // Contribuciones propias y de los demás usuarios
+            request = new Request.Builder()
+                    .url(HOST + String.format(URL_GET_CONTRIBUTIONS, String.valueOf(id)))
+                    .build();
+        }
 
         try {
 
             Response response = client.newCall(request).execute();
             String respStr  = response.body().string();
+
+            if (respStr.equals("0")) // Ninguna contribución
+                return new Pair<>(new Result(false, null, from, 0), result);
 
             JSONArray array = new JSONArray(respStr);
 

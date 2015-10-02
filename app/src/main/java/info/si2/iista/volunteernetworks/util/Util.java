@@ -7,7 +7,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
 
@@ -133,6 +132,17 @@ public class Util {
 
         NetworkInfo i = conMgr.getActiveNetworkInfo();
         return i != null && i.isConnected() && i.isAvailable();
+
+    }
+
+    /**
+     * Devuelve el token del usuario
+     * @param context Contexto del que se quiere obtener el token
+     * @return String token
+     */
+    public static String getToken (Context context) {
+
+        return Util.getPreference(context, context.getString(R.string.token));
 
     }
 
@@ -345,13 +355,8 @@ public class Util {
      */
     public static Drawable tintDrawable (Drawable drawable, int color) {
 
-        if (Build.VERSION.SDK_INT < 21) {
-            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-            return drawable;
-        } else {
-            drawable.setTint(color);
-            return drawable;
-        }
+        drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        return drawable;
 
     }
 

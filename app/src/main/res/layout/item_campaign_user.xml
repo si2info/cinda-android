@@ -19,25 +19,43 @@
 
     <TextView
         style="@style/campaign.userTitle"
-        android:text="@string/campaign_user_title"
-        android:id="@+id/title"
-        android:layout_alignTop="@+id/imgUser"
+        android:text="@string/user"
+        android:id="@+id/user"
         android:layout_toEndOf="@+id/imgUser"
         android:layout_toRightOf="@+id/imgUser"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_alignTop="@+id/imgUser"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:visibility="visible"
+        android:layout_toLeftOf="@+id/date"
+        android:layout_toStartOf="@+id/date"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"/>
+
+    <TextView
+        style="@style/campaign.userDate"
+        android:text="@string/campaign_user_title"
+        android:id="@+id/date"
+        android:layout_alignTop="@+id/imgUser"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp" />
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp" />
 
     <TextView
         style="@style/campaign.userData"
         android:text="@string/campaign_user_data"
         android:id="@+id/description"
-        android:layout_below="@+id/title"
-        android:layout_alignLeft="@+id/title"
-        android:layout_alignStart="@+id/title"
-        android:layout_alignRight="@+id/title"
-        android:layout_alignEnd="@+id/title"
-        android:paddingBottom="16dp" />
+        android:layout_below="@+id/user"
+        android:layout_alignRight="@+id/date"
+        android:layout_alignEnd="@+id/date"
+        android:paddingBottom="16dp"
+        android:layout_toEndOf="@+id/imgUser"
+        android:layout_toRightOf="@+id/imgUser"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"/>
 
 </RelativeLayout>

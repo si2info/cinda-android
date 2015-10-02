@@ -12,7 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Date;
 
-import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
+import info.si2.iista.volunteernetworks.apiclient.ItemContribution;
 import info.si2.iista.volunteernetworks.util.Util;
 
 /**
@@ -24,14 +24,14 @@ public class AdapterContributions extends RecyclerView.Adapter<AdapterContributi
 
     // Adapter
     private Context context;
-    private ArrayList<ItemModelValue> items;
+    private ArrayList<ItemContribution> items;
 
     // Listener
     private ClickListener clickListener;
 
     ArrayList<Drawable> circles;
 
-    AdapterContributions(Context context, ArrayList<ItemModelValue> items){
+    AdapterContributions(Context context, ArrayList<ItemContribution> items){
         this.context = context;
         this.items = items;
         this.circles = new ArrayList<>();
@@ -40,13 +40,15 @@ public class AdapterContributions extends RecyclerView.Adapter<AdapterContributi
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView image;
-        TextView title;
+        TextView user;
+        TextView date;
         TextView description;
 
         public ViewHolder(View itemView, int viewType) {
             super(itemView);
             image = (ImageView) itemView.findViewById(R.id.imgUser);
-            title = (TextView) itemView.findViewById(R.id.title);
+            user = (TextView) itemView.findViewById(R.id.user);
+            date = (TextView) itemView.findViewById(R.id.date);
             description = (TextView) itemView.findViewById(R.id.description);
             itemView.setOnClickListener(this);
         }
@@ -83,16 +85,23 @@ public class AdapterContributions extends RecyclerView.Adapter<AdapterContributi
     @Override
     public void onBindViewHolder(final AdapterContributions.ViewHolder holder, int position) {
 
-        ItemModelValue item = items.get(position);
-
-        holder.title.setText(item.getField());
+        ItemContribution item = items.get(position);
 
         // Date
-        Date date = Util.parseDateHourStringToDate(item.getValue());
+        Date date = Util.parseDateHourStringToDate(item.getDate());
         String dateSt = Util.parseDateHourToString(date);
 
-        holder.description.setText(dateSt);
+        // User
+        if (item.isMine()) {
+            holder.user.setText(dateSt);
+            holder.date.setVisibility(View.GONE);
+        } else {
+            holder.user.setText(item.getUser());
+            holder.date.setText(dateSt);
+        }
 
+        // Description
+        holder.description.setText(item.getDescription());
 
     }
 

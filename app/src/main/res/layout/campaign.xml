@@ -199,11 +199,38 @@
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     android:layout_marginTop="16dp" />
 
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/progressBarContributions"
+                    android:layout_below="@+id/tab_layout"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="16dp" />
+
                 <android.support.v7.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/recyclerContributions"
-                    android:layout_below="@+id/tab_layout" />
+                    android:layout_below="@+id/tab_layout"
+                    android:minHeight="64dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    style="@style/campaign"
+                    android:text="@string/my_contribute"
+                    android:id="@+id/textContribute"
+                    android:layout_below="@+id/tab_layout"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="32dp"
+                    android:paddingBottom="32dp" />
+
 
             </RelativeLayout>
 
@@ -274,6 +301,7 @@
                 android:layout_width="54dp"
                 android:layout_height="54dp"
                 android:text="@string/moreUsers"
+                android:onClick="seeMoreTopUsers"
                 android:textColor="@color/white"
                 android:layout_alignTop="@+id/topUser4"
                 android:layout_alignBottom="@+id/topUser4"

@@ -123,6 +123,10 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     }
 
+    /**
+     * Obtiene el modelo de la campaña por internet si lo hay y si no de base de datos si ya se visualizó
+     * @param id ID del modelo de la campaña a obtener
+     */
     public void getModelCampaign (int id) {
         if (Util.checkInternetConnection(this)) {
             Virde.getInstance(this).getModelCampaign(id); // Model campaign from internet

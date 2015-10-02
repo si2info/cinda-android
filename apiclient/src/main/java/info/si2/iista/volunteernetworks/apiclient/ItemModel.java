@@ -9,6 +9,8 @@ import com.google.gson.annotations.SerializedName;
  */
 public class ItemModel {
 
+    public static final String ITEM_ID_AUTHOR = "author_id";
+    public static final String ITEM_AUTHOR_NAME = "author_name";
     public static final String ITEM_CREATE_DATE = "create_date";
     public static final String ITEM_EDIT_TEXT = "text";
     public static final String ITEM_EDIT_TEXT_BIG = "textarea";

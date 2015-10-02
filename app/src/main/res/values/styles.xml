@@ -74,9 +74,17 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="campaign.userDate">
+        <item name="android:textColor">@color/campaign</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">right|end</item>
+    </style>
+
     <style name="campaign.userData">
         <item name="android:textColor">@color/campaign</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
     <!-- Loading -->

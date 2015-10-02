@@ -81,8 +81,8 @@ public class Virde {
         new VirdeSendContribution().execute(values);
     }
 
-    public void getContributions (int id) {
-        new VirdeGetContributions().execute(id);
+    public void getContributions (int id, String token) {
+        new VirdeGetContributions().execute(String.valueOf(id), token);
     }
 
     /** AsyncTasks **/
@@ -178,13 +178,13 @@ public class Virde {
 
     }
 
-    class VirdeGetContributions extends AsyncTask<Integer, Void, Pair<Result, ArrayList<ArrayList<ItemFormContribution>>>> {
+    class VirdeGetContributions extends AsyncTask<String, Void, Pair<Result, ArrayList<ArrayList<ItemFormContribution>>>> {
 
         @SafeVarargs
         @Override
-        protected final Pair<Result, ArrayList<ArrayList<ItemFormContribution>>> doInBackground(Integer... params) {
+        protected final Pair<Result, ArrayList<ArrayList<ItemFormContribution>>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
-            return apiClient.getContributions(params[0]);
+            return apiClient.getContributions(Integer.valueOf(params[0]), params[1]);
         }
 
         @Override

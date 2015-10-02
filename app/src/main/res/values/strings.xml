@@ -23,6 +23,8 @@
     <string name="campaign_geo"> </string>
 
     <string name="continue_reading">Continuar leyendo</string>
+    <string name="my_contribute">Aún no has hecho ninguna contribución</string>
+    <string name="other_contribute">Ningún usuario ha contribuído nada aún</string>
 
     <string name="moreUsers"> </string>
 
