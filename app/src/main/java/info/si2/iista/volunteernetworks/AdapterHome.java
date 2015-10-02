@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.joooonho.SelectableRoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -138,14 +138,12 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
                 int topUsers = holder.topUsers.getChildCount();
                 for (int i=0; i<topUsers; i++) {
 
-                    RelativeLayout layout = (RelativeLayout) holder.topUsers.getChildAt(i);
-
-                    ImageView image = (ImageView)layout.getChildAt(1);
+                    SelectableRoundedImageView image = (SelectableRoundedImageView)holder.topUsers.getChildAt(i);
 
                     Picasso.with(context)
                             .load(R.drawable.test_logo_si2)
                             .transform(new CircleTransform())
-                            .resize(150, 150)
+                            .resize(200, 200)
                             .into(image);
 
                 }

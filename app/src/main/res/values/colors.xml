@@ -33,4 +33,7 @@
     <color name="gradient_start">#77000000</color>
     <color name="gradient_end">#00000000</color>
 
+    <!-- Item Selected -->
+    <color name="item_select">#DEDEDE</color>
+
 </resources>
