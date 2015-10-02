@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/item_background_click">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/n_top"
+        android:id="@+id/n_top"
+        android:textColor="@color/defaultColor"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:gravity="center" />
+
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:id="@+id/userImage"
+        android:src="@drawable/test_logo_si2"
+        android:layout_toRightOf="@+id/n_top"
+        android:layout_toEndOf="@+id/n_top"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/app_name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/user"
+        android:id="@+id/userText"
+        android:textColor="@color/defaultColor"
+        android:layout_alignTop="@+id/userImage"
+        android:layout_toEndOf="@+id/userImage"
+        android:layout_toRightOf="@+id/userImage"
+        android:minHeight="48dp"
+        android:gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_toLeftOf="@+id/nContributions"
+        android:layout_toStartOf="@+id/nContributions" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/n_sends"
+        android:id="@+id/nContributions"
+        android:textColor="@color/defaultColor"
+        android:layout_alignTop="@+id/userText"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:gravity="center" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/separator"
+        android:background="@color/separator"
+        android:layout_below="@+id/userText"
+        android:layout_marginTop="16dp" />
+
+</RelativeLayout>

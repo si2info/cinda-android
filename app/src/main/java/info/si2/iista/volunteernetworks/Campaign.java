@@ -236,11 +236,19 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         SelectableRoundedImageView moreUsers = (SelectableRoundedImageView) moreUsersView.getChildAt(0);
         Util.tintDrawable(moreUsers.getDrawable(), ContextCompat.getColor(this, R.color.moreUsers));
 
+        moreUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                seeMoreTopUsers(view);
+            }
+        });
+
     }
 
     public void seeMoreTopUsers (View view) {
 
-        // TODO Intent a recyclerview para ver todos los usuarios
+        Intent intent = new Intent(this, TopUsers.class);
+        startActivity(intent);
 
     }
 
