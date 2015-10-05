@@ -112,7 +112,7 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
     @Override
     public void onBindViewHolder(final AdapterHome.ViewHolder holder, int position) {
 
-        ItemCampaign item = items.get(position);
+        final ItemCampaign item = items.get(position);
 
         switch (item.getType()) {
             case Item.CAMPAIGN:
@@ -121,10 +121,6 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
                 Picasso.with(context)
                         .load(item.getImage())
                         .into(holder.imgCampaign);
-
-                // Circle image go
-//                int color = Color.parseColor(item.getHeaderColor());
-//                holder.backGoToCampaign.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
 
                 int color = Color.parseColor(item.getHeaderColor());
                 holder.backGoToCampaign.getDrawable().mutate().setColorFilter(color, PorterDuff.Mode.SRC_IN);
@@ -135,25 +131,35 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
                         .into(holder.goToCampaign);
 
                 // Images Top Users
-                int topUsers = holder.topUsers.getChildCount();
-                for (int i=0; i<topUsers; i++) {
+                holder.topUsers.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int topUsers = holder.topUsers.getChildCount();
+                        for (int i = 0; i < topUsers; i++) {
 
-                    SelectableRoundedImageView image = (SelectableRoundedImageView)holder.topUsers.getChildAt(i);
+                            SelectableRoundedImageView image = (SelectableRoundedImageView) holder.topUsers.getChildAt(i);
 
-                    Picasso.with(context)
-                            .load(R.drawable.test_logo_si2)
-                            .transform(new CircleTransform())
-                            .resize(200, 200)
-                            .into(image);
+                            Picasso.with(context)
+                                    .load(R.drawable.test_logo_si2)
+                                    .transform(new CircleTransform())
+                                    .resize(200, 200)
+                                    .into(image);
 
-                }
+                        }
+                    }
+                });
 
                 // Text
                 holder.title.setText(item.getTitle());
                 holder.description.setText(Html.fromHtml(item.getShortDescription()));
 
                 // Suscribe button style
-                setStyleButton(item.isSuscribe(), holder.suscribe);
+                holder.suscribe.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        setStyleButton(item.isSuscribe(), holder.suscribe);
+                    }
+                });
 
                 final int pos = position;
                 holder.suscribe.setOnClickListener(new View.OnClickListener() {
