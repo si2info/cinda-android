@@ -70,7 +70,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     // Location
     private static final int REQUEST_MAP = 0x1;
-    private ImageView imgLocation;
+    private RelativeLayout viewLocation;
     private LatLng position;
 
     // Camera and gallery
@@ -200,11 +200,11 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
             if (view != null) {
 
-                String tag = ((LinearLayout)view).getChildAt(0).getTag().toString();
+                String tag = view.getTag().toString();
 
-                // Guardar ImageView de location para asignar después
+                // Guardar View de location para asignar después
                 if (tag.equals(ItemModel.ITEM_GEOPOS))
-                    imgLocation = (ImageView)((LinearLayout)view).getChildAt(0);
+                    viewLocation = (RelativeLayout) view;
 
                 // Añadir view al Layout
                 layout.addView(view);
@@ -342,7 +342,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
             if (position == null)
                 position = new LatLng(lat, lng);
 
-            changeImgLocation(position);
+//            changeImgLocation(position);
 
         }
 
@@ -355,10 +355,17 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 + latLng.latitude + ","+ latLng.longitude
                 + "&key=" + getString(R.string.google_maps_key);
 
-        if (imgLocation != null)
+        if (viewLocation != null) {
+
+            ImageView img = (ImageView)viewLocation.findViewById(R.id.mapLocation);
+            LinearLayout view = (LinearLayout)viewLocation.findViewById(R.id.feedback);
+
+            view.setVisibility(View.GONE);
+
             Picasso.with(getApplicationContext())
                     .load(url)
-                    .into(imgLocation);
+                    .into(img);
+        }
 
     }
 
@@ -580,8 +587,11 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
         int id = Util.getIntPreferenceModel(this, getString(R.string.idImage));
 
-        LinearLayout linearLayout = (LinearLayout)findViewById(id);
-        ImageView image = (ImageView)linearLayout.getChildAt(0);
+        RelativeLayout view = (RelativeLayout)findViewById(id);
+        ImageView image = (ImageView)view.findViewById(R.id.imageSelected);
+        LinearLayout feedback = (LinearLayout)view.findViewById(R.id.feedback);
+
+        feedback.setVisibility(View.GONE);
 
         // Get the dimensions of the View
         int targetW = image.getWidth();

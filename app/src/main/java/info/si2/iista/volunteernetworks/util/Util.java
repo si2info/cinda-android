@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
+import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,6 +25,8 @@ import info.si2.iista.volunteernetworks.R;
  * Project: Virde
  */
 public class Util {
+
+    private static Typeface robotoLight;
 
     /**
      * Conversor de pixels a dp
@@ -358,6 +362,31 @@ public class Util {
         drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
         return drawable;
 
+    }
+
+    /**
+     * Cambio de fuente de TextView
+     * @param c Contexto en el que se encuentra
+     * @param tv TextView a modificar fuente
+     * @param font Fuente/Estilo a setear
+     */
+    public static void setFont (Context c, TextView tv, Font font) {
+
+        if (robotoLight == null)
+            robotoLight = getRobotoLight(c);
+
+        switch (font) {
+
+            case LIGHT:
+                tv.setTypeface(robotoLight);
+                break;
+
+        }
+
+    }
+
+    public static Typeface getRobotoLight (Context c) {
+        return Typeface.createFromAsset(c.getAssets(), "fonts/Roboto-Light.ttf");
     }
 
 }

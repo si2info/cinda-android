@@ -46,6 +46,8 @@
     <string name="contributionNoSend">No ha sido posible enviar su contribución, ha quedado guardada para una posterior sincronización desde la opción \"Sincronizar\".</string>
     <string name="myShipments">MIS ENVÍOS</string>
     <string name="other">OTROS</string>
+    <string name="selectLocation">Seleccionar Ubicación</string>
+    <string name="addImage">Añadir imagen</string>
 
     <!-- recycler_topusers -->
     <string name="name">NOMBRE</string>

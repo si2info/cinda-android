@@ -1,16 +1,18 @@
 package info.si2.iista.volunteernetworks.util;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,6 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import info.si2.iista.volunteernetworks.AdapterSpinner;
 import info.si2.iista.volunteernetworks.Contribution;
 import info.si2.iista.volunteernetworks.R;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
@@ -75,59 +78,46 @@ public class Model {
      * @param id ID de la vista anterior para situar esta debajo
      * @return View de tipo EditText
      */
-    public static View getItemEditText (Context c, ItemModel item, int id, boolean lastItem) {
+    public static View getItemEditText (final Context c, final ItemModel item, int id, boolean lastItem) {
+
+        LayoutInflater inflater = LayoutInflater.from(c);
+        View modelEditText = inflater.inflate(R.layout.model_edit_text, null, false);
+        TextInputLayout textInputLayout = (TextInputLayout)modelEditText.findViewById(R.id.editText);
+        ImageView info = (ImageView)modelEditText.findViewById(R.id.imageView);
 
         // Construct View
-        TextInputLayout textInputLayout = new TextInputLayout(c);
         textInputLayout.setHint(item.getFieldLabel());
+        textInputLayout.setTypeface(Util.getRobotoLight(c));
 
         // EditText - Title hint
-        AppCompatEditText editText = new AppCompatEditText(c);
+        AppCompatEditText editText = (AppCompatEditText) textInputLayout.getEditText();
 
-        switch (item.getFieldType()) { // Tipo de texto
-            case ItemModel.ITEM_EDIT_TEXT:
-                editText.setInputType(InputType.TYPE_CLASS_TEXT);
-                break;
-            case ItemModel.ITEM_EDIT_TEXT_BIG:
-                editText.setSingleLine(false);
-                editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-                break;
-            case ItemModel.ITEM_EDIT_NUMBER:
-                editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                break;
+        if (editText != null) {
+
+            editText.setHint("");
+
+            switch (item.getFieldType()) { // Tipo de texto
+                case ItemModel.ITEM_EDIT_TEXT:
+                    editText.setInputType(InputType.TYPE_CLASS_TEXT);
+                    break;
+                case ItemModel.ITEM_EDIT_TEXT_BIG:
+                    editText.setSingleLine(false);
+                    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                    break;
+                case ItemModel.ITEM_EDIT_NUMBER:
+                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    break;
+            }
         }
 
-        textInputLayout.addView(editText);
-        textInputLayout.setTag(item.getFieldType());
-
-        // TextView - Description
-        TextView textView = new TextView(c);
-        textView.setText(item.getFieldDescription());
-        textView.setTextSize(12);
-
-        // LinearLayout - Content
-        LinearLayout layout = new LinearLayout(c);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setId(item.getId());
-        layout.setTag(item.getFieldName());
-        layout.addView(textInputLayout);
-        layout.addView(textView);
-
-        // LinearLayout - LayoutParams
-        LinearLayout.LayoutParams p1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        p1.topMargin = Util.convertDpToPixel(c, 16);
-        p1.leftMargin = Util.convertDpToPixel(c, 12);
-        p1.rightMargin = Util.convertDpToPixel(c, 12);
-        textInputLayout.setLayoutParams(p1);
-
-        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        p2.leftMargin = Util.convertDpToPixel(c, 16);
-        p2.rightMargin = Util.convertDpToPixel(c, 16);
-
-        if (lastItem)
-            p2.bottomMargin = Util.convertDpToPixel(c, 16);
-
-        textView.setLayoutParams(p2);
+        // ImageView - Description
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
+                dialog.show(((Contribution) c).getFragmentManager(), "Info");
+            }
+        });
 
         // RelativeLayout - Params, view resultante
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -136,11 +126,15 @@ public class Model {
         } else {
             params.addRule(RelativeLayout.BELOW, id);
         }
-        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        layout.setLayoutParams(params);
+        if (lastItem)
+            params.bottomMargin = Util.convertDpToPixel(c, 16);
 
-        return layout;
+        modelEditText.setLayoutParams(params);
+
+        modelEditText.setTag(item.getFieldType());
+        modelEditText.setId(item.getId());
+
+        return modelEditText;
 
     }
 
@@ -151,37 +145,37 @@ public class Model {
      * @param id ID de la vista anterior para situar esta debajo
      * @return View de tipo ImageView
      */
-    public static View getItemLocation (final Context c, ItemModel item, int id, boolean lastItem) {
+    public static View getItemLocation (final Context c, final ItemModel item, int id, boolean lastItem) {
+
+        LayoutInflater inflater = LayoutInflater.from(c);
+        View modelMap = inflater.inflate(R.layout.model_location, null, false);
+        TextView textLocation = (TextView)modelMap.findViewById(R.id.textLocation);
+        ImageView info = (ImageView)modelMap.findViewById(R.id.imageView);
+        ImageView imgMap = (ImageView)modelMap.findViewById(R.id.mapLocation);
+
+        // TextView - Location
+        textLocation.setText(item.getFieldLabel());
+        textLocation.setTypeface(Util.getRobotoLight(c));
+
+        // ImageView - Info
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
+                dialog.show(((Contribution) c).getFragmentManager(), "Info");
+            }
+        });
 
         // ImageView - Map Image
-        ImageView imageView = new ImageView(c);
-        imageView.setTag(item.getFieldType());
-        imageView.setBackgroundColor(Color.GRAY);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imgMap.setTag(item.getFieldType());
 
         // ImageView - OnClick
-        imageView.setOnClickListener(new View.OnClickListener() {
+        imgMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((Contribution) c).actionMap();
             }
         });
-
-        // LayoutParamas - ImageView
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        p.height = Util.convertDpToPixel(c, 220);
-
-        if (lastItem)
-            p.bottomMargin = Util.convertDpToPixel(c, 16);
-
-        imageView.setLayoutParams(p);
-
-        // LinearLayout - Content
-        LinearLayout layout = new LinearLayout(c);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setId(item.getId());
-        layout.setTag(item.getFieldName());
-        layout.addView(imageView);
 
         // RelativeLayout - Params, view resultante
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -190,15 +184,15 @@ public class Model {
         } else {
             params.addRule(RelativeLayout.BELOW, id);
         }
-        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        params.leftMargin = Util.convertDpToPixel(c, 16);
-        params.rightMargin = Util.convertDpToPixel(c, 16);
-        params.topMargin = Util.convertDpToPixel(c, 16);
+        if (lastItem)
+            params.bottomMargin = Util.convertDpToPixel(c, 16);
 
-        layout.setLayoutParams(params);
+        modelMap.setLayoutParams(params);
 
-        return layout;
+        modelMap.setTag(item.getFieldType());
+        modelMap.setId(item.getId());
+
+        return modelMap;
 
     }
 
@@ -209,40 +203,36 @@ public class Model {
      * @param id ID de la vista anterior para situar esta debajo
      * @return View de tipo ImageView
      */
-    public static View getItemImage (final Context c, ItemModel item, int id, boolean lastItem) {
+    public static View getItemImage (final Context c, final ItemModel item, int id, boolean lastItem) {
+
+        LayoutInflater inflater = LayoutInflater.from(c);
+        View modelImage = inflater.inflate(R.layout.model_image, null, false);
+        TextView textImage = (TextView)modelImage.findViewById(R.id.textImage);
+        ImageView info = (ImageView)modelImage.findViewById(R.id.imageView);
+        ImageView imgToSelect = (ImageView)modelImage.findViewById(R.id.imageSelected);
 
         final int idImage = item.getId();
 
-        // ImageView - Map Image
-        final ImageView imageView = new ImageView(c);
-        imageView.setId(item.getId());
-        imageView.setTag(item.getFieldType());
-        imageView.setBackgroundColor(Color.GRAY);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        // TextView - Image;
+        textImage.setText(item.getFieldLabel());
+        textImage.setTypeface(Util.getRobotoLight(c));
 
-        // ImageView - OnClick
-        imageView.setOnClickListener(new View.OnClickListener() {
+        // ImageView - Description
+        info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((Contribution)c).intentCameraGallery(idImage);
+                infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
+                dialog.show(((Contribution) c).getFragmentManager(), "Info");
             }
         });
 
-        // LayoutParamas - ImageView
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        p.height = Util.convertDpToPixel(c, 220);
-
-        if (lastItem)
-            p.bottomMargin = Util.convertDpToPixel(c, 16);
-
-        imageView.setLayoutParams(p);
-
-        // LinearLayout - Content
-        LinearLayout layout = new LinearLayout(c);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setId(item.getId());
-        layout.setTag(item.getFieldName());
-        layout.addView(imageView);
+        // ImageView - OnClick
+        imgToSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((Contribution) c).intentCameraGallery(idImage);
+            }
+        });
 
         // RelativeLayout - Params, view resultante
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -251,15 +241,15 @@ public class Model {
         } else {
             params.addRule(RelativeLayout.BELOW, id);
         }
-        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        params.leftMargin = Util.convertDpToPixel(c, 16);
-        params.rightMargin = Util.convertDpToPixel(c, 16);
-        params.topMargin = Util.convertDpToPixel(c, 16);
+        if (lastItem)
+            params.bottomMargin = Util.convertDpToPixel(c, 16);
 
-        layout.setLayoutParams(params);
+        modelImage.setLayoutParams(params);
 
-        return layout;
+        modelImage.setId(item.getId());
+        modelImage.setTag(item.getFieldType());
+
+        return modelImage;
 
     }
 
@@ -270,7 +260,12 @@ public class Model {
      * @param id ID de la vista anterior para situar esta debajo
      * @return View de tipo Spinner
      */
-    public static View getItemSpinner (Context c, ItemModel item, int id, boolean lastItem) {
+    public static View getItemSpinner (final Context c, final ItemModel item, int id, boolean lastItem) {
+
+        LayoutInflater inflater = LayoutInflater.from(c);
+        View modelSpinner = inflater.inflate(R.layout.model_spinner, null, false);
+        AppCompatSpinner spinner = (AppCompatSpinner)modelSpinner.findViewById(R.id.spinner);
+        ImageView info = (ImageView)modelSpinner.findViewById(R.id.imageView);
 
         // Spinner data
         String[] items = item.getFieldOptions().split("\\|");
@@ -280,55 +275,19 @@ public class Model {
         }
 
         // Spinner view
-        AppCompatSpinner spinner = new AppCompatSpinner(c);
-        spinner.setTag(item.getFieldType());
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, items);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerArrayAdapter);
+        AdapterSpinner adapter = new AdapterSpinner(c, R.layout.spinner_style, items);
+//        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
-        // LayoutParamas - ImageView
-        LinearLayout.LayoutParams p1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        p1.topMargin = Util.convertDpToPixel(c, 16);
-        p1.leftMargin = Util.convertDpToPixel(c, 8);
-        p1.rightMargin = Util.convertDpToPixel(c, 12);
-        spinner.setLayoutParams(p1);
-
-        // View - Separator
-        View separator = new View(c);
-        separator.setBackgroundColor(ContextCompat.getColor(c, R.color.separator));
-
-        // LayoutParams - Separator
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        p.height = Util.convertDpToPixel(c, 1);
-        p.topMargin = Util.convertDpToPixel(c, 4);
-        p.leftMargin = Util.convertDpToPixel(c, 16);
-        p.rightMargin = Util.convertDpToPixel(c, 16);
-        separator.setLayoutParams(p);
-
-        // TextView - Description
-        TextView textView = new TextView(c);
-        textView.setText(item.getFieldLabel());
-        textView.setTextSize(12);
-
-        // LayoutParams - Description
-        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        p2.topMargin = Util.convertDpToPixel(c, 4);
-        p2.leftMargin = Util.convertDpToPixel(c, 16);
-        p2.rightMargin = Util.convertDpToPixel(c, 16);
-
-        if (lastItem)
-            p2.bottomMargin = Util.convertDpToPixel(c, 16);
-
-        textView.setLayoutParams(p2);
-
-        // LinearLayout - Content
-        LinearLayout layout = new LinearLayout(c);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setId(item.getId());
-        layout.setTag(item.getFieldName());
-        layout.addView(spinner);
-        layout.addView(separator);
-        layout.addView(textView);
+        // ImageView - Description
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
+                dialog.show(((Contribution) c).getFragmentManager(), "Info");
+            }
+        });
 
         // RelativeLayout - Params, view resultante
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -337,12 +296,15 @@ public class Model {
         } else {
             params.addRule(RelativeLayout.BELOW, id);
         }
-        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        if (lastItem)
+            params.bottomMargin = Util.convertDpToPixel(c, 16);
 
-        layout.setLayoutParams(params);
+        modelSpinner.setLayoutParams(params);
 
-        return layout;
+        modelSpinner.setId(item.getId());
+        modelSpinner.setTag(item.getFieldType());
+
+        return modelSpinner;
 
     }
 
@@ -353,7 +315,12 @@ public class Model {
      * @param id ID de la vista anterior para situar esta debajo
      * @return View de tipo TextView
      */
-    public static View getItemDate (final Context c, ItemModel item, int id, boolean lastItem) {
+    public static View getItemDate (final Context c, final ItemModel item, int id, boolean lastItem) {
+
+        LayoutInflater inflater = LayoutInflater.from(c);
+        View modelDate = inflater.inflate(R.layout.model_date, null, false);
+        final TextView textDate = (TextView)modelDate.findViewById(R.id.textDate);
+        ImageView info = (ImageView)modelDate.findViewById(R.id.imageView);
 
         final String itemLabel = item.getFieldLabel() + ": %s";
         final Calendar myCalendar = Calendar.getInstance();
@@ -363,10 +330,9 @@ public class Model {
         String todayString = Util.parseDateToString(today);
 
         // Texto contendor de la fecha
-        final TextView dateText = new TextView(c);
-        dateText.setText(String.format(itemLabel, todayString));
-        dateText.setTag(item.getFieldType());
-        dateText.setTextSize(16);
+        textDate.setText(String.format(itemLabel, todayString));
+        textDate.setTypeface(Util.getRobotoLight(c));
+        textDate.setTag(item.getFieldType());
 
         final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -384,7 +350,7 @@ public class Model {
                     Date date = sdf.parse(stringDate);
                     stringDate = Util.parseDateToString(date);
 
-                    dateText.setText(String.format(itemLabel, stringDate));
+                    textDate.setText(String.format(itemLabel, stringDate));
 
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -395,40 +361,16 @@ public class Model {
         };
         dialog.setOnDateSetListener(dateSetListener);
 
-        // View - Separator
-        View separator = new View(c);
-        separator.setBackgroundColor(ContextCompat.getColor(c, R.color.separator));
+        // ImageView - Description
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
+                dialog.show(((Contribution) c).getFragmentManager(), "Info");
+            }
+        });
 
-        // LayoutParams - Separator
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        p.height = Util.convertDpToPixel(c, 1);
-        p.topMargin = Util.convertDpToPixel(c, 4);
-        separator.setLayoutParams(p);
-
-        // TextView - Description
-        TextView textView = new TextView(c);
-        textView.setText(item.getFieldDescription());
-        textView.setTextSize(12);
-
-        // LayoutParams - Description
-        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        p2.topMargin = Util.convertDpToPixel(c, 4);
-
-        if (lastItem)
-            p2.bottomMargin = Util.convertDpToPixel(c, 16);
-
-        textView.setLayoutParams(p2);
-
-        // LinearLayout - Content
-        LinearLayout layout = new LinearLayout(c);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setId(item.getId());
-        layout.setTag(item.getFieldName());
-        layout.addView(dateText);
-        layout.addView(separator);
-        layout.addView(textView);
-
-        layout.setOnClickListener(new View.OnClickListener() {
+        textDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.show(((Activity) c).getFragmentManager(), "DatePickerDialog");
@@ -442,14 +384,15 @@ public class Model {
         } else {
             params.addRule(RelativeLayout.BELOW, id);
         }
-        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        params.leftMargin = Util.convertDpToPixel(c, 16);
-        params.rightMargin = Util.convertDpToPixel(c, 16);
-        params.topMargin = Util.convertDpToPixel(c, 16);
-        layout.setLayoutParams(params);
+        if (lastItem)
+            params.bottomMargin = Util.convertDpToPixel(c, 16);
 
-        return layout;
+        modelDate.setLayoutParams(params);
+
+        modelDate.setTag(item.getFieldType());
+        modelDate.setId(item.getId());
+
+        return modelDate;
 
     }
 
@@ -513,6 +456,40 @@ public class Model {
         values[1] = result;
 
         return values;
+    }
+
+    public static class infoDialogFragment extends DialogFragment {
+
+        private String title, message;
+
+        static infoDialogFragment newInstance(String title, String message) {
+            infoDialogFragment f = new infoDialogFragment();
+
+            // Supply num input as an argument.
+            Bundle args = new Bundle();
+            args.putString("title", title);
+            args.putString("message", message);
+            f.setArguments(args);
+
+            return f;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            title = getArguments().getString("title");
+            message = getArguments().getString("message");
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(title);
+            builder.setMessage(message);
+            // Create the AlertDialog object and return it
+            return builder.create();
+        }
     }
 
 }
