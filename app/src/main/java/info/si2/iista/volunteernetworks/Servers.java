@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,13 +15,17 @@ import java.util.ArrayList;
 
 import info.si2.iista.volunteernetworks.apiclient.Item;
 import info.si2.iista.volunteernetworks.apiclient.ItemServer;
+import info.si2.iista.volunteernetworks.apiclient.Result;
+import info.si2.iista.volunteernetworks.database.DBVirde;
+import info.si2.iista.volunteernetworks.database.OnDBApiResult;
 
 /**
  * Developer: Jose Miguel Mingorance
  * Date: 7/9/15
  * Project: Virde
  */
-public class Servers extends AppCompatActivity implements DialogFragmentAddServer.DialogFragmentAddServerListener, AdapterServers.DeleteServerDialogFragment.DeleteServerDialogListener {
+public class Servers extends AppCompatActivity implements DialogFragmentAddServer.DialogFragmentAddServerListener, AdapterServers.DeleteServerDialogFragment.DeleteServerDialogListener,
+        OnDBApiResult {
 
     // RecyclerView
     private RecyclerView recyclerView;
@@ -38,16 +44,7 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
         // Views
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
-        /** Test Data **/
-
         items = new ArrayList<>();
-        items.add(new ItemServer(Item.SERVER, "http://www.whatever.com/apiverdi"));
-        items.add(new ItemServer(Item.SERVER, "http://www.whatever.com/apiverdi"));
-        items.add(new ItemServer(Item.SERVER, "http://www.whatever.com/apiverdi"));
-        items.add(new ItemServer(Item.SERVER, "http://www.whatever.com/apiverdi"));
-        items.add(new ItemServer(Item.SERVER, "http://www.whatever.com/apiverdi"));
-
-        /** End Test Data **/
 
         // RecyclerView
         recyclerView.setHasFixedSize(true);
@@ -55,6 +52,8 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+
+        DBVirde.getInstance(this).selectServers();
 
     }
 
@@ -84,6 +83,11 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
     @Override
     public void onDialogPositiveClick(int position) {
 
+        // DB
+        int idServer = items.get(position).getId();
+        DBVirde.getInstance(Servers.this).deleteServer(idServer);
+
+        // RecyclerView
         items.remove(position);
         adapter.notifyItemRemoved(position);
 
@@ -92,9 +96,57 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
     @Override
     public void onDialogPositiveClick(String name) {
 
-        items.add(0, new ItemServer(Item.SERVER, name));
-        adapter.notifyItemInserted(0);
+        // RecyclerView
+        items.add(new ItemServer(-1, Item.SERVER, name, "", false)); // TODO set a true y reiniciar con nuevo servidor
+        adapter.notifyItemInserted(items.size()-1);
 
+        // DB
+        DBVirde.getInstance(this).insertServer(items.get(items.size()-1));
+
+    }
+
+    /** Data Base **/
+
+    @Override
+    public void onDBApiInsertResult(Result result) {
+        switch (result.getResultFrom()) {
+            case DBVirde.FROM_INSERT_SERVER:
+                if (result.isError()) {
+                    Log.e("DBVirde", "Server not inserted");
+                } else {
+                    items.get(items.size()-1).setId(result.getCodigoError());
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onDBApiSelectResult(Pair<Result, ArrayList> result) {
+        switch (result.first.getResultFrom()) {
+            case DBVirde.FROM_SELECT_SERVERS:
+                if (result.first.isError()) {
+                    Log.e("DBVirde", "Server not inserted");
+                } else {
+
+                    for (Object object : result.second) {
+                        items.add((ItemServer)object);
+                        adapter.notifyItemInserted(items.size()-1);
+                    }
+
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onDBApiUpdateResult(Result result) {
+        switch (result.getResultFrom()) {
+            case DBVirde.FROM_DELETE_SERVER:
+                if (result.isError()) {
+                    Log.e("DBVirde", "Server not deleted");
+                }
+                break;
+        }
     }
 
 }

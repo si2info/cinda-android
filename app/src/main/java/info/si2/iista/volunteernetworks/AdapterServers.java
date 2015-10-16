@@ -6,12 +6,14 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -37,7 +39,9 @@ public class AdapterServers extends RecyclerView.Adapter<AdapterServers.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        RelativeLayout view;
         TextView server;
+        TextView serverDesc;
         ImageView delete;
 
         public ViewHolder(View itemView, int viewType) {
@@ -45,8 +49,10 @@ public class AdapterServers extends RecyclerView.Adapter<AdapterServers.ViewHold
 
             switch (viewType) {
                 case Item.SERVER:
+                    view = (RelativeLayout)itemView.findViewById(R.id.view);
                     delete = (ImageView)itemView.findViewById(R.id.delete);
                     server = (TextView)itemView.findViewById(R.id.server);
+                    serverDesc = (TextView)itemView.findViewById(R.id.serverDesc);
                     break;
             }
 
@@ -77,8 +83,15 @@ public class AdapterServers extends RecyclerView.Adapter<AdapterServers.ViewHold
         switch (item.getType()) {
             case Item.SERVER:
 
+                // Info server
                 holder.server.setText(item.getServer());
+                if (!item.getDescripcion().equals("")) {
+                    holder.serverDesc.setText(item.getDescripcion());
+                } else {
+                    holder.serverDesc.setText(context.getString(R.string.serverNoDesc));
+                }
 
+                // Delete server
                 holder.delete.setOnClickListener(new View.OnClickListener() { // Delete one server
                     @Override
                     public void onClick(View view) {
@@ -94,6 +107,10 @@ public class AdapterServers extends RecyclerView.Adapter<AdapterServers.ViewHold
                         dialog.show(((Activity)context).getFragmentManager(), "DeleteServerDialogFragment");
                     }
                 });
+
+                // Active server
+                if (item.isActive())
+                    holder.view.setBackgroundColor(ContextCompat.getColor(context, R.color.itemSelected));
 
                 break;
         }

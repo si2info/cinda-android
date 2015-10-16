@@ -22,11 +22,14 @@ import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import info.si2.iista.volunteernetworks.apiclient.Item;
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
+import info.si2.iista.volunteernetworks.apiclient.ItemServer;
 import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 import info.si2.iista.volunteernetworks.apiclient.Virde;
@@ -36,6 +39,10 @@ import info.si2.iista.volunteernetworks.util.Util;
 
 public class MainActivity extends AppCompatActivity implements AdapterHome.ClickListener, OnApiClientResult,
         OnDBApiResult, SwipeRefreshLayout.OnRefreshListener {
+
+    // Views
+    private TextView serverUrl;
+    private TextView serverDesc;
 
     // OnActivityResult
     private static final int FROM_SEE_CAMPAIGN = 1;
@@ -68,9 +75,6 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Shared Preferences
-        initSharedPreferences();
-
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
@@ -80,6 +84,8 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         // Views
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        serverUrl = (TextView)findViewById(R.id.serverUrl);
+        serverDesc = (TextView)findViewById(R.id.serverDesc);
         serverInfo = (RelativeLayout)findViewById(R.id.serverInfo);
 
         // RecyclerView
@@ -112,13 +118,14 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        // Registro de usuario
-        userCanOperate = false;
-        signUpUser();
+        // Default server
+        if (!Util.getBoolPreferenceModel(this, getString(R.string.isDefaultServer))) {
+            ItemServer item = new ItemServer(-1, Item.SERVER, getString(R.string.defaultServer), getString(R.string.defaultDescServer), true);
+            DBVirde.getInstance(this).insertServer(item);
+        }
 
-        // Get campaigns and feedback to user
-        doRefresh();
-        DBVirde.getInstance(this).getCampaigns();
+        // Get active server
+        DBVirde.getInstance(this).selectActiveServer();
 
     }
 
@@ -308,6 +315,15 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
                 }
                 break;
+            case DBVirde.FROM_INSERT_SERVER: // Preferences - Default Server
+                if (result.isError()) {
+                    Log.e("DBVirde", "Server not inserted");
+                } else {
+                    if (!Util.getBoolPreferenceModel(MainActivity.this, getString(R.string.isDefaultServer))) {
+                        Util.saveBoolPreferenceModel(MainActivity.this, getString(R.string.isDefaultServer), true);
+                    }
+                }
+                break;
         }
 
     }
@@ -315,6 +331,33 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
     @Override
     public void onDBApiSelectResult(Pair<Result, ArrayList> result) {
         switch (result.first.getResultFrom()) {
+            case DBVirde.FROM_SELECT_ACTIVE_SERVER:
+                if (result.first.isError()) {
+                    Log.e("DBVirde", "Campaigns not selected");
+                } else {
+                    if (result.second.size() > 0) {
+
+                        // Server
+                        ItemServer server = (ItemServer) result.second.get(0);
+
+                        // Set server info
+                        serverUrl.setText(server.getServer());
+                        serverDesc.setText(server.getDescripcion());
+
+                        // Shared Preferences
+                        initSharedPreferences(server);
+
+                        // Registro de usuario
+                        userCanOperate = false;
+                        signUpUser();
+
+                        // Get campaigns and feedback to user
+                        doRefresh();
+                        DBVirde.getInstance(this).getCampaigns();
+
+                    }
+                }
+                break;
             case DBVirde.FROM_SELECT_CAMPAIGNS:
                 if (result.first.isError()) {
                     Log.e("DBVirde", "Campaigns not selected");
@@ -533,13 +576,13 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
     /** SharedPreferences **/
 
-    public void initSharedPreferences () {
+    public void initSharedPreferences (ItemServer server) {
 
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.userPreferences), Context.MODE_PRIVATE);
 
         if (!sharedPref.contains(getString(R.string.server))) {
             SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putString(getString(R.string.server), "http://virde.dev.si2soluciones.es/");
+            editor.putString(getString(R.string.server), server.getServer());
             editor.apply();
         }
 

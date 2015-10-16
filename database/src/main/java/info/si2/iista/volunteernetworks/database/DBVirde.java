@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
+import info.si2.iista.volunteernetworks.apiclient.ItemServer;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 
 /**
@@ -35,6 +36,11 @@ public class DBVirde {
     public static final int FROM_SELECT_MODELITEM = 9;
     public static final int FROM_INSERT_MODELITEM = 10;
     public static final int FROM_UPDATE_MODELITEM = 11;
+
+    public static final int FROM_SELECT_SERVERS = 12;
+    public static final int FROM_SELECT_ACTIVE_SERVER = 13;
+    public static final int FROM_INSERT_SERVER = 14;
+    public static final int FROM_DELETE_SERVER = 15;
 
     public static DBVirde getInstance() {
         if (context == null)
@@ -115,6 +121,23 @@ public class DBVirde {
     @SuppressWarnings("unchecked")
     public void updateModelValue(ArrayList<ItemModelValue> items) {
         new DBVirdeUpdateModelValue().execute(items);
+    }
+
+        /** SERVER **/
+    public void selectServers () {
+        new DBVirdeSelectServers().execute();
+    }
+
+    public void selectActiveServer () {
+        new DBVirdeSelectActiveServer().execute();
+    }
+
+    public void insertServer (ItemServer item) {
+        new DBVirdeInsertServer().execute(item);
+    }
+
+    public void deleteServer (int id) {
+        new DBVirdeDeleteServer().execute(id);
     }
 
     /** AsyncTasks **/
@@ -281,6 +304,68 @@ public class DBVirde {
         protected Result doInBackground(ArrayList<ItemModelValue>... ItemModels) {
             DBApi apiClient = DBApi.getInstance((Context) context);
             return apiClient.updateModelValue(ItemModels[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Result result) {
+            context.onDBApiUpdateResult(result);
+        }
+
+    }
+
+        /** SERVER **/
+
+    class DBVirdeSelectServers extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemServer>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<ItemServer>> doInBackground(String... strings) {
+            DBApi apiClient = DBApi.getInstance((Context) context);
+            return apiClient.selectServers();
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onDBApiSelectResult(result);
+        }
+
+    }
+
+    class DBVirdeSelectActiveServer extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemServer>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<ItemServer>> doInBackground(String... strings) {
+            DBApi apiClient = DBApi.getInstance((Context) context);
+            return apiClient.selectActiveServer();
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onDBApiSelectResult(result);
+        }
+
+    }
+
+    class DBVirdeInsertServer extends AsyncTask<ItemServer, Void, Result> {
+
+        @Override
+        protected Result doInBackground(ItemServer... items) {
+            DBApi apiClient = DBApi.getInstance((Context) context);
+            return apiClient.insertServerToDB(items[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Result result) {
+            context.onDBApiInsertResult(result);
+        }
+
+    }
+
+    class DBVirdeDeleteServer extends AsyncTask<Integer, Void, Result> {
+
+        @Override
+        protected Result doInBackground(Integer... params) {
+            DBApi apiClient = DBApi.getInstance((Context) context);
+            return apiClient.deleteServerFromDB(params[0]);
         }
 
         @Override

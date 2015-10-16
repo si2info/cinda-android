@@ -19,6 +19,7 @@ import java.util.Locale;
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
+import info.si2.iista.volunteernetworks.apiclient.ItemServer;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 
 /**
@@ -62,7 +63,7 @@ public class DBApi {
         database = null;
     }
 
-    public Result insertCampaignsToDB (ArrayList<ItemCampaign> items) {
+    public synchronized Result insertCampaignsToDB (ArrayList<ItemCampaign> items) {
 
         int from = DBVirde.FROM_INSERT_CAMPAIGNS;
         String activeServer = getActiveServer();
@@ -134,7 +135,7 @@ public class DBApi {
 
     }
 
-    public Result updateCampaign (ItemCampaign item) {
+    public synchronized Result updateCampaign (ItemCampaign item) {
 
         int from = DBVirde.FROM_UPDATE_CAMPAIGN;
 
@@ -196,7 +197,7 @@ public class DBApi {
 
     }
 
-    public Pair<Result, ArrayList<ItemCampaign>> getCampaigns () {
+    public synchronized Pair<Result, ArrayList<ItemCampaign>> getCampaigns () {
 
         int from = DBVirde.FROM_SELECT_CAMPAIGNS;
         ArrayList<ItemCampaign> result = new ArrayList<>();
@@ -224,7 +225,7 @@ public class DBApi {
 
     }
 
-    public Pair<Result, ArrayList<ItemCampaign>> getCampaign (int id) {
+    public synchronized Pair<Result, ArrayList<ItemCampaign>> getCampaign (int id) {
 
         int from = DBVirde.FROM_SELECT_CAMPAIGN;
         ArrayList<ItemCampaign> result = new ArrayList<>();
@@ -251,7 +252,7 @@ public class DBApi {
 
     }
 
-    public Pair<Result, ArrayList<ItemCampaign>> getCampaignsFromID (int idCampaign) {
+    public synchronized Pair<Result, ArrayList<ItemCampaign>> getCampaignsFromID (int idCampaign) {
 
         int from = DBVirde.FROM_SELECT_CAMPAIGNS_FROM_ID;
         ArrayList<ItemCampaign> result = new ArrayList<>();
@@ -284,7 +285,7 @@ public class DBApi {
      * Desactiva las campañas que ya no están activas
      * @param items Campañas que si que estan activas para comparar con la base de datos local
      */
-    private void disableCampaigns (ArrayList<ItemCampaign> items) {
+    private synchronized void disableCampaigns (ArrayList<ItemCampaign> items) {
 
         String ids = "";
 
@@ -333,7 +334,7 @@ public class DBApi {
     /** MODEL **/
     /***********/
 
-    public Result insertModelToDB (ArrayList<ItemModel> items) {
+    public synchronized Result insertModelToDB (ArrayList<ItemModel> items) {
 
         int from = DBVirde.FROM_INSERT_MODEL;
 
@@ -385,7 +386,7 @@ public class DBApi {
 
     }
 
-    public Result updateModel (ItemModel item) {
+    public synchronized Result updateModel (ItemModel item) {
 
         int from = DBVirde.FROM_UPDATE_MODEL;
 
@@ -433,7 +434,7 @@ public class DBApi {
 
     }
 
-    public Pair<Result, ArrayList<ItemModel>> getModel (int id) {
+    public synchronized Pair<Result, ArrayList<ItemModel>> getModel (int id) {
 
         int from = DBVirde.FROM_SELECT_MODEL;
         ArrayList<ItemModel> result = new ArrayList<>();
@@ -488,7 +489,7 @@ public class DBApi {
     /** MODEL_ITEM_VALUE **/
     /**********************/
 
-    public Result insertModelValueToDB (ArrayList<ItemModelValue> items) {
+    public synchronized Result insertModelValueToDB (ArrayList<ItemModelValue> items) {
 
         int from = DBVirde.FROM_INSERT_MODELITEM;
         int id = getIdForModelValue();
@@ -527,7 +528,7 @@ public class DBApi {
 
     }
 
-    public Result updateModelValue (ArrayList<ItemModelValue> items) {
+    public synchronized Result updateModelValue (ArrayList<ItemModelValue> items) {
 
         int from = DBVirde.FROM_UPDATE_MODELITEM;
 
@@ -583,7 +584,7 @@ public class DBApi {
 
     }
 
-    public Pair<Result, ArrayList<ItemModelValue>> selectModelValues (int id) {
+    public synchronized Pair<Result, ArrayList<ItemModelValue>> selectModelValues (int id) {
 
         int from = DBVirde.FROM_SELECT_MODELITEM;
         ArrayList<ItemModelValue> result = new ArrayList<>();
@@ -627,6 +628,139 @@ public class DBApi {
         }
 
         return value;
+
+    }
+
+    /**********************/
+    /**      SERVER      **/
+    /**********************/
+
+    public synchronized Result insertServerToDB (ItemServer item) {
+
+        int from = DBVirde.FROM_INSERT_SERVER;
+        int id = -1;
+
+        try {
+
+            open();
+
+            // URL server
+            String url = "";
+            if (item.getServer() != null)
+                url = URLEncoder.encode(item.getServer(), "UTF-8");
+
+            // URL server
+            String desc = "";
+            if (item.getDescripcion() != null)
+                desc = URLEncoder.encode(item.getDescripcion(), "UTF-8");
+
+            String sql = "INSERT OR REPLACE INTO " + DBServer.TABLE_SERVER + " " +
+                         "(" + DBServer.TYPE + ", " + DBServer.URL + ", " + DBServer.DESC + ", " + DBServer.ACTIVE + ")" +
+                         " VALUES (" + item.getType() + ", '" + url + "', '" + desc + "', '" + item.isActive() + "')";
+
+            database.execSQL(sql);
+
+            // Get assigned id
+            sql = "SELECT " + DBServer.ID + " FROM " + DBServer.TABLE_SERVER + " ORDER BY " + DBServer.ID + " DESC LIMIT 1";
+            Cursor c = database.rawQuery(sql, null);
+
+            if (c.moveToFirst()) {
+                id = c.getInt(0);
+            }
+
+            c.close();
+            close(); // Close DB
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new Result(true, null, from, 0);
+        }
+
+        return new Result(false, null, from, id); // Error code reused
+
+    }
+
+    public synchronized Result deleteServerFromDB (int id) {
+
+        int from = DBVirde.FROM_DELETE_SERVER;
+
+        open();
+
+        String sql = "DELETE FROM " + DBServer.TABLE_SERVER + " WHERE " + DBServer.ID + "=" + String.valueOf(id);
+        database.execSQL(sql);
+
+        close(); // Close DB
+
+        return new Result(false, null, from, 1);
+
+    }
+
+
+    public synchronized Pair<Result, ArrayList<ItemServer>> selectServers () {
+
+        int from = DBVirde.FROM_SELECT_SERVERS;
+        ArrayList<ItemServer> result = new ArrayList<>();
+        String sql = "SELECT * FROM " + DBServer.TABLE_SERVER +
+                    " ORDER BY " + DBServer.ID + " ASC";
+
+        open();
+
+        Cursor c = database.rawQuery(sql, null);
+
+        if (c.moveToFirst()) {
+
+            do {
+
+                result.add(formatItemServerFromDB(c));
+
+            } while (c.moveToNext());
+
+        }
+
+        c.close();
+        close();
+
+        return new Pair<>(new Result(false, null, from, 0), result);
+
+    }
+
+    public synchronized Pair<Result, ArrayList<ItemServer>> selectActiveServer () {
+
+        int from = DBVirde.FROM_SELECT_ACTIVE_SERVER;
+        ArrayList<ItemServer> result = new ArrayList<>();
+        String sql = "SELECT * FROM " + DBServer.TABLE_SERVER +
+                    " WHERE " + DBServer.ACTIVE + "='true'";
+
+        open();
+
+        Cursor c = database.rawQuery(sql, null);
+
+        if (c.moveToFirst()) {
+            result.add(formatItemServerFromDB(c));
+        }
+
+        c.close();
+        close();
+
+        return new Pair<>(new Result(false, null, from, 0), result);
+
+    }
+
+    private ItemServer formatItemServerFromDB(Cursor c) {
+
+        ItemServer item = new ItemServer();
+
+        try {
+            item.setId(c.getInt(0));
+            item.setType(c.getInt(1));
+            item.setServer(URLDecoder.decode(c.getString(2), "UTF-8"));
+            item.setDescripcion(URLDecoder.decode(c.getString(3), "UTF-8"));
+            item.setActive(Boolean.valueOf(c.getString(4)));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return item;
 
     }
 

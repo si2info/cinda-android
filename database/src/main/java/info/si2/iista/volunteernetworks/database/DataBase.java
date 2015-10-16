@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DataBase extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "Virde.db";
 
     private static final String PRIMARY_KEY = " PRIMARY KEY";
@@ -64,6 +64,15 @@ public class DataBase extends SQLiteOpenHelper {
                     "FOREIGN KEY("+ DBModelValue.ID_CAMP + ") REFERENCES " + DBModel.TABLE_MODEL + "(" + DBModel.ID + ")" +
                     ");";
 
+    private static final String SQL_CREATE_SERVER =
+            "CREATE TABLE " + DBServer.TABLE_SERVER + " (" +
+                    DBServer.ID + TYPE_INT + PRIMARY_KEY + COMMA_SEP +
+                    DBServer.TYPE + TYPE_INT + COMMA_SEP +
+                    DBServer.URL + TYPE_TEXT + COMMA_SEP +
+                    DBServer.DESC + TYPE_TEXT + COMMA_SEP +
+                    DBServer.ACTIVE + TYPE_BOOLEAN +
+                    ");";
+
     private static final String SQL_DELETE_CAMPAIGNS =
             "DROP TABLE IF EXISTS " + DBCampaign.TABLE_CAMPAIGNS;
 
@@ -72,6 +81,9 @@ public class DataBase extends SQLiteOpenHelper {
 
     private static final String SQL_DELETE_MODELS_ITEM =
             "DROP TABLE IF EXISTS " + DBModelValue.TABLE_MODEL_VALUE;
+
+    private static final String SQL_DELETE_SERVER =
+            "DROP TABLE IF EXISTS " + DBServer.TABLE_SERVER;
 
     public DataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -82,6 +94,7 @@ public class DataBase extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_CAMPAIGNS);
         db.execSQL(SQL_CREATE_MODEL);
         db.execSQL(SQL_CREATE_MODEL_VALUE);
+        db.execSQL(SQL_CREATE_SERVER);
     }
 
     @Override
@@ -89,6 +102,7 @@ public class DataBase extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_CAMPAIGNS);
         db.execSQL(SQL_DELETE_MODELS);
         db.execSQL(SQL_DELETE_MODELS_ITEM);
+        db.execSQL(SQL_DELETE_SERVER);
         onCreate(db);
     }
 

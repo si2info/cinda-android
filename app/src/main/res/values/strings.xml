@@ -29,15 +29,22 @@
     <string name="moreUsers"> </string>
 
     <!-- Servers -->
+    <string name="defaultServer">http://virde.dev.si2soluciones.es/</string>
+    <string name="defaultDescServer">Servidor por defecto de Virde. Descubre campañas y aporta tu contribución.</string>
+    <string name="serverNoDesc">Servidor sin descripción.</string>
+    <string name="isDefaultServer">isDefaultServer</string>
     <string name="delete_text">¿Seguro que quiere eliminar este servidor?</string>
     <string name="new_server">Nuevo servidor</string>
     <string name="name_server">Url de servidor</string>
+    <string name="desc_server">Descripción de servidor</string>
     <string name="ok">OK</string>
     <string name="yes">Si</string>
     <string name="no">No</string>
     <string name="add">Añadir</string>
     <string name="cancel">Cancelar</string>
     <string name="sendAgain">Volver a intentar</string>
+    <string name="completeAll">Complete la url del servidor</string>
+    <string name="invalidUrl">Introduzca un servidor válido</string>
 
     <!-- contribution -->
     <string name="loading">Cargando modelo de campaña</string>
