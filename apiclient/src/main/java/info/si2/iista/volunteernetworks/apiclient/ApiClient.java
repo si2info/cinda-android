@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -73,7 +74,8 @@ public class ApiClient {
 
         ArrayList<ItemCampaign> result = new ArrayList<>();
 
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = getOkHttpClient();
+
         RequestBody formBody = new FormEncodingBuilder()
                 .add("token", token)
                 .build();
@@ -120,7 +122,8 @@ public class ApiClient {
 
         ArrayList<ItemCampaign> result = new ArrayList<>();
 
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = getOkHttpClient();
+
         RequestBody formBody = new FormEncodingBuilder()
                 .add("token", token)
                 .build();
@@ -160,7 +163,7 @@ public class ApiClient {
         String message = "Inténtelo más tarde";
 
         ArrayList<ItemModel> result = new ArrayList<>();
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = getOkHttpClient();
 
         Request request = new Request.Builder()
                 .url(HOST + String.format(URL_MODEL_CAMPAIGN, String.valueOf(id)))
@@ -194,7 +197,7 @@ public class ApiClient {
         int from = Virde.FROM_USER_REGISTER;
         String message = "Intente acceder más tarde";
         ArrayList<String> result = new ArrayList<>();
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = getOkHttpClient();
 
         RequestBody formBody = new FormEncodingBuilder()
                 .add("nickname", username)
@@ -243,7 +246,7 @@ public class ApiClient {
             url = (HOST + String.format(URL_UNSUSCRIBE_CAMPAIGN, String.valueOf(idCampaign)));
         }
 
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = getOkHttpClient();
         RequestBody formBody = new FormEncodingBuilder()
                 .add("token", token)
                 .build();
@@ -281,7 +284,7 @@ public class ApiClient {
 
         int from = Virde.FROM_SEND_CONTRIBUTION;
         String message = "Intente enviar la contribución más tarde";
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = getOkHttpClient();
 
         // Id Campaign
         int idCampaign = Integer.valueOf(values.get(0).getValue());
@@ -330,7 +333,7 @@ public class ApiClient {
 
         ArrayList<ArrayList<ItemFormContribution>> result = new ArrayList<>();
         ArrayList<ItemFormContribution> item;
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = getOkHttpClient();
 
 
         Request request;
@@ -407,6 +410,16 @@ public class ApiClient {
 
         SharedPreferences sharedPref = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
         return sharedPref.getString("server", "");
+
+    }
+
+    private static OkHttpClient getOkHttpClient () {
+
+        OkHttpClient client = new OkHttpClient();
+        client.setConnectTimeout(15, TimeUnit.SECONDS);
+        client.setReadTimeout(15, TimeUnit.SECONDS);
+
+        return client;
 
     }
 

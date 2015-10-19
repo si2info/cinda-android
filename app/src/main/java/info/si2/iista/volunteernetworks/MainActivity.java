@@ -248,8 +248,11 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
                     ArrayList<ItemCampaign> itemsResult = new ArrayList<>();
 
+                    int idServer = Util.getIntPreference(MainActivity.this, getString(R.string.id_server));
                     for (Object item : result.second) {
-                        itemsResult.add((ItemCampaign) item);
+                        ItemCampaign camp = (ItemCampaign)item;
+                        camp.setIdServer(idServer);
+                        itemsResult.add(camp);
                     }
 
                     DBVirde.getInstance(this).addCampaigns(itemsResult);
@@ -310,7 +313,8 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                         int idCampaign = items.get(0).getId();
                         DBVirde.getInstance(this).getCampaignsFrom(idCampaign);
                     } else { // All campaigns
-                        DBVirde.getInstance(this).getCampaigns();
+                        int idServer = Util.getIntPreference(MainActivity.this, getString(R.string.id_server));
+                        DBVirde.getInstance(this).getCampaigns(idServer);
                     }
 
                 }
@@ -357,7 +361,8 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
                         // Get campaigns and feedback to user
                         doRefresh();
-                        DBVirde.getInstance(this).getCampaigns();
+                        int idServer = Util.getIntPreference(MainActivity.this, getString(R.string.id_server));
+                        DBVirde.getInstance(this).getCampaigns(idServer);
 
                     }
                 }
@@ -587,6 +592,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         if (!sharedPref.contains(getString(R.string.server))) {
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString(getString(R.string.server), server.getServer());
+            editor.putInt(getString(R.string.id_server), server.getId());
             editor.apply();
         }
 

@@ -166,6 +166,21 @@ public class Util {
     }
 
     /**
+     * Guarda un valor asociado a una key en SharedPreferences de las preferencias del usuario
+     * @param c Context
+     * @param key String key del valor
+     * @param value Integer valor a guardar
+     */
+    public static void saveIntPreference (Context c, String key, int value) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.userPreferences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(key, value);
+        editor.apply();
+
+    }
+
+    /**
      * Obtiene un valor guardado en SharedPreferences
      * @param c Context
      * @param key key que hace referencia al valor
@@ -175,6 +190,19 @@ public class Util {
 
         SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.userPreferences), Context.MODE_PRIVATE);
         return sharedPref.getString(key, "");
+
+    }
+
+    /**
+     * Obtiene un valor guardado en SharedPreferences
+     * @param c Context
+     * @param key key que hace referencia al valor
+     * @return Integer valor de la key
+     */
+    public static int getIntPreference (Context c, String key) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.userPreferences), Context.MODE_PRIVATE);
+        return sharedPref.getInt(key, -1);
 
     }
 

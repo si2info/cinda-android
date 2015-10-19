@@ -18,6 +18,7 @@ public class ItemCampaign implements Parcelable {
 
     @SerializedName("ID")
     private int id;
+    private int idServer;
 
     @SerializedName("color")
     private String headerColor;
@@ -59,6 +60,14 @@ public class ItemCampaign implements Parcelable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getIdServer() {
+        return idServer;
+    }
+
+    public void setIdServer(int idServer) {
+        this.idServer = idServer;
     }
 
     public String getHeaderColor() {

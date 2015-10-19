@@ -105,9 +105,9 @@ public class DBApi {
 
 
                     sql = "INSERT OR REPLACE INTO " + DBCampaign.TABLE_CAMPAIGNS + " " +
-                            "VALUES (" + item.getId() + "," + item.getType() + ",'" + item.getHeaderColor() + "','" +
-                            ecodedTitle + "','" + encodedShortDesc + "','" + encodedDesc + "','" +
-                            econdedScope + "','" + item.getImage() + "','" + item.isSuscribe() + "','" +
+                            "VALUES (" + item.getId() + "," + item.getIdServer() + "," + item.getType() + ",'" +
+                            item.getHeaderColor() + "','" + ecodedTitle + "','" + encodedShortDesc + "','" +
+                            encodedDesc + "','" + econdedScope + "','" + item.getImage() + "','" + item.isSuscribe() + "','" +
                             dateToString(item.getDateStart()) + "','" + dateToString(item.getDateEnd()) + "','" +
                             activeServer + "','" + true + "')";
 
@@ -197,12 +197,13 @@ public class DBApi {
 
     }
 
-    public synchronized Pair<Result, ArrayList<ItemCampaign>> getCampaigns () {
+    public synchronized Pair<Result, ArrayList<ItemCampaign>> getCampaigns (int idServer) {
 
         int from = DBVirde.FROM_SELECT_CAMPAIGNS;
         ArrayList<ItemCampaign> result = new ArrayList<>();
         String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS +
-                    " WHERE " + DBCampaign.IS_ACTIVE + "='true'";
+                    " WHERE " + DBCampaign.IS_ACTIVE + "='true'" +
+                    " AND " + DBCampaign.ID_SERVER + "=" + idServer;
 
         open();
 
@@ -312,15 +313,16 @@ public class DBApi {
 
             campaign.setId(c.getInt(0));
             campaign.setType(c.getInt(1));
-            campaign.setHeaderColor(c.getString(2));
-            campaign.setTitle(URLDecoder.decode(c.getString(3), "UTF-8"));
-            campaign.setShortDescription(URLDecoder.decode(c.getString(4), "UTF-8"));
-            campaign.setDescription(URLDecoder.decode(c.getString(5), "UTF-8"));
-            campaign.setScope(URLDecoder.decode(c.getString(6), "UTF-8"));
-            campaign.setImage(c.getString(7));
-            campaign.setIsSuscribe(Boolean.valueOf(c.getString(8)));
-            campaign.setDateStart(stringToDate(c.getString(9)));
-            campaign.setDateEnd(stringToDate(c.getString(10)));
+            campaign.setIdServer(c.getInt(2));
+            campaign.setHeaderColor(c.getString(3));
+            campaign.setTitle(URLDecoder.decode(c.getString(4), "UTF-8"));
+            campaign.setShortDescription(URLDecoder.decode(c.getString(5), "UTF-8"));
+            campaign.setDescription(URLDecoder.decode(c.getString(6), "UTF-8"));
+            campaign.setScope(URLDecoder.decode(c.getString(7), "UTF-8"));
+            campaign.setImage(c.getString(8));
+            campaign.setIsSuscribe(Boolean.valueOf(c.getString(9)));
+            campaign.setDateStart(stringToDate(c.getString(10)));
+            campaign.setDateEnd(stringToDate(c.getString(11)));
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -733,10 +735,10 @@ public class DBApi {
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            return new Result(true, null, from, 1);
+            return new Result(true, null, from, item.getId());
         }
 
-        return new Result(false, null, from, 0);
+        return new Result(false, null, from, item.getId()); // Error code reused
 
     }
 

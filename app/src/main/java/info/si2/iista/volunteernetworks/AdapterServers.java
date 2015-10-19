@@ -109,8 +109,10 @@ public class AdapterServers extends RecyclerView.Adapter<AdapterServers.ViewHold
                 });
 
                 // Active server
-                if (item.isActive())
+                if (item.isActive()) {
                     holder.view.setBackgroundColor(ContextCompat.getColor(context, R.color.itemSelected));
+                    holder.delete.setVisibility(View.GONE);
+                }
 
                 holder.view.setOnClickListener(new View.OnClickListener() {
                     @Override

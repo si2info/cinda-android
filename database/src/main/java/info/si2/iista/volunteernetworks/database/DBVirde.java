@@ -82,8 +82,8 @@ public class DBVirde {
         new DBVirdeUpdateCampaign().execute(item);
     }
 
-    public void getCampaigns () {
-        new DBVirdeSelectCampaigns().execute();
+    public void getCampaigns (int idServer) {
+        new DBVirdeSelectCampaigns().execute(String.valueOf(idServer));
     }
 
     public void getCampaign (int id) {
@@ -184,7 +184,7 @@ public class DBVirde {
         @Override
         protected Pair<Result, ArrayList<ItemCampaign>> doInBackground(String... strings) {
             DBApi apiClient = DBApi.getInstance((Context) context);
-            return apiClient.getCampaigns();
+            return apiClient.getCampaigns(Integer.valueOf(strings[0]));
         }
 
         @Override

@@ -10,6 +10,7 @@ public class DBCampaign {
     // Table Campaign
     public static final String TABLE_CAMPAIGNS = "campaign";
     public static final String ID = "id";
+    public static final String ID_SERVER = "id_server";
     public static final String TYPE = "type";
     public static final String COLOR = "color";
     public static final String TITLE = "title";

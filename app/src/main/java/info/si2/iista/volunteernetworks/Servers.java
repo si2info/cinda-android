@@ -19,6 +19,7 @@ import info.si2.iista.volunteernetworks.apiclient.ItemServer;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 import info.si2.iista.volunteernetworks.database.DBVirde;
 import info.si2.iista.volunteernetworks.database.OnDBApiResult;
+import info.si2.iista.volunteernetworks.util.Util;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -124,6 +125,7 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
                     Log.e("DBVirde", "Server not inserted");
                 } else {
                     items.get(items.size()-1).setId(result.getCodigoError());
+                    Util.saveIntPreference(Servers.this, getString(R.string.id_server), result.getCodigoError());
 
                     adapter.notifyDataSetChanged();
 
@@ -168,6 +170,8 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
                 if (result.isError()) {
                     Log.e("DBVirde", "Server not deleted");
                 } else {
+
+                    Util.saveIntPreference(Servers.this, getString(R.string.id_server), result.getCodigoError());
 
                     // Reset app with new server
                     Intent intent = new Intent(Servers.this, MainActivity.class);
