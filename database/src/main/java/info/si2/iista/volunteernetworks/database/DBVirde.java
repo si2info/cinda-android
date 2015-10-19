@@ -41,6 +41,7 @@ public class DBVirde {
     public static final int FROM_SELECT_ACTIVE_SERVER = 13;
     public static final int FROM_INSERT_SERVER = 14;
     public static final int FROM_DELETE_SERVER = 15;
+    public static final int FROM_UPDATE_SERVER = 16;
 
     public static DBVirde getInstance() {
         if (context == null)
@@ -138,6 +139,10 @@ public class DBVirde {
 
     public void deleteServer (int id) {
         new DBVirdeDeleteServer().execute(id);
+    }
+
+    public void updateServer(ItemServer item) {
+        new DBVirdeUpdateServer().execute(item);
     }
 
     /** AsyncTasks **/
@@ -366,6 +371,21 @@ public class DBVirde {
         protected Result doInBackground(Integer... params) {
             DBApi apiClient = DBApi.getInstance((Context) context);
             return apiClient.deleteServerFromDB(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Result result) {
+            context.onDBApiUpdateResult(result);
+        }
+
+    }
+
+    class DBVirdeUpdateServer extends AsyncTask<ItemServer, Void, Result> {
+
+        @Override
+        protected Result doInBackground(ItemServer... items) {
+            DBApi apiClient = DBApi.getInstance((Context) context);
+            return apiClient.updateServer(items[0]);
         }
 
         @Override

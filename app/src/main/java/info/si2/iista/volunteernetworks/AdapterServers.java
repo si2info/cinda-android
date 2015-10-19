@@ -76,7 +76,7 @@ public class AdapterServers extends RecyclerView.Adapter<AdapterServers.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(final AdapterServers.ViewHolder holder, int position) {
+    public void onBindViewHolder(final AdapterServers.ViewHolder holder, final int position) {
 
         final ItemServer item = items.get(position);
 
@@ -111,6 +111,13 @@ public class AdapterServers extends RecyclerView.Adapter<AdapterServers.ViewHold
                 // Active server
                 if (item.isActive())
                     holder.view.setBackgroundColor(ContextCompat.getColor(context, R.color.itemSelected));
+
+                holder.view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((Servers)context).changeServer(position);
+                    }
+                });
 
                 break;
         }

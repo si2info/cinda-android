@@ -73,6 +73,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginRight="16dp"
             android:maxLines="2"
+            android:minHeight="40dp"
             android:ellipsize="end"
             android:paddingBottom="8dp" />
 

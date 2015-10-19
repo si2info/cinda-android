@@ -342,7 +342,11 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
                         // Set server info
                         serverUrl.setText(server.getServer());
-                        serverDesc.setText(server.getDescripcion());
+
+                        if (server.getDescripcion().length() != 0)
+                            serverDesc.setText(server.getDescripcion());
+                        else
+                            serverDesc.setText(getString(R.string.serverNoDesc));
 
                         // Shared Preferences
                         initSharedPreferences(server);

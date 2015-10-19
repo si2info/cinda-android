@@ -642,6 +642,17 @@ public class DBApi {
 
         try {
 
+            // poner a false el antiguo servidor activo
+            if (item.isActive()) {
+                Pair<Result, ArrayList<ItemServer>> result = selectActiveServer();
+                if (!result.first.isError()) {
+                    if (result.second.size() > 0) { // Check first execution
+                        result.second.get(0).setActive(false);
+                        updateServer(result.second.get(0));
+                    }
+                }
+            }
+
             open();
 
             // URL server
@@ -673,10 +684,59 @@ public class DBApi {
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            return new Result(true, null, from, 0);
+            return new Result(true, null, from, 1);
         }
 
         return new Result(false, null, from, id); // Error code reused
+
+    }
+
+    public synchronized Result updateServer (ItemServer item) {
+
+        int from = DBVirde.FROM_UPDATE_SERVER;
+
+        try {
+
+            // poner a false el antiguo servidor activo
+            if (item.isActive()) {
+                Pair<Result, ArrayList<ItemServer>> result = selectActiveServer();
+                if (!result.first.isError()) {
+                    if (result.second.size() > 0) { // Check first execution
+                        result.second.get(0).setActive(false);
+                        updateServer(result.second.get(0));
+                    }
+                }
+            }
+
+            open();
+
+            // URL server
+            String url = "";
+            if (item.getServer() != null)
+                url = URLEncoder.encode(item.getServer(), "UTF-8");
+
+            // URL server
+            String desc = "";
+            if (item.getDescripcion() != null)
+                desc = URLEncoder.encode(item.getDescripcion(), "UTF-8");
+
+            String sql = "UPDATE " + DBServer.TABLE_SERVER +
+                    " SET " + DBServer.TYPE + "=" + item.getType() + ", " +
+                    DBServer.URL + "='" + url + "', " +
+                    DBServer.DESC + "='" + desc + "', " +
+                    DBServer.ACTIVE + "='" + item.isActive() + "' " +
+                    " WHERE " + DBServer.ID + "=" + item.getId();
+
+            database.execSQL(sql);
+
+            close();
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new Result(true, null, from, 1);
+        }
+
+        return new Result(false, null, from, 0);
 
     }
 

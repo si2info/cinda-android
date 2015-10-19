@@ -1,6 +1,7 @@
 package info.si2.iista.volunteernetworks;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -64,6 +65,14 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
 
     }
 
+    public void changeServer (int position) {
+
+        ItemServer item = items.get(position);
+        item.setActive(true);
+        DBVirde.getInstance(this).updateServer(item);
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 //        getMenuInflater().inflate(R.menu.menu_campaign_sync, menu);
@@ -97,7 +106,7 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
     public void onDialogPositiveClick(String name) {
 
         // RecyclerView
-        items.add(new ItemServer(-1, Item.SERVER, name, "", false)); // TODO set a true y reiniciar con nuevo servidor
+        items.add(new ItemServer(-1, Item.SERVER, name, "", true));
         adapter.notifyItemInserted(items.size()-1);
 
         // DB
@@ -115,6 +124,15 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
                     Log.e("DBVirde", "Server not inserted");
                 } else {
                     items.get(items.size()-1).setId(result.getCodigoError());
+
+                    adapter.notifyDataSetChanged();
+
+                    // Reset app with new server
+                    Intent intent = new Intent(Servers.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+
                 }
                 break;
         }
@@ -144,6 +162,19 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
             case DBVirde.FROM_DELETE_SERVER:
                 if (result.isError()) {
                     Log.e("DBVirde", "Server not deleted");
+                }
+                break;
+            case DBVirde.FROM_UPDATE_SERVER:
+                if (result.isError()) {
+                    Log.e("DBVirde", "Server not deleted");
+                } else {
+
+                    // Reset app with new server
+                    Intent intent = new Intent(Servers.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+
                 }
                 break;
         }
