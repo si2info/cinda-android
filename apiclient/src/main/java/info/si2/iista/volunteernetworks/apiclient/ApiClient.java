@@ -44,6 +44,7 @@ public class ApiClient {
     private static final String URL_UNSUSCRIBE_CAMPAIGN = "API/campaign/%s/unsuscribe/";
     private static final String URL_SEND_CONTRIBUTION = "API/campaign/%s/sendData/";
     private static final String URL_GET_CONTRIBUTIONS = "API/campaign/%s/listData/";
+    private static final String URL_GET_LIST_VOLUNTEERS = "API/campaign/%s/listVolunteers/";
 
     private static Context context;
 
@@ -387,6 +388,39 @@ public class ApiClient {
         } catch (JSONException e) {
             e.printStackTrace();
             return new Pair<>(new Result(true, message, from, 0), null);
+        }
+
+    }
+
+    public Pair<Result, ArrayList<ItemUser>> getListVolunteers (int idCampaign) {
+
+        int from = Virde.FROM_GET_LIST_VOLUNTEERS;
+        ArrayList<ItemUser> result = new ArrayList<>();
+        String message = "Lista de usuarios no disponible";
+        OkHttpClient client = getOkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(HOST + String.format(URL_GET_LIST_VOLUNTEERS, String.valueOf(idCampaign)))
+                .build();
+
+        try {
+
+            Response response = client.newCall(request).execute();
+            String respStr  = response.body().string();
+
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            Gson gson = gsonBuilder.create();
+
+            if (isJSONValid(respStr)) {
+                ItemUser[] items = gson.fromJson(respStr, ItemUser[].class);
+                Collections.addAll(result, items);
+            }
+
+            return new Pair<>(new Result(false, message, from, 0), result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Pair<>(new Result(true, message, from, 1), new ArrayList<ItemUser>());
         }
 
     }

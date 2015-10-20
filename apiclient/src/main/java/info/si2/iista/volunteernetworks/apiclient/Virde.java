@@ -24,6 +24,7 @@ public class Virde {
     public static final int FROM_UNSUSCRIBE = 6;
     public static final int FROM_SEND_CONTRIBUTION = 7;
     public static final int FROM_GET_CONTRIBUTIONS = 8;
+    public static final int FROM_GET_LIST_VOLUNTEERS = 9;
 
     public static Virde getInstance() {
         if (context == null)
@@ -83,6 +84,10 @@ public class Virde {
 
     public void getContributions (int id, String token) {
         new VirdeGetContributions().execute(String.valueOf(id), token);
+    }
+
+    public void getListVolunteers (int idCampaign) {
+        new VirdeGetListVolunteers().execute(String.valueOf(idCampaign));
     }
 
     /** AsyncTasks **/
@@ -185,6 +190,21 @@ public class Virde {
         protected final Pair<Result, ArrayList<ArrayList<ItemFormContribution>>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
             return apiClient.getContributions(Integer.valueOf(params[0]), params[1]);
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onApiClientRequestResult(result);
+        }
+
+    }
+
+    class VirdeGetListVolunteers extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemUser>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<ItemUser>> doInBackground(String... params) {
+            ApiClient apiClient = ApiClient.getInstance();
+            return apiClient.getListVolunteers(Integer.valueOf(params[0]));
         }
 
         @Override

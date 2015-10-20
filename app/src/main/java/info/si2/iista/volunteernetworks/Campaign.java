@@ -1,5 +1,6 @@
 package info.si2.iista.volunteernetworks;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -45,6 +46,7 @@ import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.apiclient.ItemContribution;
 import info.si2.iista.volunteernetworks.apiclient.ItemFormContribution;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
+import info.si2.iista.volunteernetworks.apiclient.ItemUser;
 import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 import info.si2.iista.volunteernetworks.apiclient.Virde;
@@ -99,6 +101,9 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     // Model
     private ArrayList<ItemModel> model;
+
+    // Top users
+    private ArrayList<ItemUser> users;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,35 +224,101 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                 return false;
             }
 
-            });
-
-        // Top users
-        initTopUsers();
+        });
 
         // Obtener modelo de la campaña
         getModelCampaign(campaign.getId());
 
+        // Top users
+        Virde.getInstance(this).getListVolunteers(campaign.getId());
+
     }
 
+    /**
+     * Inicialización de Top Users
+     */
+    @SuppressLint("SetTextI18n")
     public void initTopUsers () {
 
-        int size = topUsers.getChildCount();
-        RelativeLayout moreUsersView = (RelativeLayout) topUsers.getChildAt(size-1);
+        // Views
+        final RelativeLayout moreUsersView = (RelativeLayout) topUsers.getChildAt(3);
+
+        // Tint background
         SelectableRoundedImageView moreUsers = (SelectableRoundedImageView) moreUsersView.getChildAt(0);
         Util.tintDrawable(moreUsers.getDrawable(), ContextCompat.getColor(this, R.color.moreUsers));
 
-        moreUsers.setOnClickListener(new View.OnClickListener() {
+        // Animation
+        final ScaleAnimation grow =  new ScaleAnimation(0f, 1f, 0f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        grow.setDuration(300);
+        grow.setFillAfter(true);
+
+        // OnClick
+        topUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 seeMoreTopUsers(view);
             }
         });
 
+        for (int i=0; i<topUsers.getChildCount(); i++) {
+            if (i == topUsers.getChildCount()-1) { // More than 3 volunteers
+
+                int nVolunteers = users.size() - 3;
+                TextView nUsers = (TextView)moreUsersView.getChildAt(1);
+
+                if (nVolunteers > 0) {
+                    if (nVolunteers > 99)
+                        nUsers.setText("+99");
+                    else
+                        nUsers.setText("+" + String.valueOf(users.size() - 3));
+
+                    coordinatorLayout.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            moreUsersView.setVisibility(View.VISIBLE);
+                            moreUsersView.startAnimation(grow);
+                        }
+                    });
+
+                } else {
+                    moreUsersView.setVisibility(View.INVISIBLE);
+                }
+
+            } else if (i < users.size()) { // The 3 first volunteers
+
+                final SelectableRoundedImageView image = (SelectableRoundedImageView) topUsers.getChildAt(i);
+
+                Picasso.with(this)
+                        .load(users.get(i).getImage())
+                        .into(image, new com.squareup.picasso.Callback() {
+                            @Override
+                            public void onSuccess() {
+                                coordinatorLayout.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        image.setVisibility(View.VISIBLE);
+                                        image.startAnimation(grow);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError() {
+
+                            }
+                        });
+
+            } else { // Less than 3 users
+                topUsers.getChildAt(i).setVisibility(View.INVISIBLE);
+            }
+        }
+
     }
 
     public void seeMoreTopUsers (View view) {
 
         Intent intent = new Intent(this, TopUsers.class);
+        intent.putParcelableArrayListExtra("topUsers", users);
         startActivity(intent);
 
     }
@@ -356,7 +427,8 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                                 reduce.setFillAfter(true);
 
                                 for (int i=0; i<topUsers.getChildCount(); i++) {
-                                    topUsers.getChildAt(i).startAnimation(reduce);
+                                    if (i < users.size())
+                                        topUsers.getChildAt(i).startAnimation(reduce);
                                 }
 
                                 isTopUsersVisible = false;
@@ -375,7 +447,8 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                                 grow.setFillAfter(true);
 
                                 for (int i=0; i<topUsers.getChildCount(); i++) {
-                                    topUsers.getChildAt(i).startAnimation(grow);
+                                    if (i < users.size())
+                                        topUsers.getChildAt(i).startAnimation(grow);
                                 }
 
                                 isTopUsersVisible = true;
@@ -663,6 +736,21 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                     // Get contributions
                     hideRecyclerContributions();
                     Virde.getInstance(this).getContributions(campaign.getId(), Util.getToken(getApplicationContext()));
+
+                }
+                break;
+            case Virde.FROM_GET_LIST_VOLUNTEERS:
+                if (result.first.isError()) {
+                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                } else {
+
+                    users = new ArrayList<>();
+
+                    for (Object object : result.second) {
+                        users.add((ItemUser)object);
+                    }
+
+                    initTopUsers();
 
                 }
                 break;

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -25,11 +27,16 @@ public class TopUsers extends AppCompatActivity implements AdapterTopUsers.Click
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recycler_topusers);
 
+        // ActionBar
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Views
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
 
-        /** TEST DATA **/
-        for (int i=0; i<10; i++) {
-            items.add(new ItemUser(i+1, 99, "SI2 Soluciones", ""));
+        // Top Users
+        if (getIntent().getExtras() != null) {
+            items = getIntent().getParcelableArrayListExtra("topUsers");
         }
 
         // RecyclerView
@@ -46,6 +53,21 @@ public class TopUsers extends AppCompatActivity implements AdapterTopUsers.Click
     @Override
     public void onContributionItemClick(View view, int position) {
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

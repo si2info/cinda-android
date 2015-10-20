@@ -48,7 +48,7 @@ public class AdapterTopUsers extends RecyclerView.Adapter<AdapterTopUsers.ViewHo
         public ViewHolder(View itemView, int viewType) {
             super(itemView);
             nTop = (TextView)itemView.findViewById(R.id.n_top);
-            user = (TextView)itemView.findViewById(R.id.user);
+            user = (TextView)itemView.findViewById(R.id.userText);
             image = (ImageView)itemView.findViewById(R.id.userImage);
             nContributions = (TextView)itemView.findViewById(R.id.nContributions);
             itemView.setOnClickListener(this);
@@ -88,10 +88,12 @@ public class AdapterTopUsers extends RecyclerView.Adapter<AdapterTopUsers.ViewHo
 
         ItemUser item = items.get(position);
 
-        holder.nTop.setText(String.valueOf(item.getnTop()));
+        holder.nTop.setText(String.valueOf(position+1));
+        holder.user.setText(item.getUsername());
+        holder.nContributions.setText(String.valueOf(item.getnContributions()));
 
         Picasso.with(context)
-                .load(R.drawable.test_logo_si2)
+                .load(item.getImage())
                 .transform(new CircleTransform())
                 .resize(200, 200)
                 .into(holder.image);

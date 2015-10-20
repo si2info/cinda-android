@@ -255,7 +255,8 @@
             android:layout_marginStart="16dp"
             app:sriv_border_width="4dp"
             app:sriv_border_color="@color/white"
-            app:sriv_oval="true" />
+            app:sriv_oval="true"
+            android:visibility="invisible" />
 
         <com.joooonho.SelectableRoundedImageView
             android:layout_width="54dp"
@@ -267,7 +268,8 @@
             android:layout_marginStart="8dp"
             app:sriv_border_width="4dp"
             app:sriv_border_color="@color/white"
-            app:sriv_oval="true" />
+            app:sriv_oval="true"
+            android:visibility="invisible" />
 
         <com.joooonho.SelectableRoundedImageView
             android:layout_width="54dp"
@@ -279,13 +281,15 @@
             android:layout_marginStart="8dp"
             app:sriv_border_width="4dp"
             app:sriv_border_color="@color/white"
-            app:sriv_oval="true" />
+            app:sriv_oval="true"
+            android:visibility="invisible" />
 
         <RelativeLayout
             android:layout_width="54dp"
             android:layout_height="54dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp">
+            android:layout_marginStart="8dp"
+            android:visibility="invisible">
 
             <com.joooonho.SelectableRoundedImageView
                 android:layout_width="match_parent"
