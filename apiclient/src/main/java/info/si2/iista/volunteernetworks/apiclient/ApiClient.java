@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -326,14 +325,13 @@ public class ApiClient {
 
     }
 
-    public Pair<Result, ArrayList<ArrayList<ItemFormContribution>>> getContributions (int id, String token) {
+    public Pair<Result, ArrayList<ItemContribution>> getContributions (int id, String token) {
 
         // FROM
         int from = Virde.FROM_GET_CONTRIBUTIONS;
         String message = "Contribuciones no disponibles";
 
-        ArrayList<ArrayList<ItemFormContribution>> result = new ArrayList<>();
-        ArrayList<ItemFormContribution> item;
+        ArrayList<ItemContribution> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
 
 
@@ -360,32 +358,17 @@ public class ApiClient {
             if (respStr.equals("0")) // Ninguna contribución
                 return new Pair<>(new Result(false, null, from, 0), result);
 
-            JSONArray array = new JSONArray(respStr);
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            Gson gson = gsonBuilder.create();
 
-            for (int i=0; i<array.length(); i++) {
-
-                item = new ArrayList<>();
-
-                JSONObject object = array.getJSONObject(i);
-                Iterator iterator = object.keys();
-
-                while(iterator.hasNext()){
-                    String key = (String)iterator.next();
-                    String value = object.getString(key);
-
-                    item.add(new ItemFormContribution(key, value));
-                }
-
-                result.add(item);
-
+            if (isJSONValid(respStr)) {
+                ItemContribution[] items = gson.fromJson(respStr, ItemContribution[].class);
+                Collections.addAll(result, items);
             }
 
             return new Pair<>(new Result(false, null, from, 0), result);
 
         } catch (IOException e) {
-            e.printStackTrace();
-            return new Pair<>(new Result(true, message, from, 0), null);
-        } catch (JSONException e) {
             e.printStackTrace();
             return new Pair<>(new Result(true, message, from, 0), null);
         }

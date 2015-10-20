@@ -183,11 +183,11 @@ public class Virde {
 
     }
 
-    class VirdeGetContributions extends AsyncTask<String, Void, Pair<Result, ArrayList<ArrayList<ItemFormContribution>>>> {
+    class VirdeGetContributions extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemContribution>>> {
 
         @SafeVarargs
         @Override
-        protected final Pair<Result, ArrayList<ArrayList<ItemFormContribution>>> doInBackground(String... params) {
+        protected final Pair<Result, ArrayList<ItemContribution>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
             return apiClient.getContributions(Integer.valueOf(params[0]), params[1]);
         }

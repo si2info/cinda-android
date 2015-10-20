@@ -1,5 +1,7 @@
 package info.si2.iista.volunteernetworks.apiclient;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Developer: Jose Miguel Mingorance
  * Date: 1/10/15
@@ -7,14 +9,31 @@ package info.si2.iista.volunteernetworks.apiclient;
  */
 public class ItemContribution {
 
+    private int id;
     private boolean isMine;
-    private String user, description, date;
 
-    public ItemContribution(boolean isMine, String user, String description, String date) {
+    @SerializedName("author_name")
+    private String user;
+
+    private String description;
+
+    @SerializedName("create_date")
+    private String date;
+
+    public ItemContribution(int id, boolean isMine, String user, String description, String date) {
+        this.id = id;
         this.isMine = isMine;
         this.user = user;
         this.description = description;
         this.date = date;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public boolean isMine() {

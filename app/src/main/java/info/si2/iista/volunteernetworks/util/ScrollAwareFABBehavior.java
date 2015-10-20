@@ -80,7 +80,7 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
     }
 
     // Same animation that FloatingActionButton.Behavior uses to show the FAB when the AppBarLayout enters
-    private void animateIn(FloatingActionButton button) {
+    public void animateIn(FloatingActionButton button) {
 
         TranslateAnimation anim = new TranslateAnimation(0, 0, 220.0f, Animation.RELATIVE_TO_SELF);
 
@@ -106,6 +106,10 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
 
         button.startAnimation(anim);
 
+    }
+
+    public boolean getIsShowing () {
+        return isShowing;
     }
 
 }

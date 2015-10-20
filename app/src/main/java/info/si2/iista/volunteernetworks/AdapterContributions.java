@@ -88,8 +88,8 @@ public class AdapterContributions extends RecyclerView.Adapter<AdapterContributi
         ItemContribution item = items.get(position);
 
         // Date
-        Date date = Util.parseDateHourStringToDate(item.getDate());
-        String dateSt = Util.parseDateHourToString(date);
+        Date date = Util.parseStringToDate("yyyy-MM-dd", item.getDate());
+        String dateSt = Util.parseDateToString(date);
 
         // User
         if (item.isMine()) {

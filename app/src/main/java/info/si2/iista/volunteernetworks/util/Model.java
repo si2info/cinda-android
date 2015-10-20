@@ -432,7 +432,7 @@ public class Model {
         String parseDate = text.getText().toString();
         int pos = parseDate.indexOf(":") + 2;
         parseDate = parseDate.substring(pos);
-        parseDate = Util.parseDateToStringServer(Util.parseStringToDate(parseDate));
+        parseDate = Util.parseDateToStringServer(Util.parseStringToDate("dd MMM yyyy", parseDate));
 
         values[0] = layout.getTag().toString();
         values[1] = parseDate;

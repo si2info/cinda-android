@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -44,7 +45,6 @@ import java.util.ArrayList;
 import info.si2.iista.volunteernetworks.AdapterContributions.ClickListener;
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.apiclient.ItemContribution;
-import info.si2.iista.volunteernetworks.apiclient.ItemFormContribution;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 import info.si2.iista.volunteernetworks.apiclient.ItemUser;
 import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
@@ -52,6 +52,7 @@ import info.si2.iista.volunteernetworks.apiclient.Result;
 import info.si2.iista.volunteernetworks.apiclient.Virde;
 import info.si2.iista.volunteernetworks.database.DBVirde;
 import info.si2.iista.volunteernetworks.database.OnDBApiResult;
+import info.si2.iista.volunteernetworks.util.ScrollAwareFABBehavior;
 import info.si2.iista.volunteernetworks.util.Util;
 import info.si2.iista.volunteernetworks.util.WrappingLinearLayoutManager;
 
@@ -67,7 +68,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     private ItemCampaign campaign;
     private int position;
 
-    // View
+    // Views
     private CoordinatorLayout coordinatorLayout;
     private LinearLayout topUsers;
     private NestedScrollView nestedScroll;
@@ -83,6 +84,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     private Button suscription;
     private ProgressBar contributeProgress;
     private TextView contributeText;
+    private FloatingActionButton fabAddContribution;
 
     // Flag
     private boolean fromDB;
@@ -139,6 +141,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         contributeProgress = (ProgressBar)findViewById(R.id.progressBarContributions);
         contributeText = (TextView)findViewById(R.id.textContribute);
+        fabAddContribution = (FloatingActionButton)findViewById(R.id.FAB_button);
 
         // Refresh listener
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
@@ -667,39 +670,38 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                     Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
                 } else {
 
-                    ArrayList<ArrayList<ItemFormContribution>> contributions = result.second;
+                    if (fromTab == 0) { // My contributions
 
-                    if (fromTab == 0) {
+                        myContributions = new ArrayList<>();
 
-                        if (contributions != null) {
-
-                            if (contributions.size() > 0)
-                                myID = findIdAuthor(contributions.get(0));
-                            else
-                                myID = -2;
-
-                            for (ArrayList<ItemFormContribution> itemFormContribution : contributions) {
-                                addToContributions(myContributions, itemFormContribution, myID);
-                            }
-                            adapter = new AdapterContributions(Campaign.this, myContributions);
-                            recyclerContributions.setAdapter(adapter);
-
-                            contributeText.setText(getString(R.string.my_contribute));
-
+                        for (Object object : result.second) {
+                            myContributions.add((ItemContribution)object);
                         }
 
-                    } else {
+                        if (myContributions.size() > 0)
+                            myID = myContributions.get(0).getId();
+                        else
+                            myID = -2;
 
-                        if (contributions != null) {
-                            for (ArrayList<ItemFormContribution> itemFormContribution : contributions) {
-                                addToContributions(otherContributions, itemFormContribution, myID);
-                            }
-                            adapter = new AdapterContributions(Campaign.this, otherContributions);
-                            recyclerContributions.setAdapter(adapter);
+                        adapter = new AdapterContributions(Campaign.this, myContributions);
+                        recyclerContributions.setAdapter(adapter);
 
-                            contributeText.setText(getString(R.string.other_contribute));
+                        contributeText.setText(getString(R.string.my_contribute));
 
+                    } else { // Other contributions
+
+                        otherContributions = new ArrayList<>();
+
+                        for (Object object : result.second) {
+                            ItemContribution contribution = (ItemContribution)object;
+                            if (contribution.getId() != myID)
+                                otherContributions.add(contribution);
                         }
+
+                        adapter = new AdapterContributions(Campaign.this, otherContributions);
+                        recyclerContributions.setAdapter(adapter);
+
+                        contributeText.setText(getString(R.string.other_contribute));
 
                     }
 
@@ -757,78 +759,6 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         }
         mSwipeRefreshLayout.setEnabled(true);
         mSwipeRefreshLayout.setRefreshing(false);
-    }
-
-    private void addToContributions (ArrayList<ItemContribution> array, ArrayList<ItemFormContribution> itemFormContribution, int idAuthor) {
-
-        // My Contributions
-        if (fromTab == 0) {
-            String createDate = findCreateDate(itemFormContribution);
-            String description = findFirstDescription(itemFormContribution);
-            if (createDate != null)
-                array.add(new ItemContribution(true, "", description, createDate));
-        }
-
-        // Other Contributions
-        if (fromTab == 1 && findIdAuthor(itemFormContribution) != idAuthor) {
-            String authorName = findAuthorName(itemFormContribution);
-            String createDate = findCreateDate(itemFormContribution);
-            String description = findFirstDescription(itemFormContribution);
-            if (createDate != null)
-                array.add(new ItemContribution(false, authorName, description, createDate));
-        }
-
-    }
-
-    private Integer findIdAuthor (ArrayList<ItemFormContribution> itemFormContribution) {
-
-        for (ItemFormContribution item : itemFormContribution) {
-            if (item.getKey().equals(ItemModel.ITEM_ID_AUTHOR))
-                return Integer.valueOf(item.getValue());
-        }
-
-        return -1;
-
-    }
-
-    private String findAuthorName (ArrayList<ItemFormContribution> itemFormContribution) {
-
-        for (ItemFormContribution item : itemFormContribution) {
-            if (item.getKey().equals(ItemModel.ITEM_AUTHOR_NAME))
-                return item.getValue();
-        }
-
-        return null;
-
-    }
-
-    private String findCreateDate (ArrayList<ItemFormContribution> itemFormContribution) {
-
-        for (ItemFormContribution item : itemFormContribution) {
-            if (item.getKey().equals(ItemModel.ITEM_CREATE_DATE))
-                return item.getValue();
-        }
-
-        return null;
-
-    }
-
-    private String findFirstDescription (ArrayList<ItemFormContribution> itemFormContribution) {
-
-        String identifier = "";
-
-        for (ItemModel item : model) {
-            if (item.getFieldType().equals(ItemModel.ITEM_EDIT_TEXT_BIG))
-                identifier = item.getFieldName();
-        }
-
-        for (ItemFormContribution item : itemFormContribution) {
-            if (item.getKey().equals(identifier))
-                return item.getValue();
-        }
-
-        return "";
-
     }
 
     @Override
@@ -937,6 +867,12 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                 showRecyclerContributions();
             }
         }
+
+        // FAB - Show button "Add contribution"
+        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fabAddContribution.getLayoutParams();
+        ScrollAwareFABBehavior scrollAwareFABBehavior = (ScrollAwareFABBehavior) p.getBehavior();
+        if (!scrollAwareFABBehavior.getIsShowing())
+            scrollAwareFABBehavior.animateIn(fabAddContribution);
 
     }
 

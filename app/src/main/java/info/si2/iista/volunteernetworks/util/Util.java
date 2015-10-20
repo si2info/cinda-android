@@ -112,10 +112,10 @@ public class Util {
      * @param dateSt String a convertir a Date
      * @return Date con la fecha especificada en dateSt
      */
-    public static Date parseStringToDate (String dateSt) {
+    public static Date parseStringToDate (String formatSt, String dateSt) {
 
         try {
-            SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+            SimpleDateFormat format = new SimpleDateFormat(formatSt, Locale.getDefault());
             return format.parse(dateSt);
         } catch (ParseException e) {
             e.printStackTrace();
