@@ -71,7 +71,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     // Location
     private static final int REQUEST_MAP = 0x1;
     private RelativeLayout viewLocation;
-    private LatLng position;
+    private LatLng position = new LatLng(0, 0);
 
     // Camera and gallery
     private static final int REQUEST_IMAGE = 0x2;
@@ -240,8 +240,8 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         // i=0 => LinearLayout loading
         for (int i=1; i<layout.getChildCount(); i++) {
 
-            LinearLayout view = (LinearLayout) layout.getChildAt(i);
-            String tag = view.getChildAt(0).getTag().toString();
+            RelativeLayout view = (RelativeLayout) layout.getChildAt(i);
+            String tag = view.getTag().toString();
             String[] data;
             String key;
 
@@ -308,12 +308,12 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
         dbValues = new ArrayList<>();
 
-        for (int i=2; i<model.size(); i++) {
+        for (int i=2; i<data.size(); i++) {
             ItemModel itemModel = model.get(i-2);
             ItemFormContribution itemForm = data.get(i);
 
             dbValues.add(new ItemModelValue(itemModel.getIdCampaign(), itemModel.getFieldName(),
-                    itemForm.getValue(), itemModel.getFieldPosition(), isSync));
+                    itemForm.getValue(), itemModel.getFieldType(), itemModel.getFieldPosition(), isSync));
         }
 
         DBVirde.getInstance(this).insertModelValue(dbValues);

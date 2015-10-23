@@ -8,15 +8,16 @@ package info.si2.iista.volunteernetworks.apiclient;
 public class ItemModelValue {
 
     private int id, idModel, order;
-    private String field, value;
+    private String field, value, fieldType;
     private boolean isSync;
 
     public ItemModelValue () {}
 
-    public ItemModelValue(int idModel, String field, String value, int order, boolean isSync) {
+    public ItemModelValue(int idModel, String field, String value, String fieldType, int order, boolean isSync) {
         this.idModel = idModel;
         this.field = field;
         this.value = value;
+        this.fieldType = fieldType;
         this.order = order;
         this.isSync = isSync;
     }
@@ -65,6 +66,14 @@ public class ItemModelValue {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getFieldType() {
+        return fieldType;
+    }
+
+    public void setFieldType(String fieldType) {
+        this.fieldType = fieldType;
     }
 
     public boolean isSync() {

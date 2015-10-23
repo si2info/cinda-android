@@ -101,7 +101,7 @@ public class Util {
     public static String parseDateToStringServer (Date date) {
 
         if (date != null)
-            return DateFormat.format("yyyy-MM-dd", date).toString();
+            return DateFormat.format("dd, MMM yyyy", date).toString();
         else
             return "";
 

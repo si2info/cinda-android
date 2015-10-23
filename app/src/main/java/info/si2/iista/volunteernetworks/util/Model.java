@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -401,7 +400,7 @@ public class Model {
      * @param layout Layout contenedora de los datos
      * @return String del TextInputLayout
      */
-    public static String[] getEditText (LinearLayout layout) {
+    public static String[] getEditText (RelativeLayout layout) {
 
         String[] values = new String[2];
 
@@ -423,7 +422,7 @@ public class Model {
      * @param layout Layout contenedora de los datos
      * @return String de la fecha en formato yyyy-MM-dd
      */
-    public static String[] getDate (LinearLayout layout) {
+    public static String[] getDate (RelativeLayout layout) {
 
         String[] values = new String[2];
 
@@ -432,7 +431,7 @@ public class Model {
         String parseDate = text.getText().toString();
         int pos = parseDate.indexOf(":") + 2;
         parseDate = parseDate.substring(pos);
-        parseDate = Util.parseDateToStringServer(Util.parseStringToDate("dd MMM yyyy", parseDate));
+        parseDate = Util.parseDateToStringServer(Util.parseStringToDate("dd, MMM yyyy", parseDate));
 
         values[0] = layout.getTag().toString();
         values[1] = parseDate;
@@ -445,7 +444,7 @@ public class Model {
      * @param layout Layout contenedora de los datos
      * @return Opción seleccionada
      */
-    public static String[] getStringSpinner (LinearLayout layout) {
+    public static String[] getStringSpinner (RelativeLayout layout) {
 
         String[] values = new String[2];
 

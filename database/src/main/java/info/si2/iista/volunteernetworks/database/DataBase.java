@@ -70,6 +70,7 @@ public class DataBase extends SQLiteOpenHelper {
                     DBModelValue.ID_CAMP + TYPE_INT + COMMA_SEP +
                     DBModelValue.FIELD + TYPE_TEXT + COMMA_SEP +
                     DBModelValue.VALUE + TYPE_TEXT + COMMA_SEP +
+                    DBModelValue.FIELD_TYPE + TYPE_TEXT + COMMA_SEP +
                     DBModelValue.ORDER + TYPE_INT + COMMA_SEP +
                     DBModelValue.IS_SYNC + TYPE_BOOLEAN + COMMA_SEP +
                     PRIMARY_KEY + "(" + DBModelValue.ID + "," + DBModelValue.FIELD + ")" + COMMA_SEP +

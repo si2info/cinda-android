@@ -183,7 +183,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         initTabs(0);
 
         adapter = new AdapterContributions(this, myContributions);
-        adapter.setClickListener(this);
+        adapter.setClickListener(Campaign.this);
         recyclerContributions.setLayoutManager(new WrappingLinearLayoutManager(this));
         recyclerContributions.setNestedScrollingEnabled(false);
         recyclerContributions.setHasFixedSize(false);
@@ -684,6 +684,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                             myID = -2;
 
                         adapter = new AdapterContributions(Campaign.this, myContributions);
+                        adapter.setClickListener(Campaign.this);
                         recyclerContributions.setAdapter(adapter);
 
                         contributeText.setText(getString(R.string.my_contribute));
@@ -699,6 +700,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                         }
 
                         adapter = new AdapterContributions(Campaign.this, otherContributions);
+                        adapter.setClickListener(Campaign.this);
                         recyclerContributions.setAdapter(adapter);
 
                         contributeText.setText(getString(R.string.other_contribute));
@@ -839,7 +841,8 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     @Override
     public void onContributionItemClick(View view, int position) {
-
+        Intent intent = new Intent(this, Test.class);
+        startActivity(intent);
     }
 
     /** TABS **/
@@ -854,6 +857,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                 Virde.getInstance(this).getContributions(campaign.getId(), Util.getToken(getApplicationContext()));
             } else  {
                 adapter = new AdapterContributions(Campaign.this, myContributions);
+                adapter.setClickListener(Campaign.this);
                 recyclerContributions.setAdapter(adapter);
                 showRecyclerContributions();
             }
@@ -863,6 +867,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                 Virde.getInstance(this).getContributions(campaign.getId(), "");
             } else {
                 adapter = new AdapterContributions(Campaign.this, otherContributions);
+                adapter.setClickListener(Campaign.this);
                 recyclerContributions.setAdapter(adapter);
                 showRecyclerContributions();
             }

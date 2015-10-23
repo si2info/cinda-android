@@ -13,6 +13,7 @@ public class DBModelValue {
     public static final String ID_CAMP = "idCampaign";
     public static final String FIELD = "field";
     public static final String VALUE = "value";
+    public static final String FIELD_TYPE = "fieldType";
     public static final String ORDER = "nOrder";
     public static final String IS_SYNC = "isSync";
 

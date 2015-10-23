@@ -10,6 +10,8 @@ public class ItemFormContribution {
     private String key, value;
     private boolean withImage;
 
+    public ItemFormContribution () {}
+
     public ItemFormContribution (String key, String value) {
 
         this.key = key;
@@ -36,6 +38,18 @@ public class ItemFormContribution {
 
     public boolean isWithImage() {
         return withImage;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setWithImage(boolean withImage) {
+        this.withImage = withImage;
     }
 
 }

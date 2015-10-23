@@ -7,9 +7,11 @@ package info.si2.iista.volunteernetworks.apiclient;
  */
 public class ItemSync {
 
-    private int type;
+    private int type, id;
     private String imgCampaign, title, description;
     private boolean isSync, isSynchronizing;
+
+    public ItemSync () {}
 
     public ItemSync (int type, String imgCampaign, String title, String description, boolean isSync) {
         this.type = type;
@@ -17,6 +19,14 @@ public class ItemSync {
         this.title = title;
         this.description = description;
         this.isSync = isSync;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public boolean isSync() {

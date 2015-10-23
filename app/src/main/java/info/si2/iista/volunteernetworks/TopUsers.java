@@ -1,5 +1,6 @@
 package info.si2.iista.volunteernetworks;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -52,6 +53,9 @@ public class TopUsers extends AppCompatActivity implements AdapterTopUsers.Click
 
     @Override
     public void onContributionItemClick(View view, int position) {
+
+        Intent intent = new Intent(this, Test.class);
+        startActivity(intent);
 
     }
 

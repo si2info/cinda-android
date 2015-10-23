@@ -45,9 +45,7 @@
         android:layout_height="1dp"
         android:id="@+id/separator"
         android:background="@color/primary"
-        android:layout_below="@+id/imgUser"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp" />
+        android:layout_below="@+id/imgUser" />
 
     <ImageView
         android:layout_width="48dp"

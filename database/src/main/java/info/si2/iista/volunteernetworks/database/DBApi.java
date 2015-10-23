@@ -513,7 +513,7 @@ public class DBApi {
 
                 String sql = "INSERT OR REPLACE INTO " + DBModelValue.TABLE_MODEL_VALUE + " " +
                              "VALUES (" + id + "," + item.getIdModel() + ",'" + item.getField() + "','" +
-                             value + "'," + item.getOrder() + ",'" + item.isSync() + "')";
+                             value + "','" + item.getFieldType() + "'," + item.getOrder() + ",'" + item.isSync() + "')";
 
                 database.execSQL(sql);
 
@@ -590,9 +590,16 @@ public class DBApi {
 
         int from = DBVirde.FROM_SELECT_MODELITEM;
         ArrayList<ItemModelValue> result = new ArrayList<>();
-        String sql = "SELECT * FROM " + DBModelValue.TABLE_MODEL_VALUE +
-                " WHERE " + DBModelValue.ID + "=" + id +
-                " ORDER BY " + DBModelValue.ORDER + " ASC";
+
+        String sql;
+        if (id == -1) {
+            sql = "SELECT * FROM " + DBModelValue.TABLE_MODEL_VALUE +
+                 " ORDER BY " + DBModelValue.ID + " ASC";
+        } else {
+            sql = "SELECT * FROM " + DBModelValue.TABLE_MODEL_VALUE +
+                 " WHERE " + DBModelValue.ID + "=" + id +
+                 " ORDER BY " + DBModelValue.ID + " ASC";
+        }
 
         open();
 
@@ -622,9 +629,11 @@ public class DBApi {
         try {
             value.setId(c.getInt(0));
             value.setIdModel(c.getInt(1));
-            value.setValue(URLDecoder.decode(c.getString(2), "UTF-8"));
-            value.setOrder(c.getInt(3));
-            value.setIsSync(Boolean.valueOf(c.getString(4)));
+            value.setField(c.getString(2));
+            value.setValue(URLDecoder.decode(c.getString(3), "UTF-8"));
+            value.setFieldType(c.getString(4));
+            value.setOrder(c.getInt(5));
+            value.setIsSync(Boolean.valueOf(c.getString(6)));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

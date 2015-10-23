@@ -294,13 +294,14 @@ public class ApiClient {
         formEncodingBuilder.type(MultipartBuilder.FORM);
         for (int i=1; i<values.size(); i++) {
             ItemFormContribution item = values.get(i);
-            if (!item.isWithImage()) {
-                formEncodingBuilder.addFormDataPart(item.getKey(), item.getValue());
-            } else {
-                File image = new File(item.getValue());
-                formEncodingBuilder.addFormDataPart(item.getKey(), image.getName(),
-                        RequestBody.create(MediaType.parse("image/jpg"), image));
-            }
+            if (!item.getKey().equals("myPosContributionNotSend"))
+                if (!item.isWithImage()) {
+                    formEncodingBuilder.addFormDataPart(item.getKey(), item.getValue());
+                } else {
+                    File image = new File(item.getValue());
+                    formEncodingBuilder.addFormDataPart(item.getKey(), image.getName(),
+                            RequestBody.create(MediaType.parse("image/jpg"), image));
+                }
         }
 
         Request request = new Request.Builder()
@@ -308,19 +309,33 @@ public class ApiClient {
                         .post(formEncodingBuilder.build())
                         .build();
 
+        String isPosItemSync = values.get(values.size() - 1).getKey();
+        String posItemSync = values.get(values.size() - 1).getValue();
+
         try {
 
             Response response = client.newCall(request).execute();
             String respStr  = response.body().string();
 
-            if (respStr.equals("1"))
-                return new Pair<>(new Result(false, null, from, 0), new ArrayList<Integer>());
-            else
-                return new Pair<>(new Result(true, message, from, 1), new ArrayList<Integer>());
+            if (respStr.equals("1")) {
+                if (!isPosItemSync.equals("myPosContributionNotSend")) {
+                    return new Pair<>(new Result(false, null, from, 0), new ArrayList<Integer>()); // codigoError reused
+                } else {
+                    return new Pair<>(new Result(false, null, from, Integer.valueOf(posItemSync)), new ArrayList<Integer>()); // codigoError reused
+                }
+            } else {
+                if (!isPosItemSync.equals("myPosContributionNotSend"))
+                    return new Pair<>(new Result(true, message, from, 1), new ArrayList<Integer>()); // codigoError reused
+                else
+                    return new Pair<>(new Result(true, message, from, Integer.valueOf(posItemSync)), new ArrayList<Integer>()); // codigoError reused
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
-            return new Pair<>(new Result(true, message, from, 1), new ArrayList<Integer>());
+            if (!isPosItemSync.equals("myPosContributionNotSend"))
+                return new Pair<>(new Result(true, message, from, 1), new ArrayList<Integer>()); // codigoError reused
+            else
+                return new Pair<>(new Result(true, message, from, Integer.valueOf(posItemSync)), new ArrayList<Integer>()); // codigoError reused
         }
 
     }
