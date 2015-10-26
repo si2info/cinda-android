@@ -24,6 +24,7 @@ import info.si2.iista.volunteernetworks.apiclient.Result;
 import info.si2.iista.volunteernetworks.apiclient.Virde;
 import info.si2.iista.volunteernetworks.database.DBVirde;
 import info.si2.iista.volunteernetworks.database.OnDBApiResult;
+import info.si2.iista.volunteernetworks.util.Util;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -103,6 +104,7 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
         ArrayList<ItemFormContribution> formItems = new ArrayList<>();
         int idContribution = modelValues.get(0).getId();
         formItems.add(new ItemFormContribution("idCampaign", String.valueOf(modelValues.get(0).getIdModel())));
+        formItems.add(new ItemFormContribution("token", Util.getPreference(this, getString(R.string.token))));
         for (int i=0; i<modelValues.size(); i++) {
 
             ItemFormContribution itemForm = new ItemFormContribution();
@@ -136,6 +138,7 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
                             idContribution = modelValues.get(i + 1).getId();
                             formItems = new ArrayList<>();
                             formItems.add(new ItemFormContribution("idCampaign", String.valueOf(modelValues.get(i + 1).getIdModel())));
+                            formItems.add(new ItemFormContribution("token", Util.getPreference(this, getString(R.string.token))));
                         }
                     } else if (i == modelValues.size() - 1) { // Último ítem
                         formItems.add(new ItemFormContribution("myPosContributionNotSend", String.valueOf(position)));
@@ -269,7 +272,13 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
                     item.setIsSync(false);
                 } else {
                     item.setIsSync(true);
+
+                    for (ItemModelValue value : contributions.get(position)) {
+                        value.setIsSync(true);
+                    }
+
                     DBVirde.getInstance(SyncUserData.this).updateModelValue(contributions.get(position));
+
                 }
                 adapter.notifyItemChanged(position);
                 break;
