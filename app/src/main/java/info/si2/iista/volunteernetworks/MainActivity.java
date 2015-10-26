@@ -249,11 +249,23 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                     ArrayList<ItemCampaign> itemsResult = new ArrayList<>();
 
                     int idServer = Util.getIntPreference(MainActivity.this, getString(R.string.id_server));
+
+                    int i = 0;
                     for (Object item : result.second) {
                         ItemCampaign camp = (ItemCampaign)item;
                         camp.setIdServer(idServer);
                         itemsResult.add(camp);
+
+                        if (i<items.size()) {
+                            items.get(i).setTopUsers(camp.getTopUsers());
+                            adapter.notifyItemChanged(i);
+                        }
+
+                        i++;
+
                     }
+
+//                    adapter.notifyDataSetChanged();
 
                     DBVirde.getInstance(this).addCampaigns(itemsResult);
 
@@ -379,13 +391,16 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                         addItemAndNotify((ItemCampaign) item);
                     }
 
-                    if (items.size() == 0) {
-                        doRefresh();
-                        Virde.getInstance(this).getListCampaigns(Util.getPreference(this, getString(R.string.token)));
-                    } else {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mSwipeRefreshLayout.setEnabled(true);
-                    }
+//                    if (items.size() == 0) {
+//                        doRefresh();
+//                        Virde.getInstance(this).getListCampaigns(Util.getPreference(this, getString(R.string.token)));
+//                    } else {
+//                        mSwipeRefreshLayout.setRefreshing(false);
+//                        mSwipeRefreshLayout.setEnabled(true);
+//                    }
+
+                    doRefresh();
+                    Virde.getInstance(this).getListCampaigns(Util.getPreference(this, getString(R.string.token)));
 
                 }
                 break;

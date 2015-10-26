@@ -101,6 +101,7 @@ public class ApiClient {
                     item.setType(Item.CAMPAIGN);
 
                 Collections.addAll(result, items);
+                Collections.reverse(result);
 
                 return new Pair<>(new Result(false, null, from, 0), result);
             } else {

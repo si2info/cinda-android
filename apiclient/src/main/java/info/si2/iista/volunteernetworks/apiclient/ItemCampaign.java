@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -42,6 +43,9 @@ public class ItemCampaign implements Parcelable {
 
     @SerializedName("date_end")
     private Date dateEnd;
+
+    @SerializedName("volunteers_top")
+    private ArrayList<ItemTopUser> topUsers;
 
     public ItemCampaign(){
     }
@@ -142,6 +146,14 @@ public class ItemCampaign implements Parcelable {
         this.scope = scope;
     }
 
+    public ArrayList<ItemTopUser> getTopUsers() {
+        return topUsers;
+    }
+
+    public void setTopUsers(ArrayList<ItemTopUser> topUsers) {
+        this.topUsers = topUsers;
+    }
+
     protected ItemCampaign(Parcel in) {
         type = in.readInt();
         id = in.readInt();
@@ -156,6 +168,12 @@ public class ItemCampaign implements Parcelable {
         dateStart = tmpDateStart != -1 ? new Date(tmpDateStart) : null;
         long tmpDateEnd = in.readLong();
         dateEnd = tmpDateEnd != -1 ? new Date(tmpDateEnd) : null;
+        if (in.readByte() == 0x01) {
+            topUsers = new ArrayList<>();
+            in.readList(topUsers, ItemTopUser.class.getClassLoader());
+        } else {
+            topUsers = null;
+        }
     }
 
     @Override
@@ -176,6 +194,12 @@ public class ItemCampaign implements Parcelable {
         dest.writeByte((byte) (isSuscribe ? 0x01 : 0x00));
         dest.writeLong(dateStart != null ? dateStart.getTime() : -1L);
         dest.writeLong(dateEnd != null ? dateEnd.getTime() : -1L);
+        if (topUsers == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(topUsers);
+        }
     }
 
     @SuppressWarnings("unused")

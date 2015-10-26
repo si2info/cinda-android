@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import info.si2.iista.volunteernetworks.apiclient.Item;
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
+import info.si2.iista.volunteernetworks.apiclient.ItemTopUser;
 import info.si2.iista.volunteernetworks.util.CircleTransform;
 import info.si2.iista.volunteernetworks.util.Util;
 
@@ -134,18 +135,39 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
                 holder.topUsers.post(new Runnable() {
                     @Override
                     public void run() {
+
                         int topUsers = holder.topUsers.getChildCount();
-                        for (int i = 0; i < topUsers; i++) {
 
-                            SelectableRoundedImageView image = (SelectableRoundedImageView) holder.topUsers.getChildAt(i);
+                        if (item.getTopUsers() != null) {
 
-                            Picasso.with(context)
-                                    .load(R.drawable.test_logo_si2)
-                                    .transform(new CircleTransform())
-                                    .resize(200, 200)
-                                    .into(image);
+                            holder.topUsers.setVisibility(View.VISIBLE);
 
+                            for (int i = 0; i < topUsers; i++) {
+
+                                SelectableRoundedImageView image = (SelectableRoundedImageView) holder.topUsers.getChildAt(i);
+
+                                if (item.getTopUsers().get(i).getImage() != null) {
+                                    if (!item.getTopUsers().get(i).getImage().equals("")) {
+
+                                        ItemTopUser topUser = item.getTopUsers().get(i);
+                                        Picasso.with(context)
+                                                .load(topUser.getImage())
+                                                .transform(new CircleTransform())
+                                                .resize(200, 200)
+                                                .into(image);
+                                    } else {
+                                        image.setVisibility(View.GONE);
+                                    }
+                                } else {
+                                    image.setVisibility(View.GONE);
+                                }
+
+                            }
+
+                        } else {
+                            holder.topUsers.setVisibility(View.GONE);
                         }
+
                     }
                 });
 
