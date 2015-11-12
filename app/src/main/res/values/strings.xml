@@ -99,6 +99,7 @@
         <string name="issue_description"> </string>
 
         <!-- item_campaign_user -->
+        <string name="user"> </string>
         <string name="campaign_user_title"> </string>
         <string name="campaign_user_data"> </string>
 

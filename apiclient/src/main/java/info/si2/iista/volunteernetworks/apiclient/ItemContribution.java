@@ -20,6 +20,11 @@ public class ItemContribution {
     @SerializedName("create_date")
     private String date;
 
+    // Wear
+    private int ID;
+    private String name;
+    private String geopos;
+
     public ItemContribution(int id, boolean isMine, String user, String description, String date) {
         this.id = id;
         this.isMine = isMine;
@@ -68,4 +73,27 @@ public class ItemContribution {
         this.date = date;
     }
 
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getGeopos() {
+        return geopos;
+    }
+
+    public void setGeopos(String geopos) {
+        this.geopos = geopos;
+    }
 }

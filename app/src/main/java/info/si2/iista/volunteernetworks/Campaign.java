@@ -841,8 +841,8 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     @Override
     public void onContributionItemClick(View view, int position) {
-        Intent intent = new Intent(this, Test.class);
-        startActivity(intent);
+//        Intent intent = new Intent(this, Test.class);
+//        startActivity(intent);
     }
 
     /** TABS **/
