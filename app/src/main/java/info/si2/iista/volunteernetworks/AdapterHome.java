@@ -146,15 +146,19 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
 
                                 SelectableRoundedImageView image = (SelectableRoundedImageView) holder.topUsers.getChildAt(i);
 
-                                if (item.getTopUsers().get(i).getImage() != null) {
-                                    if (!item.getTopUsers().get(i).getImage().equals("")) {
+                                if (i < item.getTopUsers().size()){
+                                    if (item.getTopUsers().get(i).getImage() != null) {
+                                        if (!item.getTopUsers().get(i).getImage().equals("")) {
 
-                                        ItemTopUser topUser = item.getTopUsers().get(i);
-                                        Picasso.with(context)
-                                                .load(topUser.getImage())
-                                                .transform(new CircleTransform())
-                                                .resize(200, 200)
-                                                .into(image);
+                                            ItemTopUser topUser = item.getTopUsers().get(i);
+                                            Picasso.with(context)
+                                                    .load(topUser.getImage())
+                                                    .transform(new CircleTransform())
+                                                    .resize(200, 200)
+                                                    .into(image);
+                                        } else {
+                                            image.setVisibility(View.GONE);
+                                        }
                                     } else {
                                         image.setVisibility(View.GONE);
                                     }

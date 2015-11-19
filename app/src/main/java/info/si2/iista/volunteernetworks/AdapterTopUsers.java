@@ -92,11 +92,12 @@ public class AdapterTopUsers extends RecyclerView.Adapter<AdapterTopUsers.ViewHo
         holder.user.setText(item.getUsername());
         holder.nContributions.setText(String.valueOf(item.getnContributions()));
 
-        Picasso.with(context)
-                .load(item.getImage())
-                .transform(new CircleTransform())
-                .resize(200, 200)
-                .into(holder.image);
+        if (!item.getImage().equals(""))
+            Picasso.with(context)
+                    .load(item.getImage())
+                    .transform(new CircleTransform())
+                    .resize(200, 200)
+                    .into(holder.image);
 
     }
 

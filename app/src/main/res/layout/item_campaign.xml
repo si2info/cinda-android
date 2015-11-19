@@ -113,14 +113,14 @@
         style="@style/text.issueDescription"
         android:text="@string/issue_description"
         android:id="@+id/description"
-        android:layout_below="@+id/topUsers"
+        android:layout_below="@+id/head"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="36dp" />
 
     <android.support.v7.widget.AppCompatButton
         style="@style/suscribirse"

@@ -291,28 +291,30 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
                 final SelectableRoundedImageView image = (SelectableRoundedImageView) topUsers.getChildAt(i);
 
-                Picasso.with(this)
-                        .load(users.get(i).getImage())
-                        .into(image, new com.squareup.picasso.Callback() {
-                            @Override
-                            public void onSuccess() {
-                                coordinatorLayout.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        image.setVisibility(View.VISIBLE);
-                                        image.startAnimation(grow);
-                                    }
-                                });
-                            }
+                if (!users.get(i).getImage().equals(""))
+                    Picasso.with(this)
+                            .load(users.get(i).getImage())
+                            .into(image, new com.squareup.picasso.Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    coordinatorLayout.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            image.setVisibility(View.VISIBLE);
+                                            image.startAnimation(grow);
+                                        }
+                                    });
+                                }
 
-                            @Override
-                            public void onError() {
+                                @Override
+                                public void onError() {
 
-                            }
-                        });
+                                }
+                            });
 
             } else { // Less than 3 users
-                topUsers.getChildAt(i).setVisibility(View.INVISIBLE);
+                if (i < topUsers.getChildCount())
+                    topUsers.getChildAt(i).setVisibility(View.INVISIBLE);
             }
         }
 
