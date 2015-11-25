@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Virde</string>
+    
+    <string name="parseApplicationID">GmZfs4Q3ispg7C5mrT5sfFk2PpPs0HXudLP7tkTr</string>
+    <string name="parseClientKey">LjphrT3LxgdumkViIhKiQfnEapWJ63U5TrL9x4Zl</string>
 
     <!-- menu_main -->
     <string name="action_sync">Sincronizar</string>
@@ -11,7 +14,7 @@
 
     <!-- item_campaign -->
     <string name="suscribe">Suscribirse</string>
-    <string name="unsuscribe">No me interesa</string>
+    <string name="unsuscribe">Dejar de seguir</string>
 
     <!-- campaign -->
     <string name="campaignDateTitle">FECHAS</string>
@@ -87,6 +90,10 @@
     <!-- Errors -->
     <string name="userCantOperate">Inténtelo más tarde</string>
     <string name="noID">Modelo no disponible</string>
+
+    <!-- Push -->
+    <string name="parseDebugChannel">DebugChannel</string>
+    <string name="parseProductionChannel">ProductionChannel</string>
 
     <!-- Test String -->
         <!-- activity_main -->
