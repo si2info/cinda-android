@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -413,8 +414,23 @@ public class Util {
 
     }
 
+    /**
+     * Devuelve la fuente Roboto Light
+     * @param c Context
+     * @return Typeface Roboto Light
+     */
     public static Typeface getRobotoLight (Context c) {
         return Typeface.createFromAsset(c.getAssets(), "fonts/Roboto-Light.ttf");
+    }
+
+    /**
+     * Make Toast
+     * @param c Context
+     * @param msg Mensaje a mostrar
+     * @param length Duración del toast. 0 = LENGHT_SHORT, 1 = LENGHT_LONG
+     */
+    public static void makeToast (Context c, String msg, int length) {
+        Toast.makeText(c, msg, length).show();
     }
 
 }

@@ -35,15 +35,15 @@ public class ApiClient {
     private static String HOST = "";
 
     // URLs
-    private static final String URL_CAMPAIGNS = "API/campaigns/list/";
-    private static final String URL_DATA_CAMPAIGN = "API/campaign/";
-    private static final String URL_MODEL_CAMPAIGN = "API/campaign/%s/model/";
-    private static final String URL_REGISTER_USER = "API/volunteer/register/";
-    private static final String URL_SUSCRIBE_CAMPAIGN = "API/campaign/%s/suscribe/";
-    private static final String URL_UNSUSCRIBE_CAMPAIGN = "API/campaign/%s/unsuscribe/";
-    private static final String URL_SEND_CONTRIBUTION = "API/campaign/%s/sendData/";
-    private static final String URL_GET_CONTRIBUTIONS = "API/campaign/%s/listData/";
-    private static final String URL_GET_LIST_VOLUNTEERS = "API/campaign/%s/listVolunteers/";
+    private static final String URL_CAMPAIGNS = "/API/campaigns/list/";
+    private static final String URL_DATA_CAMPAIGN = "/API/campaign/";
+    private static final String URL_MODEL_CAMPAIGN = "/API/campaign/%s/model/";
+    private static final String URL_REGISTER_USER = "/API/volunteer/register/";
+    private static final String URL_SUSCRIBE_CAMPAIGN = "/API/campaign/%s/suscribe/";
+    private static final String URL_UNSUSCRIBE_CAMPAIGN = "/API/campaign/%s/unsuscribe/";
+    private static final String URL_SEND_CONTRIBUTION = "/API/campaign/%s/sendData/";
+    private static final String URL_GET_CONTRIBUTIONS = "/API/campaign/%s/listData/";
+    private static final String URL_GET_LIST_VOLUNTEERS = "/API/campaign/%s/listVolunteers/";
 
     private static Context context;
 
@@ -446,11 +446,17 @@ public class ApiClient {
 
     }
 
+    public static void setActiveServer (String newServer) {
+
+        HOST = newServer;
+
+    }
+
     private static OkHttpClient getOkHttpClient () {
 
         OkHttpClient client = new OkHttpClient();
-        client.setConnectTimeout(15, TimeUnit.SECONDS);
-        client.setReadTimeout(15, TimeUnit.SECONDS);
+        client.setConnectTimeout(10, TimeUnit.SECONDS);
+        client.setReadTimeout(10, TimeUnit.SECONDS);
 
         return client;
 

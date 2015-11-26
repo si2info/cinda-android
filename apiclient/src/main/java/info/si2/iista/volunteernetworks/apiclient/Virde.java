@@ -90,6 +90,10 @@ public class Virde {
         new VirdeGetListVolunteers().execute(String.valueOf(idCampaign));
     }
 
+    public void setActiveServer (String newServer) {
+        ApiClient.setActiveServer(newServer);
+    }
+
     /** AsyncTasks **/
 
     class VirdeGetListCampaigns extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemCampaign>>> {

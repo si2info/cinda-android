@@ -32,7 +32,7 @@
     <string name="moreUsers"> </string>
 
     <!-- Servers -->
-    <string name="defaultServer">http://virde.dev.si2soluciones.es/</string>
+    <string name="defaultServer">http://virde.dev.si2soluciones.es</string>
     <string name="defaultDescServer">Servidor por defecto de Virde. Descubre campañas y aporta tu contribución.</string>
     <string name="serverNoDesc">Servidor sin descripción.</string>
     <string name="isDefaultServer">isDefaultServer</string>
@@ -47,11 +47,12 @@
     <string name="cancel">Cancelar</string>
     <string name="sendAgain">Volver a intentar</string>
     <string name="completeAll">Complete la url del servidor</string>
-    <string name="invalidUrl">Introduzca un servidor válido</string>
+    <string name="invalidUrl">El servidor proporcionado no es correcto</string>
+    <string name="checkingServer">Conectando con el nuevo servidor&#8230;</string>
 
     <!-- contribution -->
     <string name="loading">Cargando modelo de campaña</string>
-    <string name="sendingContribution">Enviado su contribución&#8230;</string>
+    <string name="sendingContribution">Enviando su contribución&#8230;</string>
     <string name="contributionSended">Contribución enviada</string>
     <string name="contributionNoSend">No ha sido posible enviar su contribución, ha quedado guardada para una posterior sincronización desde la opción \"Sincronizar\".</string>
     <string name="myShipments">MIS ENVÍOS</string>

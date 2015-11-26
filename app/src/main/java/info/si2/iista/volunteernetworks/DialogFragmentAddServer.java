@@ -85,7 +85,7 @@ public class DialogFragmentAddServer extends DialogFragment {
                         String name = serverName.getEditText().getText().toString();
                         if (!name.equals("")) {
 
-                            if (!name.startsWith("http://")) // Añadir sufijo de url si el usuario no lo añade
+                            if (!name.startsWith("http://")) // Anteponer a la url "http://" si el usuario no lo añade
                                 name = "http://" + name;
 
                             if (URLUtil.isValidUrl(name)) {
