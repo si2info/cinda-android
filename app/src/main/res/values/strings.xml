@@ -4,6 +4,14 @@
     <string name="parseApplicationID">GmZfs4Q3ispg7C5mrT5sfFk2PpPs0HXudLP7tkTr</string>
     <string name="parseClientKey">LjphrT3LxgdumkViIhKiQfnEapWJ63U5TrL9x4Zl</string>
 
+    <!-- Request permissions -->
+    <string name="permission_contacts_explanation">Necesitamos conocer tu correo para que puedas enviar contribuciones, ¿estás de acuerdo?</string>
+
+    <!-- activity_main -->
+    <string name="virde_advice">¡Empieza a usar Virde!</string>
+    <string name="virde_advice_desc">Descubre y contribuye en las campañas de Virde proporcionando tu correo</string>
+    <string name="activate">Activar</string>
+
     <!-- menu_main -->
     <string name="action_sync">Sincronizar</string>
     <string name="action_servers">Servidores</string>
@@ -114,5 +122,8 @@
         <!-- item_campaign_sync -->
         <string name="campaign_sync_title"> </string>
         <string name="campaign_sync_desc"> </string>
+
+        <!-- Server -->
+        <string name="urlServer"> </string>
 
 </resources>

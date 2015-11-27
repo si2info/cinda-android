@@ -79,4 +79,48 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/permissionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:background="@android:color/white">
+
+        <TextView
+            style="@style/text.advice"
+            android:text="@string/virde_advice"
+            android:id="@+id/advice"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp" />
+
+        <TextView
+            style="@style/text.advice.desc"
+            android:text="@string/virde_advice_desc"
+            android:id="@+id/adviceDesc"
+            android:layout_below="@+id/advice"
+            android:layout_alignLeft="@+id/advice"
+            android:layout_alignStart="@+id/advice"
+            android:layout_alignRight="@+id/advice"
+            android:layout_alignEnd="@+id/advice"
+            android:layout_marginTop="16dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/activate"
+            android:id="@+id/button"
+            android:layout_below="@+id/adviceDesc"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:minWidth="160dp"
+            android:onClick="activatePermissionContact" />
+
+    </RelativeLayout>
+
 </RelativeLayout>

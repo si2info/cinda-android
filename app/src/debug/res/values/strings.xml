@@ -29,4 +29,7 @@
     <string name="campaign_sync_title">Nombre de campaña</string>
     <string name="campaign_sync_desc">01 Ago 2015</string>
 
+    <!-- Server -->
+    <string name="urlServer">Url server</string>
+
 </resources>

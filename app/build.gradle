@@ -27,6 +27,10 @@ android {
         multiDexEnabled true
     }
 
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
     productFlavors {
         development {
             applicationId 'info.si2.iista.volunteernetworks.debug'

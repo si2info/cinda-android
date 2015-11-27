@@ -2,13 +2,21 @@ package info.si2.iista.volunteernetworks;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,8 +49,10 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         OnDBApiResult, SwipeRefreshLayout.OnRefreshListener {
 
     // Views
+    private RecyclerView recyclerView;
     private TextView serverUrl;
     private TextView serverDesc;
+    private RelativeLayout permissionLayout;
 
     // OnActivityResult
     private static final int FROM_SEE_CAMPAIGN = 1;
@@ -69,6 +79,9 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
     private boolean isAnimatingDescIn;    // Description
     private boolean isDescShowing;        // Description
 
+    // Request
+    private static final int PERMISSIONS_REQUEST_GET_ACCOUNTS = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +96,11 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
         // Views
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         serverUrl = (TextView)findViewById(R.id.serverUrl);
         serverDesc = (TextView)findViewById(R.id.serverDesc);
         serverInfo = (RelativeLayout)findViewById(R.id.serverInfo);
+        permissionLayout = (RelativeLayout)findViewById(R.id.permissionLayout);
 
         // RecyclerView
         recyclerView.setHasFixedSize(true);
@@ -96,6 +110,20 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+
+        // Contacts permission
+        if (Build.VERSION.SDK_INT >= 23) {
+            checkContactPermission();
+        } else {
+            initApplication();
+        }
+
+    }
+
+    private void initApplication () {
+
+        // Hide permission layout
+        permissionLayout.setVisibility(View.GONE);
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -127,6 +155,54 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         // Get active server
         DBVirde.getInstance(this).selectActiveServer();
 
+    }
+
+    /**
+     * Check if user grant GET_ACCOUNTS permission
+     */
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkContactPermission () {
+
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.GET_ACCOUNTS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (shouldShowRequestPermissionRationale(android.Manifest.permission.GET_ACCOUNTS)) {
+                showMessageOKCancel(getString(R.string.permission_contacts_explanation),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ActivityCompat.requestPermissions(MainActivity.this,
+                                        new String[]{android.Manifest.permission.GET_ACCOUNTS},
+                                        PERMISSIONS_REQUEST_GET_ACCOUNTS);
+                            }
+                        });
+            }
+
+        } else {
+            initApplication();
+        }
+
+    }
+
+    /**
+     * AlertView constructor
+     * @param message Message will be show
+     * @param okListener listener when user click "ok" button
+     */
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(MainActivity.this)
+                .setMessage(message)
+                .setPositiveButton(getString(R.string.ok), okListener)
+                .setNegativeButton(getString(R.string.cancel), null)
+                .create()
+                .show();
+    }
+
+    public void activatePermissionContact (View view) {
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{android.Manifest.permission.GET_ACCOUNTS},
+                PERMISSIONS_REQUEST_GET_ACCOUNTS);
     }
 
     @Override
@@ -426,6 +502,24 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
     @Override
     public void onDBApiUpdateResult(Result result) {
+    }
+
+    /** Request permissions **/
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_GET_ACCOUNTS: {
+
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // Permission granted
+                    initApplication();
+                } else {
+                    permissionLayout.setVisibility(View.VISIBLE);
+                }
+
+                break;
+            }
+        }
     }
 
     /**

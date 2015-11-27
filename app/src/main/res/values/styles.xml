@@ -40,6 +40,19 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="text.advice">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="text.advice.desc">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:gravity">center</item>
+    </style>
+
     <style name="text.url">
         <item name="android:textColor">@color/link</item>
         <item name="android:textSize">14sp</item>
