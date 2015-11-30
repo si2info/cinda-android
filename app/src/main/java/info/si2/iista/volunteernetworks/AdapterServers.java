@@ -84,9 +84,9 @@ public class AdapterServers extends RecyclerView.Adapter<AdapterServers.ViewHold
             case Item.SERVER:
 
                 // Info server
-                holder.server.setText(item.getServer());
-                if (!item.getDescripcion().equals("")) {
-                    holder.serverDesc.setText(item.getDescripcion());
+                holder.server.setText(item.getUrl());
+                if (!item.getDescription().equals("")) {
+                    holder.serverDesc.setText(item.getDescription());
                 } else {
                     holder.serverDesc.setText(context.getString(R.string.serverNoDesc));
                 }

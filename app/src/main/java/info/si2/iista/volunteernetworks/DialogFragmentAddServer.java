@@ -23,7 +23,7 @@ public class DialogFragmentAddServer extends DialogFragment {
     DialogFragmentAddServerListener mListener;
 
     public interface DialogFragmentAddServerListener {
-        void onDialogPositiveClick(String name);
+        void onDialogPositiveClick(String url);
     }
 
     @Override

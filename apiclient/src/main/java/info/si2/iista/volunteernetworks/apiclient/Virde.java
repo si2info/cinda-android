@@ -25,6 +25,7 @@ public class Virde {
     public static final int FROM_SEND_CONTRIBUTION = 7;
     public static final int FROM_GET_CONTRIBUTIONS = 8;
     public static final int FROM_GET_LIST_VOLUNTEERS = 9;
+    public static final int FROM_GET_SERVER_INFO = 10;
 
     public static Virde getInstance() {
         if (context == null)
@@ -56,6 +57,10 @@ public class Virde {
     }
 
     /** Peticiones a servidor **/
+    public void getServerInfo(String urlServer) {
+        new VirdeGetServerInfo().execute(urlServer);
+    }
+
 
     public void getListCampaigns(String token) {
         new VirdeGetListCampaigns().execute(token);
@@ -95,6 +100,21 @@ public class Virde {
     }
 
     /** AsyncTasks **/
+
+    class VirdeGetServerInfo extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemServer>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<ItemServer>> doInBackground(String... params) {
+            ApiClient apiClient = ApiClient.getInstance();
+            return apiClient.getServerInfo(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onApiClientRequestResult(result);
+        }
+
+    }
 
     class VirdeGetListCampaigns extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemCampaign>>> {
 

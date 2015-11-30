@@ -350,7 +350,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         }
 
         // Url server
-        String urlServer = Util.getPreference(this, getString(R.string.server));
+        String urlServer = Util.getPreference(this, getString(R.string.serverUrl));
         values.add(new ItemFormContribution(ItemModel.ITEM_URL_SERVER, urlServer));
 
         if (!model.get(model.size()-1).getFieldType().equals(ItemModel.ITEM_URL_SERVER)) {

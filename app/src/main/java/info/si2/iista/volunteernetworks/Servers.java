@@ -126,21 +126,21 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
 
     /** Dialog add server **/
     @Override
-    public void onDialogPositiveClick(String name) {
+    public void onDialogPositiveClick(String url) {
 
         // Dialog
         dialog = new ProgressDialogFragment();
         dialog.show(getFragmentManager(), getString(R.string.checkingServer));
 
         // RecyclerView
-        items.add(new ItemServer(-1, Item.SERVER, name, "", true));
+        items.add(new ItemServer(-1, Item.SERVER, url, "", true));
         adapter.notifyItemInserted(items.size()-1);
 
         // Save old server. If new server isn't correct, set old server.
-        oldUrlServer = Util.getPreference(this, getString(R.string.server));
+        oldUrlServer = Util.getPreference(this, getString(R.string.serverUrl));
 
         // Set main server in app
-        setMainServer(name);
+        setMainServer(url);
 
         // Test if its a correct server
         checkServer();
@@ -156,7 +156,7 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.userPreferences), Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(getString(R.string.server), newServer);
+        editor.putString(getString(R.string.serverUrl), newServer);
         editor.apply();
 
         Virde.getInstance(this).setActiveServer(newServer);

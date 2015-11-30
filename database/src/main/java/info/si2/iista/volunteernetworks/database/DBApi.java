@@ -17,8 +17,10 @@ import java.util.Date;
 import java.util.Locale;
 
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
+import info.si2.iista.volunteernetworks.apiclient.ItemGoogleMaps;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
+import info.si2.iista.volunteernetworks.apiclient.ItemParse;
 import info.si2.iista.volunteernetworks.apiclient.ItemServer;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 
@@ -668,17 +670,25 @@ public class DBApi {
 
             // URL server
             String url = "";
-            if (item.getServer() != null)
-                url = URLEncoder.encode(item.getServer(), "UTF-8");
+            if (item.getUrl() != null)
+                url = URLEncoder.encode(item.getUrl(), "UTF-8");
+
+            // Name server
+            String name = "";
+            if (item.getName() != null)
+                name = URLEncoder.encode(item.getName(), "UTF-8");
 
             // URL server
             String desc = "";
-            if (item.getDescripcion() != null)
-                desc = URLEncoder.encode(item.getDescripcion(), "UTF-8");
+            if (item.getDescription() != null)
+                desc = URLEncoder.encode(item.getDescription(), "UTF-8");
 
             String sql = "INSERT OR REPLACE INTO " + DBServer.TABLE_SERVER + " " +
-                         "(" + DBServer.TYPE + ", " + DBServer.URL + ", " + DBServer.DESC + ", " + DBServer.ACTIVE + ")" +
-                         " VALUES (" + item.getType() + ", '" + url + "', '" + desc + "', '" + item.isActive() + "')";
+                         "(" + DBServer.TYPE + ", " + DBServer.NAME + ", " + DBServer.DESC + ", " + DBServer.URL + ", " +
+                         DBServer.GOOGLE_MAPS_STATIC_KEY + ", " + DBServer.PARSE_API  + ", " + DBServer.PARSE_KEY + ", " + DBServer.ACTIVE + ")" +
+                         " VALUES (" + item.getType() + ", '" + name + "', '" + desc + "', '" + url + "', '" +
+                         item.getMapsKeys().getApi() + "', '" + item.getParseKeys().getApi() + "', '" + item.getParseKeys().getKey() + "', '" +
+                         item.isActive() + "')";
 
             database.execSQL(sql);
 
@@ -723,18 +733,27 @@ public class DBApi {
 
             // URL server
             String url = "";
-            if (item.getServer() != null)
-                url = URLEncoder.encode(item.getServer(), "UTF-8");
+            if (item.getUrl() != null)
+                url = URLEncoder.encode(item.getUrl(), "UTF-8");
+
+            // Name server
+            String name = "";
+            if (item.getName() != null)
+                name = URLEncoder.encode(item.getName(), "UTF-8");
 
             // URL server
             String desc = "";
-            if (item.getDescripcion() != null)
-                desc = URLEncoder.encode(item.getDescripcion(), "UTF-8");
+            if (item.getDescription() != null)
+                desc = URLEncoder.encode(item.getDescription(), "UTF-8");
 
             String sql = "UPDATE " + DBServer.TABLE_SERVER +
                     " SET " + DBServer.TYPE + "=" + item.getType() + ", " +
-                    DBServer.URL + "='" + url + "', " +
+                    DBServer.NAME + "='" + name + "', " +
                     DBServer.DESC + "='" + desc + "', " +
+                    DBServer.URL + "='" + url + "', " +
+                    DBServer.GOOGLE_MAPS_STATIC_KEY + "='" + item.getMapsKeys().getApi() + "', " +
+                    DBServer.PARSE_API + "='" + item.getParseKeys().getApi() + "', " +
+                    DBServer.PARSE_KEY + "='" + item.getParseKeys().getKey() + "', " +
                     DBServer.ACTIVE + "='" + item.isActive() + "' " +
                     " WHERE " + DBServer.ID + "=" + item.getId();
 
@@ -824,9 +843,12 @@ public class DBApi {
         try {
             item.setId(c.getInt(0));
             item.setType(c.getInt(1));
-            item.setServer(URLDecoder.decode(c.getString(2), "UTF-8"));
-            item.setDescripcion(URLDecoder.decode(c.getString(3), "UTF-8"));
-            item.setActive(Boolean.valueOf(c.getString(4)));
+            item.setName(URLDecoder.decode(c.getString(2), "UTF-8"));
+            item.setDescription(URLDecoder.decode(c.getString(3), "UTF-8"));
+            item.setUrl(URLDecoder.decode(c.getString(4), "UTF-8"));
+            item.setMapsKeys(new ItemGoogleMaps(c.getString(5)));
+            item.setParseKeys(new ItemParse(c.getString(6), c.getString(7)));
+            item.setActive(Boolean.valueOf(c.getString(8)));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -893,7 +915,7 @@ public class DBApi {
     private String getActiveServer () {
 
         SharedPreferences sharedPref = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
-        return sharedPref.getString("server", "");
+        return sharedPref.getString("serverUrl", "");
 
     }
 

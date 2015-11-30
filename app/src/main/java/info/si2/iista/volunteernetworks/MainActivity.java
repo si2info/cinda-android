@@ -35,7 +35,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import info.si2.iista.volunteernetworks.apiclient.Item;
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.apiclient.ItemServer;
 import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
@@ -148,12 +147,15 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
         // Default server
         if (!Util.getBoolPreferenceModel(this, getString(R.string.isDefaultServer))) {
-            ItemServer item = new ItemServer(-1, Item.SERVER, getString(R.string.defaultServer), getString(R.string.defaultDescServer), true);
-            DBVirde.getInstance(this).insertServer(item);
-        }
 
-        // Get active server
-        DBVirde.getInstance(this).selectActiveServer();
+            Virde.getInstance(this).getServerInfo(getString(R.string.defaultServer));
+
+        } else {
+
+            // Get active server
+            DBVirde.getInstance(this).selectActiveServer();
+
+        }
 
     }
 
@@ -304,6 +306,20 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
     public void onApiClientRequestResult(Pair<Result, ArrayList> result) {
 
         switch (result.first.getResultFrom()) {
+            case Virde.FROM_GET_SERVER_INFO:
+                if (result.first.isError()) {
+                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    mSwipeRefreshLayout.setEnabled(true);
+                } else {
+
+                    // Add server to DB
+                    ItemServer item = (ItemServer) result.second.get(0);
+                    item.setActive(true);
+                    DBVirde.getInstance(this).insertServer(item);
+
+                }
+                break;
             case Virde.FROM_USER_REGISTER:
                 if (result.first.isError()) {
                     Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
@@ -412,6 +428,11 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                     Log.e("DBVirde", "Server not inserted");
                 } else {
                     if (!Util.getBoolPreferenceModel(MainActivity.this, getString(R.string.isDefaultServer))) {
+
+                        // Get active server
+                        DBVirde.getInstance(this).selectActiveServer();
+
+                        // Set active server
                         Util.saveBoolPreferenceModel(MainActivity.this, getString(R.string.isDefaultServer), true);
                     }
                 }
@@ -425,7 +446,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         switch (result.first.getResultFrom()) {
             case DBVirde.FROM_SELECT_ACTIVE_SERVER:
                 if (result.first.isError()) {
-                    Log.e("DBVirde", "Campaigns not selected");
+                    Log.e("DBVirde", "Server no selected from DB");
                 } else {
                     if (result.second.size() > 0) {
 
@@ -433,10 +454,10 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                         ItemServer server = (ItemServer) result.second.get(0);
 
                         // Set server info
-                        serverUrl.setText(server.getServer());
+                        serverUrl.setText(server.getUrl());
 
-                        if (server.getDescripcion().length() != 0)
-                            serverDesc.setText(server.getDescripcion());
+                        if (server.getDescription().length() != 0)
+                            serverDesc.setText(server.getDescription());
                         else
                             serverDesc.setText(getString(R.string.serverNoDesc));
 
@@ -467,16 +488,13 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                         addItemAndNotify((ItemCampaign) item);
                     }
 
-//                    if (items.size() == 0) {
-//                        doRefresh();
-//                        Virde.getInstance(this).getListCampaigns(Util.getPreference(this, getString(R.string.token)));
-//                    } else {
-//                        mSwipeRefreshLayout.setRefreshing(false);
-//                        mSwipeRefreshLayout.setEnabled(true);
-//                    }
-
-                    doRefresh();
-                    Virde.getInstance(this).getListCampaigns(Util.getPreference(this, getString(R.string.token)));
+                    if (items.size() == 0) {
+                        doRefresh();
+                        Virde.getInstance(this).getListCampaigns(Util.getPreference(this, getString(R.string.token)));
+                    } else {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mSwipeRefreshLayout.setEnabled(true);
+                    }
 
                 }
                 break;
@@ -698,12 +716,15 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.userPreferences), Context.MODE_PRIVATE);
 
-        if (!sharedPref.contains(getString(R.string.server))) {
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putString(getString(R.string.server), server.getServer());
-            editor.putInt(getString(R.string.id_server), server.getId());
-            editor.apply();
-        }
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(getString(R.string.id_server), server.getId());
+        editor.putString(getString(R.string.serverUrl), server.getUrl());
+        editor.putString(getString(R.string.serverName), server.getName());
+        editor.putString(getString(R.string.serverDesc), server.getDescription());
+        editor.putString(getString(R.string.serverMapsApi), server.getMapsKeys().getApi());
+        editor.putString(getString(R.string.serverParseApi), server.getParseKeys().getApi());
+        editor.putString(getString(R.string.serverParseKey), server.getParseKeys().getKey());
+        editor.apply();
 
     }
 

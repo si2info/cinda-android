@@ -83,10 +83,17 @@
     <string name="n_top">1</string>
     <string name="n_sends">12</string>
     
-    <!-- Shared Preferences -->
+    <!-- Server Shared Preferences -->
     <string name="userPreferences">userPreferences</string>
-    <string name="server">server</string>
     <string name="id_server">idServer</string>
+    <string name="serverUrl">serverUrl</string>
+    <string name="serverName">serverName</string>
+    <string name="serverDesc">serverDesc</string>
+    <string name="serverMapsApi">serverMapsApi</string>
+    <string name="serverParseApi">serverParseApi</string>
+    <string name="serverParseKey">serverParseKey</string>
+
+    <!-- User Shared Preferences -->
     <string name="username">username</string>
     <string name="mail">mail</string>
     <string name="device_id">deviceID</string>

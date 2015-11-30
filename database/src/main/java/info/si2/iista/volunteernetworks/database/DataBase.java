@@ -26,8 +26,12 @@ public class DataBase extends SQLiteOpenHelper {
             "CREATE TABLE " + DBServer.TABLE_SERVER + " (" +
                     DBServer.ID + TYPE_INT + PRIMARY_KEY + COMMA_SEP +
                     DBServer.TYPE + TYPE_INT + COMMA_SEP +
-                    DBServer.URL + TYPE_TEXT + COMMA_SEP +
+                    DBServer.NAME + TYPE_INT + COMMA_SEP +
                     DBServer.DESC + TYPE_TEXT + COMMA_SEP +
+                    DBServer.URL + TYPE_TEXT + COMMA_SEP +
+                    DBServer.GOOGLE_MAPS_STATIC_KEY + TYPE_TEXT + COMMA_SEP +
+                    DBServer.PARSE_API + TYPE_TEXT + COMMA_SEP +
+                    DBServer.PARSE_KEY + TYPE_TEXT + COMMA_SEP +
                     DBServer.ACTIVE + TYPE_BOOLEAN +
                     ");";
 

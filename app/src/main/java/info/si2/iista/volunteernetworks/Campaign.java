@@ -572,7 +572,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
             public void onClick(View view) {
                 if (description.getTag() == 0) { // Expand
 
-                    description.setText(item.getDescription());
+                    description.setText(Html.fromHtml(item.getDescription()));
                     description.setTag(1);
 
                 } else { // Collapse

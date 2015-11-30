@@ -35,6 +35,7 @@ public class ApiClient {
     private static String HOST = "";
 
     // URLs
+    private static final String URL_SERVER_INFO = "/API/server/info/";
     private static final String URL_CAMPAIGNS = "/API/campaigns/list/";
     private static final String URL_DATA_CAMPAIGN = "/API/campaign/";
     private static final String URL_MODEL_CAMPAIGN = "/API/campaign/%s/model/";
@@ -64,6 +65,42 @@ public class ApiClient {
     public static ApiClient getInstance() {
         createInstance();
         return INSTANCE;
+    }
+
+    public Pair<Result, ArrayList<ItemServer>> getServerInfo (String urlServer) {
+
+        // FROM
+        int from = Virde.FROM_GET_SERVER_INFO;
+        String message = "Inténtelo más tarde";
+
+        ArrayList<ItemServer> result = new ArrayList<>();
+        OkHttpClient client = getOkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(urlServer + URL_SERVER_INFO)
+                .build();
+
+        try {
+
+            Response response = client.newCall(request).execute();
+            String respStr  = response.body().string();
+
+            GsonBuilder gsonBuilder = new GsonBuilder()
+                    .setDateFormat("yyyy-MM-dd HH:mm:ss");
+            Gson gson = gsonBuilder.create();
+
+            if (!respStr.equals("0")) {
+                ItemServer item = gson.fromJson(respStr, ItemServer.class);
+                Collections.addAll(result, item);
+            }
+
+            return new Pair<>(new Result(false, null, from, 0), result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Pair<>(new Result(true, message, from, 0), null);
+        }
+
     }
 
     public Pair<Result, ArrayList<ItemCampaign>> getListCampaigns (String token) {
@@ -199,6 +236,9 @@ public class ApiClient {
         String message = "Intente acceder más tarde";
         ArrayList<String> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
+
+        if (HOST.equals(""))
+            HOST = getActiveServer();
 
         RequestBody formBody = new FormEncodingBuilder()
                 .add("nickname", username)
@@ -442,7 +482,7 @@ public class ApiClient {
     private static String getActiveServer () {
 
         SharedPreferences sharedPref = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
-        return sharedPref.getString("server", "");
+        return sharedPref.getString("serverUrl", "");
 
     }
 
