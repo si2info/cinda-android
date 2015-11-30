@@ -43,7 +43,8 @@ public class AdapterSyncUserData extends RecyclerView.Adapter<AdapterSyncUserDat
 
         ImageView imgUser;
         TextView title;
-        TextView description;
+        TextView url;
+        TextView date;
         ImageView isSync;
         ProgressBar syncProgress;
         View separator;
@@ -55,7 +56,8 @@ public class AdapterSyncUserData extends RecyclerView.Adapter<AdapterSyncUserDat
                 case Item.SYNC:
                     imgUser = (ImageView)itemView.findViewById(R.id.imgUser);
                     title = (TextView)itemView.findViewById(R.id.title);
-                    description = (TextView)itemView.findViewById(R.id.description);
+                    url = (TextView)itemView.findViewById(R.id.urlServer);
+                    date = (TextView)itemView.findViewById(R.id.date);
                     isSync = (ImageView)itemView.findViewById(R.id.isSync);
                     syncProgress = (ProgressBar)itemView.findViewById(R.id.syncProgressBar);
                     separator = itemView.findViewById(R.id.separator);
@@ -115,14 +117,15 @@ public class AdapterSyncUserData extends RecyclerView.Adapter<AdapterSyncUserDat
                         .into(holder.imgUser);
 
                 holder.title.setText(item.getTitle());
-                holder.description.setText(item.getDescription());
+                holder.url.setText(item.getUrl());
+                holder.date.setText(item.getDate());
 
                 if (item.isSynchronizing()) { // Synchronizing state
 
                     if (!item.isSync()) {
                         holder.isSync.setVisibility(View.GONE);
                         holder.syncProgress.setVisibility(View.VISIBLE);
-                        item.setIsSync(true); // TODO establecer si está sincronizado con la respuesta del servidor
+                        item.setIsSync(true);
                     }
 
                 } else { // Actual state

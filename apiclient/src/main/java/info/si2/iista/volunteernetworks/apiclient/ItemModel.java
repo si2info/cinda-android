@@ -22,6 +22,11 @@ public class ItemModel {
     public static final String ITEM_FILE = "file";
     public static final String ITEM_SPINNER = "select";
 
+    // App
+    public static final String ITEM_CAMPAIGN_NAME = "campaign_name";
+    public static final String ITEM_DATE_SEND = "date_send";
+    public static final String ITEM_URL_SERVER = "url_server";
+
     private int id;
     @SerializedName("id_campaign")
     private int idCampaign;

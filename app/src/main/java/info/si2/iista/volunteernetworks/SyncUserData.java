@@ -88,7 +88,8 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
                 finish();
                 return true;
             case R.id.action_sync:
-                syncContributions();
+                if (modelValues.size() > 0)
+                    syncContributions();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -239,11 +240,8 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
     /** Util **/
     public void setValue (ItemSync itemSync, ItemModelValue value) {
 
-        switch (value.getFieldType()) { // TODO add date
-            case ItemModel.ITEM_EDIT_TEXT_BIG:
-                itemSync.setDescription(value.getValue());
-                break;
-            case ItemModel.ITEM_EDIT_TEXT:
+        switch (value.getFieldType()) {
+            case ItemModel.ITEM_CAMPAIGN_NAME:
                 itemSync.setTitle(value.getValue());
                 break;
             case ItemModel.ITEM_IMAGE:
@@ -251,6 +249,12 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
                 break;
             case ItemModel.ITEM_DATE:
                 Log.d("DATE", value.getValue());
+                break;
+            case ItemModel.ITEM_DATE_SEND:
+                itemSync.setDate(value.getValue());
+                break;
+            case ItemModel.ITEM_URL_SERVER:
+                itemSync.setUrl(value.getValue());
                 break;
         }
 

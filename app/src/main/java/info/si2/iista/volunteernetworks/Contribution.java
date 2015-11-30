@@ -1,17 +1,22 @@
 package info.si2.iista.volunteernetworks;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Pair;
@@ -32,8 +37,11 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import info.si2.iista.volunteernetworks.apiclient.ItemFormContribution;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
@@ -75,6 +83,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     // Camera and gallery
     private static final int REQUEST_IMAGE = 0x2;
+    private int idImage;
     private String mCurrentPhotoPath;
     private boolean fromCamera;
 
@@ -83,6 +92,10 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     // ProgresDialog
     private ProgressDialogFragment dialog;
+
+    // Request
+    private static final int PERMISSIONS_REQUEST_LOCATION = 1;
+    private static final int PERMISSIONS_REQUEST_CAMERA = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -297,6 +310,52 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
         }
 
+        addInfoItemSync();
+
+    }
+
+    /**
+     * Añade a la contribución fecha y hora en la que se envía
+     */
+    public void addInfoItemSync () {
+
+        // Campaign name
+        String campaignName = getIntent().getExtras().getString("campaignName");
+        values.add(new ItemFormContribution(ItemModel.ITEM_CAMPAIGN_NAME, campaignName));
+
+        if (!model.get(model.size()-1).getFieldType().equals(ItemModel.ITEM_CAMPAIGN_NAME)) {
+            ItemModel itemModel = new ItemModel();
+            itemModel.setIdCampaign(model.get(0).getIdCampaign());
+            itemModel.setFieldName(ItemModel.ITEM_CAMPAIGN_NAME);
+            itemModel.setFieldType(ItemModel.ITEM_CAMPAIGN_NAME);
+            model.add(itemModel);
+        }
+
+        // Date send
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm", Locale.getDefault());
+        String currentDateandTime = sdf.format(new Date());
+        values.add(new ItemFormContribution(ItemModel.ITEM_DATE_SEND, currentDateandTime));
+
+        if (!model.get(model.size()-1).getFieldType().equals(ItemModel.ITEM_DATE_SEND)) {
+            ItemModel itemModel = new ItemModel();
+            itemModel.setIdCampaign(model.get(0).getIdCampaign());
+            itemModel.setFieldName(ItemModel.ITEM_DATE_SEND);
+            itemModel.setFieldType(ItemModel.ITEM_DATE_SEND);
+            model.add(itemModel);
+        }
+
+        // Url server
+        String urlServer = Util.getPreference(this, getString(R.string.server));
+        values.add(new ItemFormContribution(ItemModel.ITEM_URL_SERVER, urlServer));
+
+        if (!model.get(model.size()-1).getFieldType().equals(ItemModel.ITEM_URL_SERVER)) {
+            ItemModel itemModel = new ItemModel();
+            itemModel.setIdCampaign(model.get(0).getIdCampaign());
+            itemModel.setFieldName(ItemModel.ITEM_URL_SERVER);
+            itemModel.setFieldType(ItemModel.ITEM_URL_SERVER);
+            model.add(itemModel);
+        }
+
     }
 
     /**
@@ -395,8 +454,10 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 finish();
                 return true;
             case R.id.action_send:
-                getDataFromLayout();
-                saveContributionToDB(model, values, false);
+                if (layout.getChildCount() > 1) {
+                    getDataFromLayout();
+                    saveContributionToDB(model, values, false);
+                }
                 return true;
         }
 
@@ -412,6 +473,43 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     public void actionMap () {
 
+        if (Build.VERSION.SDK_INT >= 23) {
+            checkMapPermission();
+        } else {
+            intentToMap();
+        }
+
+    }
+
+    /** Grant Permission **/
+
+    public void checkMapPermission () {
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                PERMISSIONS_REQUEST_LOCATION);
+
+    }
+
+    public void checkCameraPermission (int idImage) {
+
+        if (Build.VERSION.SDK_INT >= 23) {
+
+            this.idImage = idImage;
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    PERMISSIONS_REQUEST_CAMERA);
+        } else {
+            intentCameraGallery(idImage);
+        }
+
+    }
+
+    /** Intents **/
+
+    public void intentToMap () {
+
         Intent intent = new Intent(this, Map.class);
 
         if (position != null) {
@@ -420,6 +518,25 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         }
 
         startActivityForResult(intent, REQUEST_MAP);
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // Permission granted
+                    intentToMap();
+                }
+                break;
+
+            case PERMISSIONS_REQUEST_CAMERA:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // Permission granted
+                    intentCameraGallery(idImage);
+                }
+                break;
+        }
 
     }
 

@@ -31,12 +31,21 @@
 
     <TextView
         style="@style/campaign.userData"
-        android:text="@string/campaign_sync_desc"
-        android:id="@+id/description"
+        android:text="@string/urlServer"
+        android:id="@+id/urlServer"
         android:layout_below="@+id/title"
+        android:layout_toStartOf="@+id/isSync"
+        android:layout_toLeftOf="@+id/isSync"
+        android:layout_alignLeft="@+id/title"
+        android:layout_alignStart="@+id/title" />
+
+    <TextView
+        style="@style/campaign.userData"
+        android:text="@string/campaign_sync_desc"
+        android:id="@+id/date"
+        android:layout_below="@+id/urlServer"
         android:layout_alignLeft="@+id/title"
         android:layout_alignStart="@+id/title"
-        android:paddingBottom="16dp"
         android:layout_toLeftOf="@+id/isSync"
         android:layout_toStartOf="@+id/isSync" />
 
@@ -45,7 +54,8 @@
         android:layout_height="1dp"
         android:id="@+id/separator"
         android:background="@color/primary"
-        android:layout_below="@+id/imgUser" />
+        android:layout_below="@+id/date"
+        android:layout_marginTop="8dp" />
 
     <ImageView
         android:layout_width="48dp"

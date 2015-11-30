@@ -8,16 +8,17 @@ package info.si2.iista.volunteernetworks.apiclient;
 public class ItemSync {
 
     private int type, id;
-    private String imgCampaign, title, description;
+    private String imgCampaign, title, url, date;
     private boolean isSync, isSynchronizing;
 
     public ItemSync () {}
 
-    public ItemSync (int type, String imgCampaign, String title, String description, boolean isSync) {
+    public ItemSync (int type, String imgCampaign, String title, String url, String date, boolean isSync) {
         this.type = type;
         this.imgCampaign = imgCampaign;
         this.title = title;
-        this.description = description;
+        this.url = url;
+        this.date = date;
         this.isSync = isSync;
     }
 
@@ -61,12 +62,12 @@ public class ItemSync {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDate() {
+        return date;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDate(String description) {
+        this.date = description;
     }
 
     public boolean isSynchronizing() {
@@ -77,4 +78,11 @@ public class ItemSync {
         this.isSynchronizing = isSynchronizing;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }

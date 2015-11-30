@@ -229,7 +229,7 @@ public class Model {
         imgToSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((Contribution) c).intentCameraGallery(idImage);
+                ((Contribution) c).checkCameraPermission(idImage);
             }
         });
 
