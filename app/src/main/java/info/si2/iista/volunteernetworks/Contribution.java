@@ -1,9 +1,11 @@
 package info.si2.iista.volunteernetworks;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -17,6 +19,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Pair;
@@ -40,6 +43,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -96,6 +100,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     // Request
     private static final int PERMISSIONS_REQUEST_LOCATION = 1;
     private static final int PERMISSIONS_REQUEST_CAMERA = 2;
+    private static final int PERMISSIONS_REQUEST_CAMERA_AND_STORAGE = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -491,19 +496,74 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     }
 
-    public void checkCameraPermission (int idImage) {
+    public void checkCameraAndStoragePermission(int idImage) {
 
         if (Build.VERSION.SDK_INT >= 23) {
 
             this.idImage = idImage;
 
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA},
-                    PERMISSIONS_REQUEST_CAMERA);
+            List<String> permissionsNeeded = new ArrayList<>();
+
+            final List<String> permissionsList = new ArrayList<>();
+            if (!addPermission(permissionsList, Manifest.permission.CAMERA))
+                permissionsNeeded.add("Camera");
+            if (!addPermission(permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE))
+                permissionsNeeded.add("Read photos");
+            if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                permissionsNeeded.add("Save photos");
+
+            if (permissionsList.size() > 0) {
+                if (permissionsNeeded.size() > 0) {
+
+                    String message = getString(R.string.permission_camera_and_storage);
+
+                    showMessageOKCancel(message,
+                            new DialogInterface.OnClickListener() {
+                                @TargetApi(Build.VERSION_CODES.M)
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                                            PERMISSIONS_REQUEST_CAMERA_AND_STORAGE);
+                                }
+                            });
+
+                    return;
+                }
+
+                requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                        PERMISSIONS_REQUEST_CAMERA_AND_STORAGE);
+                return;
+
+            }
+
+            intentCameraGallery(idImage);
+
         } else {
             intentCameraGallery(idImage);
         }
 
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean addPermission(List<String> permissionsList, String permission) {
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            permissionsList.add(permission);
+            // Check for Rationale Option
+            if (!shouldShowRequestPermissionRationale(permission))
+                return false;
+        }
+        return true;
+    }
+
+    /** Dialog **/
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton(getString(R.string.ok), okListener)
+                .setNegativeButton(getString(R.string.cancel), null)
+                .create()
+                .show();
     }
 
     /** Intents **/
@@ -521,6 +581,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
@@ -536,6 +597,35 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     intentCameraGallery(idImage);
                 }
                 break;
+            case PERMISSIONS_REQUEST_CAMERA_AND_STORAGE:
+
+                HashMap<String, Integer> perms = new HashMap<>();
+
+                // Initial
+                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+
+                // Check permissions
+                if (perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) { // All Permissions Granted
+
+                    intentCameraGallery(idImage);
+
+                } else { // Permission Denied
+                    Toast.makeText(this, getString(R.string.permission_camera_and_storage_bad), Toast.LENGTH_SHORT).show();
+                }
+
+                break;
+
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         }
 
     }

@@ -1,11 +1,15 @@
 <resources>
+
     <string name="app_name">Virde</string>
-    
+
+    <!-- Parse -->
     <string name="parseApplicationID">GmZfs4Q3ispg7C5mrT5sfFk2PpPs0HXudLP7tkTr</string>
     <string name="parseClientKey">LjphrT3LxgdumkViIhKiQfnEapWJ63U5TrL9x4Zl</string>
 
     <!-- Request permissions -->
     <string name="permission_contacts_explanation">Necesitamos conocer tu correo para que puedas enviar contribuciones, ¿estás de acuerdo?</string>
+    <string name="permission_camera_and_storage">Necesitamos que autorices algunos permisos para poder utilizar la cámara</string>
+    <string name="permission_camera_and_storage_bad">Para utilizar esta función, debes aceptar todos los permisos</string>
 
     <!-- activity_main -->
     <string name="virde_advice">¡Empieza a usar Virde!</string>
