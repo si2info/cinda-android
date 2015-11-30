@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -83,12 +84,21 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback, Google
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_map, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
 
         switch (id) {
             case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_map_ok:
                 setResultOk();
                 return true;
         }
@@ -103,7 +113,6 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback, Google
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
         setResultOk();
     }
 

@@ -42,6 +42,9 @@
     <string name="other_contribute">Ningún usuario ha contribuído nada aún</string>
 
     <string name="moreUsers"> </string>
+    
+    <!-- Map -->
+    <string name="action_map_ok">OK</string>
 
     <!-- Servers -->
     <string name="defaultServer">http://virde.dev.si2soluciones.es</string>
