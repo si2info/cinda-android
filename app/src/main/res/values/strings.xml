@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">Virde</string>
+    <string name="app_name">Shiari</string>
 
     <!-- Parse -->
     <string name="parseApplicationID">GmZfs4Q3ispg7C5mrT5sfFk2PpPs0HXudLP7tkTr</string>
@@ -12,8 +12,8 @@
     <string name="permission_camera_and_storage_bad">Para utilizar esta función, debes aceptar todos los permisos</string>
 
     <!-- activity_main -->
-    <string name="virde_advice">¡Empieza a usar Virde!</string>
-    <string name="virde_advice_desc">Descubre y contribuye en las campañas de Virde proporcionando tu correo</string>
+    <string name="shiari_advice">¡Empieza a usar Shiari!</string>
+    <string name="shiari_advice_desc">Descubre y contribuye en las campañas de Shiari proporcionando tu correo</string>
     <string name="activate">Activar</string>
 
     <!-- menu_main -->
@@ -48,7 +48,7 @@
 
     <!-- Servers -->
     <string name="defaultServer">http://virde.dev.si2soluciones.es</string>
-    <string name="defaultDescServer">Servidor por defecto de Virde. Descubre campañas y aporta tu contribución.</string>
+    <string name="defaultDescServer">Servidor por defecto de Shiari. Descubre campañas y aporta tu contribución.</string>
     <string name="serverNoDesc">Servidor sin descripción.</string>
     <string name="isDefaultServer">isDefaultServer</string>
     <string name="delete_text">¿Seguro que quiere eliminar este servidor?</string>
@@ -108,7 +108,7 @@
     <string name="lngModel">lngModel</string>
 
     <!-- Camera -->
-    <string name="album_name">Virde</string>
+    <string name="album_name">Shiari</string>
 
     <!-- Errors -->
     <string name="userCantOperate">Inténtelo más tarde</string>

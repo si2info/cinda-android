@@ -88,7 +88,7 @@
 
         <TextView
             style="@style/text.advice"
-            android:text="@string/virde_advice"
+            android:text="@string/shiari_advice"
             android:id="@+id/advice"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
@@ -101,7 +101,7 @@
 
         <TextView
             style="@style/text.advice.desc"
-            android:text="@string/virde_advice_desc"
+            android:text="@string/shiari_advice_desc"
             android:id="@+id/adviceDesc"
             android:layout_below="@+id/advice"
             android:layout_alignLeft="@+id/advice"

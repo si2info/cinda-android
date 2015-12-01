@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
-        toolbar.setLogo(R.drawable.logo_virde_blanco);
+        toolbar.setLogo(R.drawable.app_logo);
         setSupportActionBar(toolbar);
 
         // Views
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
         // Default server
-        if (!Util.getBoolPreferenceModel(this, getString(R.string.isDefaultServer))) {
+        if (!Util.getBoolPreference(this, getString(R.string.isDefaultServer))) {
 
             Virde.getInstance(this).getServerInfo(getString(R.string.defaultServer));
 
@@ -427,13 +427,11 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                 if (result.isError()) {
                     Log.e("DBVirde", "Server not inserted");
                 } else {
-                    if (!Util.getBoolPreferenceModel(MainActivity.this, getString(R.string.isDefaultServer))) {
+                    if (!Util.getBoolPreference(MainActivity.this, getString(R.string.isDefaultServer))) {
 
                         // Get active server
                         DBVirde.getInstance(this).selectActiveServer();
 
-                        // Set active server
-                        Util.saveBoolPreferenceModel(MainActivity.this, getString(R.string.isDefaultServer), true);
                     }
                 }
                 break;
@@ -462,7 +460,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                             serverDesc.setText(getString(R.string.serverNoDesc));
 
                         // Shared Preferences
-                        initSharedPreferences(server);
+                        Util.initServerSharedPreferences(MainActivity.this, server);
 
                         // Registro de usuario
                         userCanOperate = false;
@@ -707,24 +705,6 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         });
 
         view.startAnimation(anim);
-
-    }
-
-    /** SharedPreferences **/
-
-    public void initSharedPreferences (ItemServer server) {
-
-        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.userPreferences), Context.MODE_PRIVATE);
-
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(getString(R.string.id_server), server.getId());
-        editor.putString(getString(R.string.serverUrl), server.getUrl());
-        editor.putString(getString(R.string.serverName), server.getName());
-        editor.putString(getString(R.string.serverDesc), server.getDescription());
-        editor.putString(getString(R.string.serverMapsApi), server.getMapsKeys().getApi());
-        editor.putString(getString(R.string.serverParseApi), server.getParseKeys().getApi());
-        editor.putString(getString(R.string.serverParseKey), server.getParseKeys().getKey());
-        editor.apply();
 
     }
 

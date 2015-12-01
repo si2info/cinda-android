@@ -88,7 +88,7 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
 
     public void changeServer (int position) {
 
-        ItemServer item = items.get(position);
+        ItemServer item = items.get(position-1);
         item.setActive(true);
         DBVirde.getInstance(this).updateServer(item);
 
@@ -143,7 +143,7 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
         setMainServer(url);
 
         // Test if its a correct server
-        checkServer();
+        checkServer(url);
 
     }
 
@@ -166,18 +166,20 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
     /**
      * Check if server is valid
      */
-    public void checkServer () {
+    public void checkServer (String url) {
+
+        Virde.getInstance(this).getServerInfo(url);
 
         // Data
-        String mail, name, deviceID;
+//        String mail, name, deviceID;
 
         // User data from SharedPreferences
-        name = Util.getPreference(this, getString(R.string.username));
-        mail = Util.getPreference(this, getString(R.string.mail));
-        deviceID = Util.getPreference(this, getString(R.string.device_id));
+//        name = Util.getPreference(this, getString(R.string.username));
+//        mail = Util.getPreference(this, getString(R.string.mail));
+//        deviceID = Util.getPreference(this, getString(R.string.device_id));
 
         // Get token
-        Virde.getInstance(this).userRegister(name, mail, deviceID);
+//        Virde.getInstance(this).userRegister(name, mail, deviceID);
 
     }
 
@@ -234,7 +236,7 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
                 break;
             case DBVirde.FROM_UPDATE_SERVER:
                 if (result.isError()) {
-                    Log.e("DBVirde", "Server not deleted");
+                    Log.e("DBVirde", "Server not updated");
                 } else {
 
                     Util.saveIntPreference(Servers.this, getString(R.string.id_server), result.getCodigoError());
@@ -254,7 +256,7 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
 
     @Override
     public void onApiClientRequestResult(Pair<Result, ArrayList> result) {
-        switch (result.first.getResultFrom()) { // TODO relizar comprobación con petición de datos del servidor
+        switch (result.first.getResultFrom()) {
             case Virde.FROM_USER_REGISTER:
                 if (result.first.isError()) { // Invalid server
                     removeItem();
@@ -266,6 +268,25 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
 
                     // DB
                     DBVirde.getInstance(this).insertServer(items.get(items.size()-1));
+
+                }
+                dialog.dismiss();
+                break;
+
+            case Virde.FROM_GET_SERVER_INFO:
+                if (result.first.isError()) {
+                    Util.makeToast(getApplicationContext(), getString(R.string.invalidUrl), 0);
+                } else {
+
+                    // Server
+                    ItemServer item = (ItemServer) result.second.get(0);
+                    item.setActive(true);
+
+                    // Save server data to SharedPreferences
+                    Util.initServerSharedPreferences(Servers.this, item);
+
+                    // Add server to DB
+                    DBVirde.getInstance(this).insertServer(item);
 
                 }
                 dialog.dismiss();

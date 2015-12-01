@@ -68,7 +68,10 @@ public class DBApi {
     public synchronized Result insertCampaignsToDB (ArrayList<ItemCampaign> items) {
 
         int from = DBVirde.FROM_INSERT_CAMPAIGNS;
-        String activeServer = getActiveServer();
+
+        // Data actual server
+        int idServer = getIdActiveServer();
+        String urlServer = getActiveServer();
 
         try {
 
@@ -78,7 +81,8 @@ public class DBApi {
 
                 // Comprobar si la campaña existe mediante su ID
                 String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS + " " +
-                        "WHERE " + DBCampaign.ID + " = '" + items.get(i).getId() + "'";
+                        "WHERE " + DBCampaign.ID + " = '" + items.get(i).getId() + "' " +
+                        "AND " + DBCampaign.ID_SERVER + " = " + String.valueOf(idServer);
 
                 open(); // Open DB
                 Cursor c = database.rawQuery(sql, null);
@@ -111,7 +115,7 @@ public class DBApi {
                             item.getHeaderColor() + "','" + ecodedTitle + "','" + encodedShortDesc + "','" +
                             encodedDesc + "','" + econdedScope + "','" + item.getImage() + "','" + item.isSuscribe() + "','" +
                             dateToString(item.getDateStart()) + "','" + dateToString(item.getDateEnd()) + "','" +
-                            activeServer + "','" + true + "')";
+                            urlServer + "','" + true + "')";
 
                     database.execSQL(sql);
 
@@ -314,8 +318,8 @@ public class DBApi {
         try {
 
             campaign.setId(c.getInt(0));
-            campaign.setType(c.getInt(1));
-            campaign.setIdServer(c.getInt(2));
+            campaign.setIdServer(c.getInt(1));
+            campaign.setType(c.getInt(2));
             campaign.setHeaderColor(c.getString(3));
             campaign.setTitle(URLDecoder.decode(c.getString(4), "UTF-8"));
             campaign.setShortDescription(URLDecoder.decode(c.getString(5), "UTF-8"));
@@ -916,6 +920,13 @@ public class DBApi {
 
         SharedPreferences sharedPref = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
         return sharedPref.getString("serverUrl", "");
+
+    }
+
+    private int getIdActiveServer () {
+
+        SharedPreferences sharedPref = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
+        return sharedPref.getInt("idServer", -1);
 
     }
 

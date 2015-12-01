@@ -91,6 +91,7 @@ public class ApiClient {
 
             if (!respStr.equals("0")) {
                 ItemServer item = gson.fromJson(respStr, ItemServer.class);
+                item.setType(Item.SERVER);
                 Collections.addAll(result, item);
             }
 

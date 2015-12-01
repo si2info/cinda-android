@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import info.si2.iista.volunteernetworks.R;
+import info.si2.iista.volunteernetworks.apiclient.ItemServer;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -208,6 +209,23 @@ public class Util {
     }
 
     /**
+     * Obtiene un valor guardado en SharedPreferences del modelo
+     * @param c Context
+     * @param key key que hace referencia al valor
+     * @return Boolean valor de la key
+     */
+    public static boolean getBoolPreference (Context c, String key) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.userPreferences), Context.MODE_PRIVATE);
+
+        if (!sharedPref.contains(key))
+            return false;
+
+        return sharedPref.getBoolean(key, false);
+
+    }
+
+    /**
      * Guarda un valor asociado a una key en SharedPreferences de un modelo de campaña
      * @param c Context
      * @param key String key del valor
@@ -279,7 +297,7 @@ public class Util {
     }
 
     /**
-     * Obtiene un valor guardado en SharedPreferences
+     * Obtiene un valor guardado en SharedPreferences del modelo
      * @param c Context
      * @param key key que hace referencia al valor
      * @return Boolean valor de la key
@@ -431,6 +449,28 @@ public class Util {
      */
     public static void makeToast (Context c, String msg, int length) {
         Toast.makeText(c, msg, length).show();
+    }
+
+    /**
+     * Init or update server info
+     * @param c Context
+     * @param server Server to save or update
+     */
+    public static void initServerSharedPreferences (Context c, ItemServer server) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.userPreferences), Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(c.getString(R.string.id_server), server.getId());
+        editor.putString(c.getString(R.string.serverUrl), server.getUrl());
+        editor.putString(c.getString(R.string.serverName), server.getName());
+        editor.putString(c.getString(R.string.serverDesc), server.getDescription());
+        editor.putString(c.getString(R.string.serverMapsApi), server.getMapsKeys().getApi());
+        editor.putString(c.getString(R.string.serverParseApi), server.getParseKeys().getApi());
+        editor.putString(c.getString(R.string.serverParseKey), server.getParseKeys().getKey());
+        editor.putBoolean(c.getString(R.string.isDefaultServer), true);
+        editor.apply();
+
     }
 
 }
