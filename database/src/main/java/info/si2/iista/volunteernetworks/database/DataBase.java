@@ -13,7 +13,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 3;
-    public static final String DATABASE_NAME = "Virde.db";
+    public static final String DATABASE_NAME = "Shiari.db";
 
     private static final String PRIMARY_KEY = " PRIMARY KEY";
     private static final String AUTOINCREMENT = " AUTOINCREMENT";
@@ -51,6 +51,8 @@ public class DataBase extends SQLiteOpenHelper {
                     DBCampaign.DATE_END + TYPE_TEXT + COMMA_SEP +
                     DBCampaign.SERVER + TYPE_TEXT + COMMA_SEP +
                     DBCampaign.IS_ACTIVE + TYPE_BOOLEAN + COMMA_SEP +
+                    DBCampaign.HAVE_TRACKING + TYPE_BOOLEAN + COMMA_SEP +
+                    DBCampaign.GEOPOSITION + TYPE_TEXT + COMMA_SEP +
                     "FOREIGN KEY("+ DBCampaign.ID_SERVER + ") REFERENCES " + DBServer.TABLE_SERVER + "(" + DBServer.ID + ")" +
                     " );";
 

@@ -607,6 +607,10 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
+        if (campaign.haveTracking())
+            getMenuInflater().inflate(R.menu.menu_campaign, menu);
+
         return true;
     }
 

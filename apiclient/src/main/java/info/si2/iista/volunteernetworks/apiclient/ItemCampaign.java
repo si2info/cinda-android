@@ -47,9 +47,16 @@ public class ItemCampaign implements Parcelable {
     @SerializedName("volunteers_top")
     private ArrayList<ItemTopUser> topUsers;
 
+    @SerializedName("tracking")
+    private boolean haveTracking;
+
+    private String geoposition;
+
+    /** Constructor **/
     public ItemCampaign(){
     }
 
+    /** Getter and setter **/
     public int getType() {
         return type;
     }
@@ -154,6 +161,46 @@ public class ItemCampaign implements Parcelable {
         this.topUsers = topUsers;
     }
 
+    public String getStringGeoposition () {
+        return geoposition;
+    }
+
+    public void setGeoposition(String geoposition) {
+        this.geoposition = geoposition;
+    }
+
+    public String[] getGeoposition() {
+
+        String[] latLng = null;
+
+        if (geoposition != null) {
+            if (geoposition.contains(",")) {
+
+                latLng = geoposition.split(",");
+
+                // Trim result
+                latLng[0] = latLng[0].trim();
+                latLng[1] = latLng[1].trim();
+
+            }
+        }
+
+        return latLng;
+    }
+
+    public void setGeoposition(String lat, String lng) {
+        this.geoposition = lat + "," + lng;
+    }
+
+    public boolean haveTracking() {
+        return haveTracking;
+    }
+
+    public void setHaveTracking(boolean haveTracking) {
+        this.haveTracking = haveTracking;
+    }
+
+    /** Parcelable **/
     protected ItemCampaign(Parcel in) {
         type = in.readInt();
         id = in.readInt();
@@ -163,7 +210,9 @@ public class ItemCampaign implements Parcelable {
         shortDescription = in.readString();
         scope = in.readString();
         image = in.readString();
+        geoposition = in.readString();
         isSuscribe = in.readByte() != 0x00;
+        haveTracking = in.readByte() != 0x00;
         long tmpDateStart = in.readLong();
         dateStart = tmpDateStart != -1 ? new Date(tmpDateStart) : null;
         long tmpDateEnd = in.readLong();
@@ -191,7 +240,9 @@ public class ItemCampaign implements Parcelable {
         dest.writeString(shortDescription);
         dest.writeString(scope);
         dest.writeString(image);
+        dest.writeString(geoposition);
         dest.writeByte((byte) (isSuscribe ? 0x01 : 0x00));
+        dest.writeByte((byte) (haveTracking ? 0x01 : 0x00));
         dest.writeLong(dateStart != null ? dateStart.getTime() : -1L);
         dest.writeLong(dateEnd != null ? dateEnd.getTime() : -1L);
         if (topUsers == null) {

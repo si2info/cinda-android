@@ -24,6 +24,9 @@
     <!-- menu_contribution -->
     <string name="action_send">Enviar</string>
 
+    <!-- menu_campaign -->
+    <string name="action_tracking">Grabar ruta</string>
+
     <!-- item_campaign -->
     <string name="suscribe">Suscribirse</string>
     <string name="unsuscribe">Dejar de seguir</string>

@@ -23,5 +23,7 @@ public class DBCampaign {
     public static final String DATE_END = "dateEnd";
     public static final String SERVER = "server";
     public static final String IS_ACTIVE = "isActive";
+    public static final String HAVE_TRACKING = "haveTracking";
+    public static final String GEOPOSITION = "geoposition";
 
 }

@@ -115,7 +115,7 @@ public class DBApi {
                             item.getHeaderColor() + "','" + ecodedTitle + "','" + encodedShortDesc + "','" +
                             encodedDesc + "','" + econdedScope + "','" + item.getImage() + "','" + item.isSuscribe() + "','" +
                             dateToString(item.getDateStart()) + "','" + dateToString(item.getDateEnd()) + "','" +
-                            urlServer + "','" + true + "')";
+                            urlServer + "','" + true + "','" + item.haveTracking() + "','" + item.getStringGeoposition() + "')";
 
                     database.execSQL(sql);
 
@@ -185,7 +185,9 @@ public class DBApi {
                         DBCampaign.IMAGE + "='" + item.getImage() + "'," +
                         DBCampaign.IS_SUSCRIBE + "='" + item.isSuscribe() + "'," +
                         DBCampaign.DATE_START + "='" + dateToString(item.getDateStart()) + "'," +
-                        DBCampaign.DATE_END + "='" + dateToString(item.getDateEnd()) + "' " +
+                        DBCampaign.DATE_END + "='" + dateToString(item.getDateEnd()) + "', " +
+                        DBCampaign.HAVE_TRACKING + "='" + item.haveTracking() + "'," +
+                        DBCampaign.GEOPOSITION + "='" + item.getStringGeoposition() + "' " +
                         "WHERE " + DBCampaign.ID + "=" + item.getId();
 
                 database.execSQL(sql);
@@ -329,6 +331,10 @@ public class DBApi {
             campaign.setIsSuscribe(Boolean.valueOf(c.getString(9)));
             campaign.setDateStart(stringToDate(c.getString(10)));
             campaign.setDateEnd(stringToDate(c.getString(11)));
+            // c == 12 -> url server - dato interno
+            // c == 13 -> is active
+            campaign.setHaveTracking(Boolean.valueOf(c.getString(14)));
+            campaign.setGeoposition(c.getString(15));
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
