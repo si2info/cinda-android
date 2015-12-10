@@ -9,7 +9,8 @@
     <!-- Request permissions -->
     <string name="permission_contacts_explanation">Necesitamos conocer tu correo para que puedas enviar contribuciones, ¿estás de acuerdo?</string>
     <string name="permission_camera_and_storage">Necesitamos que autorices algunos permisos para poder utilizar la cámara</string>
-    <string name="permission_camera_and_storage_bad">Para utilizar esta función, debes aceptar todos los permisos</string>
+    <string name="permission_camera_and_storage_bad">Para utilizar esta función debes aceptar todos los permisos</string>
+    <string name="permission_location">Para utilizar esta función debes autorizar el uso de localización</string>
 
     <!-- activity_main -->
     <string name="shiari_advice">¡Empieza a usar Shiari!</string>
@@ -60,6 +61,8 @@
     <string name="desc_server">Descripción de servidor</string>
     <string name="ok">OK</string>
     <string name="yes">Si</string>
+    <string name="now">Ahora</string>
+    <string name="later">Después</string>
     <string name="no">No</string>
     <string name="add">Añadir</string>
     <string name="cancel">Cancelar</string>
@@ -110,8 +113,15 @@
     <string name="latModel">latModel</string>
     <string name="lngModel">lngModel</string>
 
+    <!-- Dialog -->
+    <string name="dialog_send_tracking">¿Deseas enviar ahora tu recorrido como contribución o enviar más tarde?\n\nSi selecciona más tarde podrá sincronizarlas desde la opción "Sincronizar".</string>
+
     <!-- Camera -->
     <string name="album_name">Shiari</string>
+
+    <!-- GPX -->
+    <string name="base_dir">Shiari</string>
+    <string name="gpx_dir_name">gpx</string>
 
     <!-- Errors -->
     <string name="userCantOperate">Inténtelo más tarde</string>

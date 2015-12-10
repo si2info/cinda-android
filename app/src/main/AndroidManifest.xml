@@ -3,8 +3,10 @@
     package="info.si2.iista.volunteernetworks">
 
     <!-- Location -->
+    <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
 
     <!-- Network -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -74,6 +76,11 @@
             android:name=".Test"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Tracking"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme"
+            android:noHistory="true" />
 
         <!-- Maps -->
         <meta-data
@@ -86,6 +93,13 @@
             android:value="4af8e192cb7f8db7bb39d229cbf7bc628704d24e" />
 
         <!-- Services -->
+        <service android:name=".TrackingService"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:enabled="true"/>
+
+        <receiver android:name=".NotificationReceiver" />
+
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 

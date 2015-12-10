@@ -1,6 +1,7 @@
 package info.si2.iista.volunteernetworks.util;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
@@ -8,13 +9,22 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -28,6 +38,7 @@ import info.si2.iista.volunteernetworks.apiclient.ItemServer;
  */
 public class Util {
 
+    // Typeface
     private static Typeface robotoLight;
 
     /**
@@ -123,6 +134,15 @@ public class Util {
             e.printStackTrace();
             return null;
         }
+
+    }
+
+    public static String parseDateToString (String formatSt, Date date) {
+
+        if (date != null)
+            return DateFormat.format(formatSt, date).toString();
+        else
+            return "";
 
     }
 
@@ -471,6 +491,71 @@ public class Util {
         editor.putBoolean(c.getString(R.string.isDefaultServer), true);
         editor.apply();
 
+    }
+
+    /** File .GPX **/
+
+    public static String saveGpxFile (Context c, ArrayList<LatLng> locations) {
+
+        // File name
+        Date now = new Date();
+        String dateNowSt = parseDateToString("yyyyMMddHHmmss", now);
+        String fileName = c.getString(R.string.app_name) + "_" + dateNowSt;
+
+        // File content
+        String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?><gpx xmlns=\"http://www.topografix.com/GPX/1/1\" creator=\"MapSource 6.15.5\" version=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"  xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\"><trk>\n";
+        String name = "<name>" + fileName + "</name><trkseg>\n";
+
+        String segments = "";
+        for (LatLng latLng : locations) {
+            segments += "<trkpt lat=\"" + latLng.latitude + "\" lon=\"" + latLng.longitude + "\"></trkpt>\n";
+        }
+
+        String footer = "</trkseg></trk></gpx>";
+
+        // File to save
+        String fileDir = Environment.getExternalStorageDirectory() + "/" + c.getString(R.string.base_dir)
+                         + "/" + c.getString(R.string.gpx_dir_name) + "/" + fileName + ".gpx";
+        File file = new File (fileDir);
+
+        // Save file
+        if (file.getParentFile().mkdirs()) {
+            try {
+
+                FileWriter writer = new FileWriter(file, false);
+                writer.append(header);
+                writer.append(name);
+                writer.append(segments);
+                writer.append(footer);
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
+                Log.e("GPX File", "Error Writting Path", e);
+            }
+
+            return fileDir;
+
+        } else {
+            return null;
+        }
+
+    }
+
+    /** Dialog **/
+
+    /**
+     * AlertView constructor
+     * @param c Context
+     * @param message Message will be show
+     * @param okListener listener when user click "ok" button
+     */
+    public static void showMessageOKCancel(Context c, String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(c)
+                .setMessage(message)
+                .setPositiveButton(c.getString(R.string.ok), okListener)
+                .setNegativeButton(c.getString(R.string.cancel), null)
+                .create()
+                .show();
     }
 
 }

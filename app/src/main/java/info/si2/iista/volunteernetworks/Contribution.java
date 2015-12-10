@@ -19,7 +19,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Pair;
@@ -488,11 +488,28 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     /** Grant Permission **/
 
+    @TargetApi(Build.VERSION_CODES.M)
     public void checkMapPermission () {
 
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                PERMISSIONS_REQUEST_LOCATION);
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (shouldShowRequestPermissionRationale(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Util.showMessageOKCancel(this, getString(R.string.permission_location),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ActivityCompat.requestPermissions(Contribution.this,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        PERMISSIONS_REQUEST_LOCATION);
+                            }
+                        });
+            }
+
+        } else {
+            intentToMap();
+        }
 
     }
 
@@ -517,7 +534,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
                     String message = getString(R.string.permission_camera_and_storage);
 
-                    showMessageOKCancel(message,
+                    Util.showMessageOKCancel(this, message,
                             new DialogInterface.OnClickListener() {
                                 @TargetApi(Build.VERSION_CODES.M)
                                 @Override
@@ -553,17 +570,6 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 return false;
         }
         return true;
-    }
-
-    /** Dialog **/
-
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(this)
-                .setMessage(message)
-                .setPositiveButton(getString(R.string.ok), okListener)
-                .setNegativeButton(getString(R.string.cancel), null)
-                .create()
-                .show();
     }
 
     /** Intents **/

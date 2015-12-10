@@ -1,13 +1,18 @@
 package info.si2.iista.volunteernetworks;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -106,6 +111,9 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     // Top users
     private ArrayList<ItemUser> users;
+
+    // Permission Request
+    private static final int PERMISSIONS_REQUEST_LOCATION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -620,8 +628,46 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
             case android.R.id.home:
                 finishActivity();
                 return true;
+
+            case R.id.action_tracking:
+                checkLocationPermission();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void checkLocationPermission () {
+
+        if (Build.VERSION.SDK_INT >= 23) {
+
+            if (ContextCompat.checkSelfPermission(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                if (shouldShowRequestPermissionRationale(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    Util.showMessageOKCancel(this, getString(R.string.permission_location),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ActivityCompat.requestPermissions(Campaign.this,
+                                            new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                            PERMISSIONS_REQUEST_LOCATION);
+                                }
+                            });
+                }
+
+            } else {
+                Intent intent = new Intent(this, Tracking.class);
+                startActivity(intent);
+            }
+
+        } else {
+
+            Intent intent = new Intent(this, Tracking.class);
+            startActivity(intent);
+
+        }
+
     }
 
     public void finishActivity () {
@@ -822,6 +868,21 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                 }
                 break;
         }
+    }
+
+    /** Permission Request **/
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // Permission granted
+                    Intent intent = new Intent(this, Tracking.class);
+                    startActivity(intent);
+                }
+                break;
+        }
+
     }
 
     @Override

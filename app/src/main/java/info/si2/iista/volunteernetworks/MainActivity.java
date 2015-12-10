@@ -16,7 +16,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -170,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                 != PackageManager.PERMISSION_GRANTED) {
 
             if (shouldShowRequestPermissionRationale(android.Manifest.permission.GET_ACCOUNTS)) {
-                showMessageOKCancel(getString(R.string.permission_contacts_explanation),
+                Util.showMessageOKCancel(this, getString(R.string.permission_contacts_explanation),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -185,20 +184,6 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
             initApplication();
         }
 
-    }
-
-    /**
-     * AlertView constructor
-     * @param message Message will be show
-     * @param okListener listener when user click "ok" button
-     */
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(MainActivity.this)
-                .setMessage(message)
-                .setPositiveButton(getString(R.string.ok), okListener)
-                .setNegativeButton(getString(R.string.cancel), null)
-                .create()
-                .show();
     }
 
     public void activatePermissionContact (View view) {
