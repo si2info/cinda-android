@@ -519,9 +519,14 @@ public class Util {
         File file = new File (fileDir);
 
         // Save file
-        if (file.getParentFile().mkdirs()) {
-            try {
+        boolean dirExist;
+        if (!file.getParentFile().exists())
+            dirExist = file.getParentFile().mkdirs();
+        else
+            dirExist = true;
 
+        if (dirExist) {
+            try {
                 FileWriter writer = new FileWriter(file, false);
                 writer.append(header);
                 writer.append(name);

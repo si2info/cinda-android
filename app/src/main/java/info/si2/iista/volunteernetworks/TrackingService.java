@@ -31,7 +31,7 @@ public class TrackingService extends Service implements LocationListener, Google
     public static final String ACTION_INIT = "Iniciar";
     public static final String ACTION_PAUSE = "Pausar";
     public static final String ACTION_STOP = "Parar";
-    public static final String ACTION_REPLAY = "Replay";
+    public static final String ACTION_CONTINUE = "Continuar";
 
     // Notification
     public static final int NOTIFICATION_TRACKING_ID = 417;
@@ -83,21 +83,25 @@ public class TrackingService extends Service implements LocationListener, Google
         switch (action) {
 
             case ACTION_INIT:
+                Tracking.menuType = Tracking.MENU_PAUSE_STOP;
                 NotificationCompat.Builder builder = createTrackingNotification(this, true);
                 startForeground(NOTIFICATION_TRACKING_ID, builder.build());
                 trackingService = this;
                 break;
 
             case ACTION_PAUSE:
+                Tracking.menuType = Tracking.MENU_CONTINUE_STOP;
                 stopLocationUpdates();
                 updateTrackingNotification(false);
                 break;
 
             case ACTION_STOP:
+                Tracking.menuType = Tracking.MENU_PLAY;
                 actionStop();
                 break;
 
-            case ACTION_REPLAY:
+            case ACTION_CONTINUE:
+                Tracking.menuType = Tracking.MENU_PAUSE_STOP;
                 startLocationUpdates();
                 updateTrackingNotification(true);
                 break;
@@ -256,11 +260,11 @@ public class TrackingService extends Service implements LocationListener, Google
     private static NotificationCompat.Action getPlayTrakingPI (Context context) {
 
         Intent intent = new Intent(context, TrackingService.class);
-        intent.setAction(TrackingService.ACTION_REPLAY);
+        intent.setAction(TrackingService.ACTION_CONTINUE);
         PendingIntent pi = PendingIntent.getService(context, 0, intent, 0);
 
         return new NotificationCompat.Action(R.drawable.ic_play_arrow_white_24dp,
-                TrackingService.ACTION_REPLAY, pi);
+                context.getString(R.string.action_continue), pi);
 
     }
 
@@ -271,7 +275,7 @@ public class TrackingService extends Service implements LocationListener, Google
         PendingIntent pi = PendingIntent.getService(context, 0, intent, 0);
 
         return new NotificationCompat.Action(R.drawable.ic_pause_white_24dp,
-                TrackingService.ACTION_PAUSE, pi);
+                context.getString(R.string.action_pause), pi);
 
     }
 
@@ -282,7 +286,7 @@ public class TrackingService extends Service implements LocationListener, Google
         PendingIntent pi = PendingIntent.getService(context, 0, intent, 0);
 
         return new NotificationCompat.Action(R.drawable.ic_stop_white_24dp,
-                TrackingService.ACTION_STOP, pi);
+                context.getString(R.string.action_stop), pi);
 
     }
 

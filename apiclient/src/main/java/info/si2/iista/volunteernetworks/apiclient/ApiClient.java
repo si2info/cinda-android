@@ -465,6 +465,50 @@ public class ApiClient {
 
     }
 
+    public Pair<Result, ArrayList<Integer>> sendGpxContribution (ItemGpx item) {
+
+        int from = Virde.FROM_USER_REGISTER;
+        String message = "Intente enviar la contribución más tarde";
+        ArrayList<Integer> result = new ArrayList<>();
+        OkHttpClient client = getOkHttpClient();
+
+        if (HOST.equals(""))
+            HOST = getActiveServer();
+
+        MultipartBuilder formEncodingBuilder = new MultipartBuilder();
+        formEncodingBuilder.type(MultipartBuilder.FORM);
+
+        formEncodingBuilder.addFormDataPart("id", item.getId());
+        formEncodingBuilder.addFormDataPart("id_campaign", String.valueOf(item.getIdCampaign()));
+        formEncodingBuilder.addFormDataPart("id_volunteer", String.valueOf(item.getIdVolunteer()));
+
+        File gpx = new File(item.getDir());
+        formEncodingBuilder.addFormDataPart("tracking", gpx.getName(),
+                RequestBody.create(MediaType.parse("application/gpx; charset=utf-8"), gpx));
+
+        Request request = new Request.Builder()
+                .url(HOST + URL_REGISTER_USER)
+                .post(formEncodingBuilder.build())
+                .build();
+
+        try {
+
+            Response response = client.newCall(request).execute();
+            String respStr  = response.body().string();
+
+            if (respStr.equals("0")) {
+                return new Pair<>(new Result(true, message, from, 1), new ArrayList<Integer>());
+            } else {
+                return new Pair<>(new Result(false, null, from, 0), result);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Pair<>(new Result(true, message, from, 1), new ArrayList<Integer>());
+        }
+
+    }
+
     /** UTIL **/
     private boolean isJSONValid(String json) {
         try {

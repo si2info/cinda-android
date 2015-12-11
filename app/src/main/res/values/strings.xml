@@ -28,6 +28,12 @@
     <!-- menu_campaign -->
     <string name="action_tracking">Grabar ruta</string>
 
+    <!-- menu init, pause, continue, stop -->
+    <string name="action_init">Iniciar</string>
+    <string name="action_pause">Pausar</string>
+    <string name="action_continue">Continuar</string>
+    <string name="action_stop">Parar</string>
+
     <!-- item_campaign -->
     <string name="suscribe">Suscribirse</string>
     <string name="unsuscribe">Dejar de seguir</string>
@@ -114,7 +120,7 @@
     <string name="lngModel">lngModel</string>
 
     <!-- Dialog -->
-    <string name="dialog_send_tracking">¿Deseas enviar ahora tu recorrido como contribución o enviar más tarde?\n\nSi selecciona más tarde podrá sincronizarlas desde la opción "Sincronizar".</string>
+    <string name="dialog_send_tracking">¿Deseas enviar ahora tu recorrido como contribución o enviar más tarde?\n\nSi selecciona más tarde podrá sincronizar sus contribuciones desde la opción "Sincronizar".</string>
 
     <!-- Camera -->
     <string name="album_name">Shiari</string>

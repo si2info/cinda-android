@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DataBase extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "Shiari.db";
 
     private static final String PRIMARY_KEY = " PRIMARY KEY";
@@ -83,6 +83,17 @@ public class DataBase extends SQLiteOpenHelper {
                     "FOREIGN KEY("+ DBModelValue.ID_CAMP + ") REFERENCES " + DBModel.TABLE_MODEL + "(" + DBModel.ID + ")" +
                     ");";
 
+    private static final String SQL_CREATE_GPX =
+            "CREATE TABLE " + DBGpxContribution.TABLE_GPX + " (" +
+                    DBGpxContribution.ID + TYPE_INT + PRIMARY_KEY + COMMA_SEP +
+                    DBGpxContribution.ID_SERVER + TYPE_INT + COMMA_SEP +
+                    DBGpxContribution.ID_CAMPAIGN + TYPE_INT + COMMA_SEP +
+                    DBGpxContribution.DIR + TYPE_TEXT + COMMA_SEP +
+                    DBGpxContribution.DATE + TYPE_TEXT + COMMA_SEP +
+                    DBGpxContribution.IS_SYNC + TYPE_BOOLEAN + COMMA_SEP +
+                    "FOREIGN KEY("+ DBGpxContribution.ID_CAMPAIGN + ") REFERENCES " + DBModel.TABLE_MODEL + "(" + DBModel.ID + ")" +
+                    ");";
+
     private static final String SQL_DELETE_CAMPAIGNS =
             "DROP TABLE IF EXISTS " + DBCampaign.TABLE_CAMPAIGNS;
 
@@ -95,6 +106,9 @@ public class DataBase extends SQLiteOpenHelper {
     private static final String SQL_DELETE_SERVER =
             "DROP TABLE IF EXISTS " + DBServer.TABLE_SERVER;
 
+    private static final String SQL_DELETE_GPX =
+            "DROP TABLE IF EXISTS " + DBGpxContribution.TABLE_GPX;
+
     public DataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -105,6 +119,7 @@ public class DataBase extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_CAMPAIGNS);
         db.execSQL(SQL_CREATE_MODEL);
         db.execSQL(SQL_CREATE_MODEL_VALUE);
+        db.execSQL(SQL_CREATE_GPX);
     }
 
     @Override
@@ -113,6 +128,7 @@ public class DataBase extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_CAMPAIGNS);
         db.execSQL(SQL_DELETE_MODELS);
         db.execSQL(SQL_DELETE_MODELS_ITEM);
+        db.execSQL(SQL_DELETE_GPX);
         onCreate(db);
     }
 

@@ -80,7 +80,7 @@
             android:name=".Tracking"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme"
-            android:noHistory="true" />
+            android:launchMode="singleTop" />
 
         <!-- Maps -->
         <meta-data

@@ -18,6 +18,7 @@ import java.util.Locale;
 
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.apiclient.ItemGoogleMaps;
+import info.si2.iista.volunteernetworks.apiclient.ItemGpx;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
 import info.si2.iista.volunteernetworks.apiclient.ItemParse;
@@ -651,6 +652,137 @@ public class DBApi {
         }
 
         return value;
+
+    }
+
+    /**********************/
+    /**       GPX        **/
+    /**********************/
+
+    public synchronized Result insertGpxToDB (ItemGpx item) {
+
+        int from = DBVirde.FROM_INSERT_GPX;
+
+        try {
+
+            open();
+
+            // Options
+            String dir = "";
+            if (item.getDir() != null)
+                dir = URLEncoder.encode(item.getDir(), "UTF-8");
+
+            String sql = "INSERT OR REPLACE INTO " + DBGpxContribution.TABLE_GPX + " " +
+                    "VALUES (" + item.getId() + "," + item.getIdServer() + "," + item.getIdCampaign() + ",'" +
+                    dir + "','" + dateToString(item.getDate()) + "','" + item.isSync() + "')";
+
+            database.execSQL(sql);
+
+
+            close(); // Close DB
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new Result(true, null, from, 0);
+        }
+
+        return new Result(false, null, from, 0);
+
+    }
+
+    public synchronized Result updateGPX (ItemGpx item) {
+
+        int from = DBVirde.FROM_UPDATE_MODEL;
+
+        try {
+
+            open(); // Open DB
+
+            // Comprobar si la campaña existe mediante su ID
+            String sql = "SELECT * FROM " + DBModel.TABLE_MODEL + " " +
+                    "WHERE " + DBModel.ID + " = '" + item.getId() + "'";
+
+            Cursor c = database.rawQuery(sql, null);
+
+            if (c.getCount() == 1) { // Si no existe la campaña, añadir
+
+                // Scope
+                String dir = "";
+                if (item.getDir() != null)
+                    dir = URLEncoder.encode(item.getDir(), "UTF-8");
+
+                sql = "UPDATE " + DBGpxContribution.TABLE_GPX + " " +
+                        "SET " + DBGpxContribution.ID + "=" + item.getId() + "," +
+                        DBGpxContribution.ID_SERVER + "=" + item.getIdServer() + "," +
+                        DBGpxContribution.ID_CAMPAIGN + "='" + item.getIdCampaign() + "'," +
+                        DBGpxContribution.DIR + "='" + dir + "'," +
+                        DBGpxContribution.DATE + "='" + dateToString(item.getDate()) + "'," +
+                        DBGpxContribution.IS_SYNC + "='" + item.isSync() + "'," +
+                        "WHERE " + DBGpxContribution.ID + "=" + item.getId();
+
+                database.execSQL(sql);
+            }
+
+            c.close();
+            close(); // Close DB
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new Result(true, null, from, 0);
+        }
+
+        return new Result(false, null, from, 0);
+
+    }
+
+    public synchronized Pair<Result, ArrayList<ItemGpx>> selectGpxs (int idServer, int idCampaign) {
+
+        int from = DBVirde.FROM_SELECT_MODELITEM;
+        ArrayList<ItemGpx> result = new ArrayList<>();
+
+        String sql;
+        sql = "SELECT * FROM " + DBGpxContribution.TABLE_GPX +
+                " WHERE " + DBGpxContribution.ID_SERVER + "=" + idServer +
+                " AND " + DBGpxContribution.ID_CAMPAIGN + "=" + idCampaign +
+                " ORDER BY " + DBGpxContribution.ID + " ASC";
+
+        open();
+
+        Cursor c = database.rawQuery(sql, null);
+
+        if (c.moveToFirst()) {
+
+            do {
+
+                result.add(formatItemGpxFromDB(c));
+
+            } while (c.moveToNext());
+
+        }
+
+        c.close();
+        close();
+
+        return new Pair<>(new Result(false, null, from, 0), result);
+
+    }
+
+    private ItemGpx formatItemGpxFromDB(Cursor c) {
+
+        ItemGpx item = new ItemGpx();
+
+        try {
+            item.setId(c.getString(0));
+            item.setIdServer(c.getInt(1));
+            item.setIdCampaign(c.getInt(2));
+            item.setDir(URLDecoder.decode(c.getString(3), "UTF-8"));
+            item.setDate(stringToDate(c.getString(4)));
+            item.setSync(Boolean.valueOf(c.getString(5)));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return item;
 
     }
 

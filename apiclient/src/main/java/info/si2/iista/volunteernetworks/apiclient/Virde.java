@@ -99,6 +99,10 @@ public class Virde {
         ApiClient.setActiveServer(newServer);
     }
 
+    public void sendGpxContribution (ItemGpx item) {
+        new VirdeSendGpx().execute(item);
+    }
+
     /** AsyncTasks **/
 
     class VirdeGetServerInfo extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemServer>>> {
@@ -229,6 +233,21 @@ public class Virde {
         protected Pair<Result, ArrayList<ItemUser>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
             return apiClient.getListVolunteers(Integer.valueOf(params[0]));
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onApiClientRequestResult(result);
+        }
+
+    }
+
+    class VirdeSendGpx extends AsyncTask<ItemGpx, Void, Pair<Result, ArrayList<Integer>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<Integer>> doInBackground(ItemGpx... params) {
+            ApiClient apiClient = ApiClient.getInstance();
+            return apiClient.sendGpxContribution(params[0]);
         }
 
         @Override
