@@ -83,6 +83,7 @@
 
     <!-- DictionaryValue -->
     <string name="select">SELECCIONA</string>
+    <string name="dictionary">Diccionario</string>
 
     <!-- contribution -->
     <string name="loading">Cargando modelo de campaña</string>

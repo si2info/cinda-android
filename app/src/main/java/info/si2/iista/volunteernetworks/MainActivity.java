@@ -169,6 +169,10 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                 != PackageManager.PERMISSION_GRANTED) {
 
             if (shouldShowRequestPermissionRationale(android.Manifest.permission.GET_ACCOUNTS)) {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{android.Manifest.permission.GET_ACCOUNTS},
+                        PERMISSIONS_REQUEST_GET_ACCOUNTS);
+            } else {
                 Util.showMessageOKCancel(this, getString(R.string.permission_contacts_explanation),
                         new DialogInterface.OnClickListener() {
                             @Override

@@ -1,9 +1,13 @@
 package info.si2.iista.volunteernetworks;
 
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +16,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -30,6 +37,7 @@ public class DictionaryValue extends AppCompatActivity implements AdapterDiction
     private ArrayList<ItemDictionary> searched;
 
     // Views
+    private RelativeLayout infoDictionary;
     private RecyclerView recyclerView;
 
     // Adapters
@@ -48,14 +56,30 @@ public class DictionaryValue extends AppCompatActivity implements AdapterDiction
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(getString(R.string.select));
+            getSupportActionBar().setElevation(0);
         }
 
+        // Dictionary
+        dictionary = Contribution.dictionary;
+
         // Views
+        infoDictionary = (RelativeLayout)findViewById(R.id.dictionaryInfo);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        TextView dictionaryName = (TextView)findViewById(R.id.dictionaryName);
+        ImageView info = (ImageView)findViewById(R.id.infoDictionary);
+
+        // Set dictionary info
+        dictionaryName.setText(dictionary.getName());
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InfoDialogFragment dialog = InfoDialogFragment.newInstance(dictionary.getName(), dictionary.getDescription());
+                dialog.show(getFragmentManager(), "Info");
+            }
+        });
 
         // Init search contents
         searched = new ArrayList<>();
-        dictionary = Contribution.dictionary;
         ArrayList<ItemDictionary> items = dictionary.getTerms();
 
         // RecyclerView
@@ -106,7 +130,6 @@ public class DictionaryValue extends AppCompatActivity implements AdapterDiction
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                isSearchActive = true;
                 searchView.clearFocus();
                 return true;
             }
@@ -114,7 +137,6 @@ public class DictionaryValue extends AppCompatActivity implements AdapterDiction
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                isSearchActive = true;
                 searched.clear();
 
                 for (ItemDictionary item : dictionary.getTerms()) {
@@ -135,6 +157,21 @@ public class DictionaryValue extends AppCompatActivity implements AdapterDiction
             @Override
             public boolean onClose() {
                 recyclerView.setAdapter(adapter);
+                return true;
+            }
+        });
+
+        MenuItemCompat.setOnActionExpandListener(menu.getItem(0), new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                infoDictionary.setVisibility(View.GONE);
+                isSearchActive = true;
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                infoDictionary.setVisibility(View.VISIBLE);
                 isSearchActive = false;
                 return true;
             }
@@ -145,8 +182,8 @@ public class DictionaryValue extends AppCompatActivity implements AdapterDiction
     @Override
     public void onItemClickListener(View view, int position) {
 
-        String codeTerm = "";
-        String term = "";
+        String codeTerm;
+        String term;
 
         if (isSearchActive) {
             codeTerm = searched.get(position).getCode();
@@ -162,6 +199,41 @@ public class DictionaryValue extends AppCompatActivity implements AdapterDiction
         setResult(RESULT_OK, returnIntent);
         finish();
 
+    }
+
+    /** Dialog - Info **/
+    public static class InfoDialogFragment extends DialogFragment {
+
+        private String title, message;
+
+        static InfoDialogFragment newInstance(String title, String message) {
+            InfoDialogFragment f = new InfoDialogFragment();
+
+            // Supply num input as an argument.
+            Bundle args = new Bundle();
+            args.putString("title", title);
+            args.putString("message", message);
+            f.setArguments(args);
+
+            return f;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            title = getArguments().getString("title");
+            message = getArguments().getString("message");
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(title);
+            builder.setMessage(message);
+            // Create the AlertDialog object and return it
+            return builder.create();
+        }
     }
 
 }
