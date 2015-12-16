@@ -26,6 +26,7 @@ public class Virde {
     public static final int FROM_GET_CONTRIBUTIONS = 8;
     public static final int FROM_GET_LIST_VOLUNTEERS = 9;
     public static final int FROM_GET_SERVER_INFO = 10;
+    public static final int FROM_GET_DICTIONARY = 11;
 
     public static Virde getInstance() {
         if (context == null)
@@ -101,6 +102,10 @@ public class Virde {
 
     public void sendGpxContribution (ItemGpx item) {
         new VirdeSendGpx().execute(item);
+    }
+
+    public void getDictionary(int idDictionary) {
+        new VirdeGetDictionary().execute(String.valueOf(idDictionary));
     }
 
     /** AsyncTasks **/
@@ -248,6 +253,21 @@ public class Virde {
         protected Pair<Result, ArrayList<Integer>> doInBackground(ItemGpx... params) {
             ApiClient apiClient = ApiClient.getInstance();
             return apiClient.sendGpxContribution(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onApiClientRequestResult(result);
+        }
+
+    }
+
+    class VirdeGetDictionary extends AsyncTask<String, Void, Pair<Result, ArrayList<Dictionary>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<Dictionary>> doInBackground(String... params) {
+            ApiClient apiClient = ApiClient.getInstance();
+            return apiClient.getDictionary(params[0]);
         }
 
         @Override

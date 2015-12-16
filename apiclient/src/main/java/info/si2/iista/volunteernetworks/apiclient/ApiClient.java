@@ -45,6 +45,7 @@ public class ApiClient {
     private static final String URL_SEND_CONTRIBUTION = "/API/campaign/%s/sendData/";
     private static final String URL_GET_CONTRIBUTIONS = "/API/campaign/%s/listData/";
     private static final String URL_GET_LIST_VOLUNTEERS = "/API/campaign/%s/listVolunteers/";
+    private static final String URL_DICTIONARY = "/API/dictionary/";
 
     private static Context context;
 
@@ -505,6 +506,42 @@ public class ApiClient {
         } catch (IOException e) {
             e.printStackTrace();
             return new Pair<>(new Result(true, message, from, 1), new ArrayList<Integer>());
+        }
+
+    }
+
+    public Pair<Result, ArrayList<Dictionary>> getDictionary (String idDictionary) {
+
+        // FROM
+        int from = Virde.FROM_GET_DICTIONARY;
+        String message = "Inténtelo más tarde";
+
+        ArrayList<Dictionary> result = new ArrayList<>();
+        OkHttpClient client = getOkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(HOST + URL_DICTIONARY + idDictionary)
+                .build();
+
+        try {
+
+            Response response = client.newCall(request).execute();
+            String respStr  = response.body().string();
+
+            GsonBuilder gsonBuilder = new GsonBuilder()
+                    .setDateFormat("yyyy-MM-dd HH:mm:ss");
+            Gson gson = gsonBuilder.create();
+
+            if (!respStr.equals("0")) {
+                Dictionary dictionary = gson.fromJson(respStr, Dictionary.class);
+                result.add(dictionary);
+            }
+
+            return new Pair<>(new Result(false, null, from, 0), result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Pair<>(new Result(true, message, from, 0), null);
         }
 
     }

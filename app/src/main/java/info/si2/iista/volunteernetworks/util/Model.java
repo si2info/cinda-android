@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
@@ -31,6 +32,7 @@ import info.si2.iista.volunteernetworks.AdapterSpinner;
 import info.si2.iista.volunteernetworks.Contribution;
 import info.si2.iista.volunteernetworks.R;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
+import info.si2.iista.volunteernetworks.DictionaryValue;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -42,6 +44,9 @@ public class Model {
     public static View getItem (Context c, ItemModel item, int id, boolean lastItem) {
 
         switch (item.getFieldType()) {
+            case ItemModel.ITEM_DICTIONARY:
+                return getItemDictionary(c, item, id, lastItem);
+
             case ItemModel.ITEM_EDIT_TEXT:
             case ItemModel.ITEM_EDIT_TEXT_BIG:
             case ItemModel.ITEM_EDIT_NUMBER:
@@ -67,6 +72,59 @@ public class Model {
         }
 
         return null;
+
+    }
+
+    /**
+     * Construye una vista de tipo LinearLayout contenedora de un EditText
+     * @param c Context donde se creará la vista
+     * @param item ItemModel que contiente los datos de la vista
+     * @param id ID de la vista anterior para situar esta debajo
+     * @return View de tipo EditText
+     */
+    public static View getItemDictionary (final Context c, final ItemModel item, int id, boolean lastItem) {
+
+        LayoutInflater inflater = LayoutInflater.from(c);
+        View modelDictionary = inflater.inflate(R.layout.model_dictionary, null, false);
+        TextView textView = (TextView)modelDictionary.findViewById(R.id.textDictionary);
+        ImageView info = (ImageView)modelDictionary.findViewById(R.id.imageView);
+
+        textView.setText(item.getFieldLabel());
+
+        // TextView - Select value dictionary
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(c, DictionaryValue.class);
+                ((Contribution)c).startActivityForResult(intent, Contribution.DICTIONARY_VALUE_REQUEST);
+            }
+        });
+
+        // ImageView - Description
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
+                dialog.show(((Contribution) c).getFragmentManager(), "Info");
+            }
+        });
+
+        // RelativeLayout - Params, view resultante
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        if (id == -1) {
+            params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        } else {
+            params.addRule(RelativeLayout.BELOW, id);
+        }
+        if (lastItem)
+            params.bottomMargin = Util.convertDpToPixel(c, 16);
+
+        modelDictionary.setLayoutParams(params);
+
+        modelDictionary.setTag(item.getFieldType());
+        modelDictionary.setId(item.getId());
+
+        return modelDictionary;
 
     }
 

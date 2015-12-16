@@ -11,5 +11,6 @@ public class Item {
     public static final int SYNC = 2;
     public static final int SERVER = 3;
     public static final int CONTRIBUTION = 4;
+    public static final int DICTIONARY = 5;
 
 }

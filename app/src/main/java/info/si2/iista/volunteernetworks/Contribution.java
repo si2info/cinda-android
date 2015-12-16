@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -47,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import info.si2.iista.volunteernetworks.apiclient.Dictionary;
 import info.si2.iista.volunteernetworks.apiclient.ItemFormContribution;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
@@ -85,6 +87,10 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     private RelativeLayout viewLocation;
     private LatLng position = new LatLng(0, 0);
 
+    // Dictionary
+    private RelativeLayout viewDictionary;
+    private String codeTerm = "";
+
     // Camera and gallery
     private static final int REQUEST_IMAGE = 0x2;
     private int idImage;
@@ -97,10 +103,14 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     // ProgresDialog
     private ProgressDialogFragment dialog;
 
+    // Dictionary
+    public static Dictionary dictionary;
+
     // Request
     private static final int PERMISSIONS_REQUEST_LOCATION = 1;
     private static final int PERMISSIONS_REQUEST_CAMERA = 2;
     private static final int PERMISSIONS_REQUEST_CAMERA_AND_STORAGE = 3;
+    public static final int DICTIONARY_VALUE_REQUEST = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,6 +210,14 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 }
                 dialog.dismiss();
                 break;
+
+            case Virde.FROM_GET_DICTIONARY:
+                if (result.first.isError()) {
+                    Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
+                } else {
+                    dictionary = (Dictionary)result.second.get(0);
+                }
+                break;
         }
     }
 
@@ -223,6 +241,12 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 // Guardar View de location para asignar después
                 if (tag.equals(ItemModel.ITEM_GEOPOS))
                     viewLocation = (RelativeLayout) view;
+
+                // Test dictionary
+                if (tag.equals(ItemModel.ITEM_DICTIONARY)) {
+                    viewDictionary = (RelativeLayout) view;
+                    Virde.getInstance(this).getDictionary(Integer.valueOf(items.get(i).getFieldOptions()));
+                }
 
                 // Añadir view al Layout
                 layout.addView(view);
@@ -311,6 +335,11 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     data = Model.getStringSpinner(view);
                     values.add(new ItemFormContribution(data[0], data[1]));
                     break;
+
+                case ItemModel.ITEM_DICTIONARY:
+                    values.add(new ItemFormContribution(view.getTag().toString(), codeTerm));
+                    break;
+
             }
 
         }
@@ -708,7 +737,15 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == REQUEST_MAP && resultCode == RESULT_OK) {
+        if (requestCode == DICTIONARY_VALUE_REQUEST && resultCode == RESULT_OK) {
+
+            codeTerm = data.getExtras().getString("codeTerm");
+            String term = data.getExtras().getString("term");
+
+            TextView textView = (TextView)viewDictionary.getChildAt(0);
+            textView.setText(term);
+
+        } else if (requestCode == REQUEST_MAP && resultCode == RESULT_OK) {
 
             Double lat = data.getDoubleExtra("lat", 0.0);
             Double lng = data.getDoubleExtra("lng", 0.0);
