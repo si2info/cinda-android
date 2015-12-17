@@ -79,6 +79,7 @@ public class TrackingService extends Service implements LocationListener, Google
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         String action = intent.getAction();
+        Intent updateIntent;
 
         switch (action) {
 
@@ -93,6 +94,12 @@ public class TrackingService extends Service implements LocationListener, Google
                 Tracking.menuType = Tracking.MENU_CONTINUE_STOP;
                 stopLocationUpdates();
                 updateTrackingNotification(false);
+
+                updateIntent = new Intent(this, Tracking.class);
+                updateIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                updateIntent.putExtra("menuType", 3);
+                startActivity(updateIntent);
+
                 break;
 
             case ACTION_STOP:
@@ -104,6 +111,12 @@ public class TrackingService extends Service implements LocationListener, Google
                 Tracking.menuType = Tracking.MENU_PAUSE_STOP;
                 startLocationUpdates();
                 updateTrackingNotification(true);
+
+                updateIntent = new Intent(this, Tracking.class);
+                updateIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                updateIntent.putExtra("menuType", 2);
+                startActivity(updateIntent);
+
                 break;
         }
 

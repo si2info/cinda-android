@@ -133,6 +133,7 @@
 
     <!-- Dialog -->
     <string name="dialog_send_tracking">¿Deseas enviar ahora tu recorrido como contribución o enviar más tarde?\n\nSi selecciona más tarde podrá sincronizar sus contribuciones desde la opción "Sincronizar".</string>
+    <string name="dialog_init_tracking">¿Quieres comenzar a grabar tu ruta?</string>
 
     <!-- Camera -->
     <string name="album_name">Shiari</string>

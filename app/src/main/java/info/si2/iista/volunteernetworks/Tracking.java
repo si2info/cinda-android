@@ -49,6 +49,10 @@ public class Tracking extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tracking);
 
+        // Action bar
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         // Init map
         SupportMapFragment fm = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         googleMap = fm.getMap();
@@ -72,15 +76,53 @@ public class Tracking extends AppCompatActivity {
             }
         });
 
+        // Dialog - Init tracking
+        if (menuType == MENU_PLAY)
+            initTracking();
+
+    }
+
+    /**
+     * Muestra un diálogo en el que explica al usuario en qué consiste el Tracking con dos acciones
+     * Aceptar: Inicia el Tracking
+     * Cancelar: Sale de la actividad
+     */
+    public void initTracking () {
+
+        DialogInterface.OnClickListener okListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                menuType = MENU_PAUSE_STOP;
+                invalidateOptionsMenu();
+                startToTracking();
+            }
+        };
+
+        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        };
+
+        new AlertDialog.Builder(this)
+                .setMessage(getString(R.string.dialog_init_tracking))
+                .setPositiveButton(getString(R.string.yes), okListener)
+                .setNegativeButton(getString(R.string.no), cancelListener)
+                .setCancelable(false)
+                .create()
+                .show();
+
     }
 
     /** Action menu items **/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if (menuType == 1)
-            getMenuInflater().inflate(R.menu.menu_traking_play, menu);
-        else if (menuType == 2)
+//        if (menuType == 1)
+//            getMenuInflater().inflate(R.menu.menu_traking_play, menu);
+//        else
+        if (menuType == 2)
             getMenuInflater().inflate(R.menu.menu_tracking_pause_stop, menu);
         else if (menuType == 3)
             getMenuInflater().inflate(R.menu.menu_tracking_continue_stop, menu);
@@ -205,6 +247,13 @@ public class Tracking extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
 
         checkStopTracking(intent);
+
+        if (intent.getExtras() != null) {
+            if (intent.getExtras().containsKey("menuType")) {
+                menuType = intent.getExtras().getInt("menuType");
+                invalidateOptionsMenu();
+            }
+        }
 
         super.onNewIntent(intent);
     }
