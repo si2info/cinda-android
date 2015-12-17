@@ -39,8 +39,8 @@
     <color name="infoImage">#757575</color>
 
     <!-- Text protection scrim -->
-    <color name="gradient_start">#77000000</color>
-    <color name="gradient_end">#00000000</color>
+    <color name="gradient_start">#E04CAF50</color>
+    <color name="gradient_end">#E64CAF50</color>
 
     <!-- Item Selected -->
     <color name="item_select">#DEDEDE</color>

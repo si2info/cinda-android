@@ -7,7 +7,7 @@
     <item
         android:id="@+id/action_tracking"
         android:title="@string/action_tracking"
-        android:icon="@drawable/ic_directions_walk_white_24dp"
+        android:icon="@drawable/ic_add_location_white_24dp"
         android:orderInCategory="100"
         app:showAsAction="always" />
 
