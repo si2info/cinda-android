@@ -16,7 +16,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import info.si2.iista.volunteernetworks.apiclient.Dictionary;
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
+import info.si2.iista.volunteernetworks.apiclient.ItemDictionary;
 import info.si2.iista.volunteernetworks.apiclient.ItemGoogleMaps;
 import info.si2.iista.volunteernetworks.apiclient.ItemGpx;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
@@ -1022,6 +1024,148 @@ public class DBApi {
         editor.apply();
 
         return nKey;
+
+    }
+
+    /**********************/
+    /**    DICTIONARY    **/
+    /**********************/
+
+    public synchronized Result insertDictionaryToDB (Dictionary dictionary) {
+
+        int from = DBVirde.FROM_INSERT_DICTIONARY;
+
+        try {
+
+            open();
+
+            // Name dictionary
+            String name = "";
+            if (dictionary.getName() != null)
+                name = URLEncoder.encode(dictionary.getName(), "UTF-8");
+
+            // Description dictionary
+            String description = "";
+            if (dictionary.getDescription() != null)
+                description = URLEncoder.encode(dictionary.getDescription(), "UTF-8");
+
+            String sql = "INSERT OR REPLACE INTO " + DBDictionary.TABLE_DICTIONARY + " " +
+                    " VALUES (" + dictionary.getCode() + ", " + dictionary.getIdServer() + ", '" + name + "', '" +
+                    description + "')";
+
+            database.execSQL(sql);
+
+            for (ItemDictionary item : dictionary.getTerms()) {
+
+                // Name term
+                name = "";
+                if (dictionary.getName() != null)
+                    name = URLEncoder.encode(item.getName(), "UTF-8");
+
+                // Description term
+                description = "";
+                if (dictionary.getDescription() != null)
+                    description = URLEncoder.encode(item.getDescription(), "UTF-8");
+
+                sql = "INSERT OR REPLACE INTO " + DBDictionaryTerm.TABLE_TERMS + " " +
+                        " VALUES (" + dictionary.getCode() + ", '" + name + "', '" + description +
+                        "', " + item.getCode() + ")";
+
+                database.execSQL(sql);
+
+            }
+
+            close(); // Close DB
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new Result(true, null, from, 1);
+        }
+
+        return new Result(false, null, from, 0);
+
+    }
+
+    public synchronized Pair<Result, ArrayList<Integer>> checkIfDictionaryExists (int code) {
+
+        int from = DBVirde.FROM_CHECK_IF_DICTIONARY_EXISTS;
+        ArrayList<Integer> result = new ArrayList<>();
+
+        open();
+
+        String sql = "SELECT * FROM " + DBDictionary.TABLE_DICTIONARY +
+                " WHERE " + DBDictionary.ID_DICTIONARY +  " = " + code;
+
+
+        Cursor c = database.rawQuery(sql, null);
+
+        if (c.getCount() == 0) {
+            result.add(0);
+        } else {
+            result.add(1);
+        }
+
+        c.close();
+        close();
+
+        return new Pair<>(new Result(false, null, from, 0), result);
+
+    }
+
+    public synchronized Pair<Result, ArrayList<Dictionary>> selectDictionary (int code) {
+
+        int from = DBVirde.FROM_SELECT_DICTIONARY;
+        ArrayList<Dictionary> result = new ArrayList<>();
+
+        String sql = "SELECT " + DBDictionary.TABLE_DICTIONARY+"."+DBDictionary.ID_DICTIONARY + ", " +
+                DBDictionary.TABLE_DICTIONARY+"."+DBDictionary.NAME + ", " + DBDictionary.TABLE_DICTIONARY+"."+DBDictionary.DESCRIPTION + ", " +
+                DBDictionaryTerm.TABLE_TERMS+"."+DBDictionaryTerm.NAME + ", " + DBDictionaryTerm.TABLE_TERMS+"."+DBDictionaryTerm.DESCRIPTION + ", " +
+                DBDictionaryTerm.TABLE_TERMS+"."+DBDictionaryTerm.CODE + "\n" +
+                "FROM " + DBDictionary.TABLE_DICTIONARY + ", " + DBDictionaryTerm.TABLE_TERMS + ", " + DBServer.TABLE_SERVER + "\n" +
+                "WHERE " + DBDictionary.TABLE_DICTIONARY+"."+DBDictionary.ID_DICTIONARY + " = " + DBDictionaryTerm.TABLE_TERMS+"."+DBDictionaryTerm.ID_DICTIONARY + "\n" +
+                "AND " + DBDictionary.TABLE_DICTIONARY+"."+DBDictionary.ID_SERVER + " = " + DBServer.TABLE_SERVER+"."+DBServer.ID;
+
+        open();
+
+        Cursor c = database.rawQuery(sql, null);
+
+        if (c.moveToFirst()) {
+            result.add(formatDictionaryFromDB(c));
+        }
+
+        c.close();
+        close();
+
+        return new Pair<>(new Result(false, null, from, 0), result);
+
+    }
+
+    private Dictionary formatDictionaryFromDB(Cursor c) {
+
+        Dictionary dictionary = new Dictionary();
+
+        try {
+
+            dictionary.setCode(c.getInt(0));
+            dictionary.setName(URLDecoder.decode(c.getString(1), "UTF-8"));
+            dictionary.setDescription(URLDecoder.decode(c.getString(2), "UTF-8"));
+            dictionary.setTerms(new ArrayList<ItemDictionary>());
+
+            do {
+
+                ItemDictionary item = new ItemDictionary();
+                item.setName(URLDecoder.decode(c.getString(3), "UTF-8"));
+                item.setDescription(URLDecoder.decode(c.getString(4), "UTF-8"));
+                item.setCode(c.getString(5));
+                dictionary.getTerms().add(item);
+
+            } while (c.moveToNext());
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return dictionary;
 
     }
 

@@ -73,10 +73,6 @@
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".Test"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".Tracking"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme"

@@ -5,6 +5,7 @@
     <color name="primary">#4CAF50</color>
     <color name="primary_dark">#388E3C</color>
     <color name="accent">#4CAF50</color>
+    <color name="toolbar_semitrans">#22000000</color>
 
     <color name="error">#CD382E</color>
     <color name="text">#4A4A4A</color>

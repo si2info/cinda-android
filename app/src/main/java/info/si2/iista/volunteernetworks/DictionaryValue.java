@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,13 +25,17 @@ import java.util.ArrayList;
 
 import info.si2.iista.volunteernetworks.apiclient.Dictionary;
 import info.si2.iista.volunteernetworks.apiclient.ItemDictionary;
+import info.si2.iista.volunteernetworks.apiclient.Result;
+import info.si2.iista.volunteernetworks.database.DBVirde;
+import info.si2.iista.volunteernetworks.database.OnDBApiResult;
+import info.si2.iista.volunteernetworks.util.Util;
 
 /**
  * Developer: Jose Miguel Mingorance
  * Date: 15/12/15
  * Project: Shiari
  */
-public class DictionaryValue extends AppCompatActivity implements AdapterDictionary.OnItemClickListener {
+public class DictionaryValue extends AppCompatActivity implements AdapterDictionary.OnItemClickListener, OnDBApiResult {
 
     // Data
     private Dictionary dictionary;
@@ -59,12 +64,33 @@ public class DictionaryValue extends AppCompatActivity implements AdapterDiction
             getSupportActionBar().setElevation(0);
         }
 
+        // Get dictionary from DB
+        if (getIntent().getExtras() != null) {
+            int idDictionary = getIntent().getExtras().getInt("code");
+            DBVirde.getInstance(this).selectDictionary(idDictionary);
+        }
+
         // Dictionary
-        dictionary = Contribution.dictionary;
+//        dictionary = Contribution.dictionary;
+
+        // Views
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+
+        // RecyclerView
+        ArrayList<ItemDictionary> items = new ArrayList<>();
+        adapter = new AdapterDictionary(this, items);
+        adapter.setOnItemClickListener(this);
+        recyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+
+    }
+
+    private void initView () {
 
         // Views
         infoDictionary = (RelativeLayout)findViewById(R.id.dictionaryInfo);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         TextView dictionaryName = (TextView)findViewById(R.id.dictionaryName);
         ImageView info = (ImageView)findViewById(R.id.infoDictionary);
 
@@ -198,6 +224,35 @@ public class DictionaryValue extends AppCompatActivity implements AdapterDiction
         returnIntent.putExtra("term", term);
         setResult(RESULT_OK, returnIntent);
         finish();
+
+    }
+
+    /** DB **/
+    @Override
+    public void onDBApiInsertResult(Result result) {
+
+    }
+
+    @Override
+    public void onDBApiSelectResult(Pair<Result, ArrayList> result) {
+        switch (result.first.getResultFrom()) {
+            case DBVirde.FROM_SELECT_DICTIONARY:
+                if (result.first.isError()) {
+                    Util.makeToast(this, result.first.getMensaje(), 0);
+                } else {
+
+                    if (result.second.size() > 0) {
+                        dictionary = (Dictionary) result.second.get(0);
+                        initView();
+                    }
+
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onDBApiUpdateResult(Result result) {
 
     }
 

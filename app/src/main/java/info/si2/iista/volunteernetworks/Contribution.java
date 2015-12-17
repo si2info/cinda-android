@@ -104,7 +104,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     private ProgressDialogFragment dialog;
 
     // Dictionary
-    public static Dictionary dictionary;
+    private Dictionary dictionary;
 
     // Request
     private static final int PERMISSIONS_REQUEST_LOCATION = 1;
@@ -216,6 +216,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
                 } else {
                     dictionary = (Dictionary)result.second.get(0);
+                    DBVirde.getInstance(this).insertDictionary(dictionary);
                 }
                 break;
         }
@@ -245,7 +246,9 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 // Test dictionary
                 if (tag.equals(ItemModel.ITEM_DICTIONARY)) {
                     viewDictionary = (RelativeLayout) view;
-                    Virde.getInstance(this).getDictionary(Integer.valueOf(items.get(i).getFieldOptions()));
+                    dictionary = new Dictionary();
+                    dictionary.setCode(Integer.valueOf(items.get(i).getFieldOptions()));
+                    DBVirde.getInstance(this).checkIfDictionaryExists(dictionary.getCode());
                 }
 
                 // Añadir view al Layout
@@ -717,6 +720,16 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     drawModel(model);
 
                 }
+                break;
+            case DBVirde.FROM_CHECK_IF_DICTIONARY_EXISTS:
+
+                int exist = (Integer) result.second.get(0);
+
+                if (exist == 0) {
+                    int idServer = Util.getIntPreference(this, getString(R.string.id_server));
+                    Virde.getInstance(this).getDictionary(model.get(0).getIdCampaign(), dictionary.getCode(), idServer);
+                }
+
                 break;
         }
     }

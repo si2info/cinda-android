@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DataBase extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "Shiari.db";
 
     private static final String PRIMARY_KEY = " PRIMARY KEY";
@@ -94,6 +94,24 @@ public class DataBase extends SQLiteOpenHelper {
                     "FOREIGN KEY("+ DBGpxContribution.ID_CAMPAIGN + ") REFERENCES " + DBModel.TABLE_MODEL + "(" + DBModel.ID + ")" +
                     ");";
 
+    private static final String SQL_CREATE_DICTIONARY =
+            "CREATE TABLE " + DBDictionary.TABLE_DICTIONARY + " (" +
+                    DBDictionary.ID_DICTIONARY + TYPE_INT + COMMA_SEP +
+                    DBDictionary.ID_SERVER + TYPE_INT + COMMA_SEP +
+                    DBDictionary.NAME + TYPE_TEXT + COMMA_SEP +
+                    DBDictionary.DESCRIPTION + TYPE_TEXT + COMMA_SEP +
+                    "FOREIGN KEY("+ DBDictionary.ID_SERVER + ") REFERENCES " + DBCampaign.TABLE_CAMPAIGNS + "(" + DBCampaign.ID + ")" +
+                    ");";
+
+    private static final String SQL_CREATE_DICTIONARY_TERM =
+            "CREATE TABLE " + DBDictionaryTerm.TABLE_TERMS + " (" +
+                    DBDictionaryTerm.ID_DICTIONARY + TYPE_INT + COMMA_SEP +
+                    DBDictionaryTerm.NAME + TYPE_TEXT + COMMA_SEP +
+                    DBDictionaryTerm.DESCRIPTION + TYPE_TEXT + COMMA_SEP +
+                    DBDictionaryTerm.CODE + TYPE_INT + COMMA_SEP +
+                    "FOREIGN KEY("+ DBDictionaryTerm.ID_DICTIONARY + ") REFERENCES " + DBDictionary.TABLE_DICTIONARY + "(" + DBDictionary.ID_DICTIONARY + ")" +
+                    ");";
+
     private static final String SQL_DELETE_CAMPAIGNS =
             "DROP TABLE IF EXISTS " + DBCampaign.TABLE_CAMPAIGNS;
 
@@ -109,6 +127,12 @@ public class DataBase extends SQLiteOpenHelper {
     private static final String SQL_DELETE_GPX =
             "DROP TABLE IF EXISTS " + DBGpxContribution.TABLE_GPX;
 
+    private static final String SQL_DELETE_DICTIONARY =
+            "DROP TABLE IF EXISTS " + DBDictionary.TABLE_DICTIONARY;
+
+    private static final String SQL_DELETE_DICTIONARY_TERMS =
+            "DROP TABLE IF EXISTS " + DBDictionaryTerm.TABLE_TERMS;
+
     public DataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -120,6 +144,8 @@ public class DataBase extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_MODEL);
         db.execSQL(SQL_CREATE_MODEL_VALUE);
         db.execSQL(SQL_CREATE_GPX);
+        db.execSQL(SQL_CREATE_DICTIONARY);
+        db.execSQL(SQL_CREATE_DICTIONARY_TERM);
     }
 
     @Override
@@ -129,6 +155,8 @@ public class DataBase extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_MODELS);
         db.execSQL(SQL_DELETE_MODELS_ITEM);
         db.execSQL(SQL_DELETE_GPX);
+        db.execSQL(SQL_DELETE_DICTIONARY);
+        db.execSQL(SQL_DELETE_DICTIONARY_TERMS);
         onCreate(db);
     }
 

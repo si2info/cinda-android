@@ -7,6 +7,7 @@ import android.util.Pair;
 
 import java.util.ArrayList;
 
+import info.si2.iista.volunteernetworks.apiclient.Dictionary;
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.apiclient.ItemGpx;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
@@ -47,6 +48,10 @@ public class DBVirde {
     public static final int FROM_INSERT_GPX = 17;
     public static final int FROM_SELECT_GPX = 18;
     public static final int FROM_UPDATE_GPX = 19;
+
+    public static final int FROM_INSERT_DICTIONARY = 20;
+    public static final int FROM_SELECT_DICTIONARY = 21;
+    public static final int FROM_CHECK_IF_DICTIONARY_EXISTS = 22;
 
 
     public static DBVirde getInstance() {
@@ -163,6 +168,20 @@ public class DBVirde {
 
     public void updateGpx (ItemGpx item) {
         new DBVirdeUpdateGpx().execute(item);
+    }
+
+        /** Dictionary **/
+
+    public void checkIfDictionaryExists (int code) {
+        new DBVirdeCheckDictionary().execute(code);
+    }
+
+    public void insertDictionary (Dictionary dictionary) {
+        new DBVirdeInsertDictionary().execute(dictionary);
+    }
+
+    public void selectDictionary (int code) {
+        new DBVirdeSelectDictionary().execute(code);
     }
 
     /** AsyncTasks **/
@@ -458,6 +477,53 @@ public class DBVirde {
         @Override
         protected void onPostExecute(Result result) {
             context.onDBApiUpdateResult(result);
+        }
+
+    }
+
+        /** DICTIONARY **/
+
+    class DBVirdeSelectDictionary extends AsyncTask<Integer, Void, Pair<Result, ArrayList<Dictionary>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<Dictionary>> doInBackground(Integer... integers) {
+            DBApi apiClient = DBApi.getInstance((Context) context);
+            return apiClient.selectDictionary(integers[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onDBApiSelectResult(result);
+        }
+
+    }
+
+    class DBVirdeInsertDictionary extends AsyncTask<Dictionary, Void, Result> {
+
+        @Override
+        protected Result doInBackground(Dictionary... items) {
+            DBApi apiClient = DBApi.getInstance((Context) context);
+            return apiClient.insertDictionaryToDB(items[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Result result) {
+            context.onDBApiInsertResult(result);
+        }
+
+    }
+
+    class DBVirdeCheckDictionary extends AsyncTask<Integer, Void, Pair<Result, ArrayList<Integer>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<Integer>> doInBackground(Integer... integers) {
+            DBApi apiClient = DBApi.getInstance((Context) context);
+            return apiClient.checkIfDictionaryExists(integers[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onDBApiSelectResult(result);
         }
 
     }

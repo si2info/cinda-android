@@ -9,8 +9,25 @@ import java.util.ArrayList;
  */
 public class Dictionary {
 
+    private int code, idServer;
     private String name, description;
     private ArrayList<ItemDictionary> terms;
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public int getIdServer() {
+        return idServer;
+    }
+
+    public void setIdServer(int idServer) {
+        this.idServer = idServer;
+    }
 
     public String getName() {
         return name;

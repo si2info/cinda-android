@@ -96,6 +96,7 @@ public class Model {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(c, DictionaryValue.class);
+                intent.putExtra("code", Integer.valueOf(item.getFieldOptions()));
                 ((Contribution)c).startActivityForResult(intent, Contribution.DICTIONARY_VALUE_REQUEST);
             }
         });

@@ -318,6 +318,12 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                     userCanOperate = true;
                     String token = (String) result.second.get(0);
                     Util.savePreference(this, getString(R.string.token), token);
+
+                    // Get campaigns and feedback to user
+                    doRefresh();
+                    int idServer = Util.getIntPreference(MainActivity.this, getString(R.string.id_server));
+                    DBVirde.getInstance(this).getCampaigns(idServer);
+
                 }
                 break;
             case Virde.FROM_LIST_CAMPAIGNS:
@@ -453,12 +459,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
                         // Registro de usuario
                         userCanOperate = false;
-                        signUpUser();
-
-                        // Get campaigns and feedback to user
-                        doRefresh();
-                        int idServer = Util.getIntPreference(MainActivity.this, getString(R.string.id_server));
-                        DBVirde.getInstance(this).getCampaigns(idServer);
+                        signUpUser(); // FROM - get campaigns
 
                     }
                 }

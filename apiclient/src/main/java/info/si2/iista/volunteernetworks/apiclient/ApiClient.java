@@ -510,7 +510,7 @@ public class ApiClient {
 
     }
 
-    public Pair<Result, ArrayList<Dictionary>> getDictionary (String idDictionary) {
+    public Pair<Result, ArrayList<Dictionary>> getDictionary (String idCampaign, String idDictionary, String idServer) {
 
         // FROM
         int from = Virde.FROM_GET_DICTIONARY;
@@ -534,6 +534,8 @@ public class ApiClient {
 
             if (!respStr.equals("0")) {
                 Dictionary dictionary = gson.fromJson(respStr, Dictionary.class);
+                dictionary.setCode(Integer.valueOf(idDictionary));
+                dictionary.setIdServer(Integer.valueOf(idServer));
                 result.add(dictionary);
             }
 
