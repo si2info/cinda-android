@@ -68,6 +68,27 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <!-- Texts Model -->
+    <style name="text.modelTitle">
+        <item name="android:textColor">@color/model_title</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="text.modelText">
+        <item name="android:textColor">@color/model_title</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="text.modelDescription">
+        <item name="android:textColor">@color/model_description</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="text.modelInfo">
+        <item name="android:textColor">@color/model_info</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <!-- Texts Campaign -->
     <style name="campaign" parent="@android:style/TextAppearance.Medium">
         <item name="android:layout_width">wrap_content</item>

@@ -118,8 +118,10 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         setContentView(R.layout.contribution);
 
         // Action bar
-        if (getSupportActionBar() != null)
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getString(R.string.contribution_title));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // Views
         layout = (RelativeLayout)findViewById(R.id.layout);
@@ -304,6 +306,8 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     break;
 
                 case ItemModel.ITEM_DATETIME:
+                    data = Model.getDateTime(view);
+                    values.add(new ItemFormContribution(data[0], data[1]));
                     break;
 
                 case ItemModel.ITEM_GEOPOS:
@@ -755,7 +759,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
             codeTerm = data.getExtras().getString("codeTerm");
             String term = data.getExtras().getString("term");
 
-            TextView textView = (TextView)viewDictionary.getChildAt(0);
+            TextView textView = (TextView)viewDictionary.getChildAt(2);
             textView.setText(term);
 
         } else if (requestCode == REQUEST_MAP && resultCode == RESULT_OK) {

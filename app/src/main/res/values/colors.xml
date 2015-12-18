@@ -18,7 +18,6 @@
 
     <!-- Separator -->
     <color name="separator">#E2E2E2</color>
-    <color name="separator_model">#7f7e7f</color>
 
     <!-- Text Item Campaign -->
     <color name="defaultColor">#7F7E7F</color>
@@ -37,6 +36,11 @@
     <!-- Model -->
     <color name="backImage">#f0f0f0</color>
     <color name="infoImage">#757575</color>
+    <color name="model_title">#555555</color>
+    <color name="model_text">#333333</color>
+    <color name="model_info">#CCCCCC</color>
+    <color name="model_description">#555555</color>
+    <color name="model_separator">#DDDDDD</color>
 
     <!-- Text protection scrim -->
     <color name="gradient_start">#E04CAF50</color>

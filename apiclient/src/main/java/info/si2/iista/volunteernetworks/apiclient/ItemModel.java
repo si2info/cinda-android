@@ -22,6 +22,7 @@ public class ItemModel {
     public static final String ITEM_FILE = "file";
     public static final String ITEM_SPINNER = "select";
     public static final String ITEM_DICTIONARY = "dictionary";
+    public static final String ITEM_DESCRIPTION = "description";
 
     // App
     public static final String ITEM_CAMPAIGN_NAME = "campaign_name";

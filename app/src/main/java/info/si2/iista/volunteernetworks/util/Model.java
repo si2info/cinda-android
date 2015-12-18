@@ -6,10 +6,9 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatSpinner;
+import android.text.Html;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,9 +29,9 @@ import java.util.Locale;
 
 import info.si2.iista.volunteernetworks.AdapterSpinner;
 import info.si2.iista.volunteernetworks.Contribution;
+import info.si2.iista.volunteernetworks.DictionaryValue;
 import info.si2.iista.volunteernetworks.R;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
-import info.si2.iista.volunteernetworks.DictionaryValue;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -56,7 +55,7 @@ public class Model {
                 return getItemDate(c, item, id, lastItem);
 
             case ItemModel.ITEM_DATETIME:
-                break;
+                return getItemDateTime(c, item, id, lastItem);
 
             case ItemModel.ITEM_GEOPOS:
                 return getItemLocation(c, item, id, lastItem);
@@ -69,6 +68,9 @@ public class Model {
 
             case ItemModel.ITEM_SPINNER:
                 return getItemSpinner(c, item, id, lastItem);
+
+            case ItemModel.ITEM_DESCRIPTION:
+                return getItemDescription(c, item, id, lastItem);
         }
 
         return null;
@@ -76,20 +78,22 @@ public class Model {
     }
 
     /**
-     * Construye una vista de tipo LinearLayout contenedora de un EditText
+     * Construye una vista de tipo RelativeLayout contenedora de un TextView
      * @param c Context donde se creará la vista
      * @param item ItemModel que contiente los datos de la vista
      * @param id ID de la vista anterior para situar esta debajo
-     * @return View de tipo EditText
+     * @return View RelativeLayout
      */
     public static View getItemDictionary (final Context c, final ItemModel item, int id, boolean lastItem) {
 
         LayoutInflater inflater = LayoutInflater.from(c);
         View modelDictionary = inflater.inflate(R.layout.model_dictionary, null, false);
         TextView textView = (TextView)modelDictionary.findViewById(R.id.textDictionary);
-        ImageView info = (ImageView)modelDictionary.findViewById(R.id.imageView);
+        TextView title = (TextView)modelDictionary.findViewById(R.id.title);
+        TextView info = (TextView)modelDictionary.findViewById(R.id.info);
 
-        textView.setText(item.getFieldLabel());
+        textView.setText(c.getString(R.string.dic_hint));
+        title.setText(item.getFieldLabel());
 
         // TextView - Select value dictionary
         textView.setOnClickListener(new View.OnClickListener() {
@@ -101,14 +105,18 @@ public class Model {
             }
         });
 
-        // ImageView - Description
-        info.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
-                dialog.show(((Contribution) c).getFragmentManager(), "Info");
-            }
-        });
+        // TextView - Description
+        if (item.getFieldDescription().equals("")) {
+            info.setVisibility(View.INVISIBLE);
+        } else {
+            info.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
+                    dialog.show(((Contribution) c).getFragmentManager(), "Info");
+                }
+            });
+        }
 
         // RelativeLayout - Params, view resultante
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -130,6 +138,81 @@ public class Model {
     }
 
     /**
+     * Construye una vista de tipo RelativeLayout contenedora de un TextView
+     * @param c Context donde se creará la vista
+     * @param item ItemModel que contiente los datos de la vista
+     * @param id ID de la vista anterior para situar esta debajo
+     * @return View RelativeLayout
+     */
+    public static View getItemDateTime (final Context c, final ItemModel item, int id, boolean lastItem) {
+
+        LayoutInflater inflater = LayoutInflater.from(c);
+        View modelDateTime = inflater.inflate(R.layout.model_datetime, null, false);
+        TextView title = (TextView)modelDateTime.findViewById(R.id.title);
+        TextView datetime = (TextView)modelDateTime.findViewById(R.id.dateTime);
+
+        // Date Time
+        Date date = new Date();
+        String dateSt = Util.parseDateToString("dd/MM/yyyy HH:mm", date);
+        datetime.setText(dateSt);
+        title.setText(item.getFieldLabel());
+
+        // RelativeLayout - Params, view resultante
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        if (id == -1) {
+            params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        } else {
+            params.addRule(RelativeLayout.BELOW, id);
+        }
+        if (lastItem)
+            params.bottomMargin = Util.convertDpToPixel(c, 16);
+
+        modelDateTime.setLayoutParams(params);
+
+        modelDateTime.setTag(item.getFieldType());
+        modelDateTime.setId(item.getId());
+
+        return modelDateTime;
+
+    }
+
+    /**
+     * Construye una vista de tipo RelativeLayout contenedora de un TextView
+     * @param c Context donde se creará la vista
+     * @param item ItemModel que contiente los datos de la vista
+     * @param id ID de la vista anterior para situar esta debajo
+     * @return View RelativeLayout
+     */
+    public static View getItemDescription (final Context c, final ItemModel item, int id, boolean lastItem) {
+
+        LayoutInflater inflater = LayoutInflater.from(c);
+        View modelDescription = inflater.inflate(R.layout.model_description, null, false);
+        TextView textView = (TextView)modelDescription.findViewById(R.id.description);
+
+        // Description
+        String description = "<i>" + item.getFieldDescription() + "</i>";
+        textView.setText(Html.fromHtml(description));
+
+        // RelativeLayout - Params, view resultante
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        if (id == -1) {
+            params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        } else {
+            params.addRule(RelativeLayout.BELOW, id);
+        }
+        if (lastItem)
+            params.bottomMargin = Util.convertDpToPixel(c, 16);
+
+        modelDescription.setLayoutParams(params);
+
+        modelDescription.setTag(item.getFieldType());
+        modelDescription.setId(item.getId());
+
+        return modelDescription;
+
+    }
+
+    /**
      * Construye una vista de tipo LinearLayout contenedora de un EditText
      * @param c Context donde se creará la vista
      * @param item ItemModel que contiente los datos de la vista
@@ -140,42 +223,44 @@ public class Model {
 
         LayoutInflater inflater = LayoutInflater.from(c);
         View modelEditText = inflater.inflate(R.layout.model_edit_text, null, false);
-        TextInputLayout textInputLayout = (TextInputLayout)modelEditText.findViewById(R.id.editText);
-        ImageView info = (ImageView)modelEditText.findViewById(R.id.imageView);
+        EditText editText = (EditText)modelEditText.findViewById(R.id.editText);
+        TextView title = (TextView)modelEditText.findViewById(R.id.title);
+        TextView info = (TextView)modelEditText.findViewById(R.id.info);
+
+        // Title
+        title.setText(item.getFieldLabel());
 
         // Construct View
-        textInputLayout.setHint(item.getFieldLabel());
-        textInputLayout.setTypeface(Util.getRobotoLight(c));
+        editText.setHint(item.getFieldLabel());
+//        editText.setTypeface(Util.getRobotoLight(c));
 
-        // EditText - Title hint
-        AppCompatEditText editText = (AppCompatEditText) textInputLayout.getEditText();
+        editText.setHint("");
 
-        if (editText != null) {
-
-            editText.setHint("");
-
-            switch (item.getFieldType()) { // Tipo de texto
-                case ItemModel.ITEM_EDIT_TEXT:
-                    editText.setInputType(InputType.TYPE_CLASS_TEXT);
-                    break;
-                case ItemModel.ITEM_EDIT_TEXT_BIG:
-                    editText.setSingleLine(false);
-                    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-                    break;
-                case ItemModel.ITEM_EDIT_NUMBER:
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    break;
-            }
+        switch (item.getFieldType()) { // Tipo de texto
+            case ItemModel.ITEM_EDIT_TEXT:
+                editText.setInputType(InputType.TYPE_CLASS_TEXT);
+                break;
+            case ItemModel.ITEM_EDIT_TEXT_BIG:
+                editText.setSingleLine(false);
+                editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                break;
+            case ItemModel.ITEM_EDIT_NUMBER:
+                editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                break;
         }
 
-        // ImageView - Description
-        info.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
-                dialog.show(((Contribution) c).getFragmentManager(), "Info");
-            }
-        });
+        // TextView - Description
+        if (item.getFieldDescription().equals("")) {
+            info.setVisibility(View.INVISIBLE);
+        } else {
+            info.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
+                    dialog.show(((Contribution) c).getFragmentManager(), "Info");
+                }
+            });
+        }
 
         // RelativeLayout - Params, view resultante
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -208,21 +293,25 @@ public class Model {
         LayoutInflater inflater = LayoutInflater.from(c);
         View modelMap = inflater.inflate(R.layout.model_location, null, false);
         TextView textLocation = (TextView)modelMap.findViewById(R.id.textLocation);
-        ImageView info = (ImageView)modelMap.findViewById(R.id.imageView);
+        TextView info = (TextView)modelMap.findViewById(R.id.info);
         ImageView imgMap = (ImageView)modelMap.findViewById(R.id.mapLocation);
 
         // TextView - Location
         textLocation.setText(item.getFieldLabel());
         textLocation.setTypeface(Util.getRobotoLight(c));
 
-        // ImageView - Info
-        info.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
-                dialog.show(((Contribution) c).getFragmentManager(), "Info");
-            }
-        });
+        // TextView - Description
+        if (item.getFieldDescription().equals("")) {
+            info.setVisibility(View.INVISIBLE);
+        } else {
+            info.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
+                    dialog.show(((Contribution) c).getFragmentManager(), "Info");
+                }
+            });
+        }
 
         // ImageView - Map Image
         imgMap.setTag(item.getFieldType());
@@ -265,24 +354,27 @@ public class Model {
 
         LayoutInflater inflater = LayoutInflater.from(c);
         View modelImage = inflater.inflate(R.layout.model_image, null, false);
-        TextView textImage = (TextView)modelImage.findViewById(R.id.textImage);
-        ImageView info = (ImageView)modelImage.findViewById(R.id.imageView);
+        TextView textImage = (TextView)modelImage.findViewById(R.id.title);
+        TextView info = (TextView)modelImage.findViewById(R.id.info);
         ImageView imgToSelect = (ImageView)modelImage.findViewById(R.id.imageSelected);
 
         final int idImage = item.getId();
 
         // TextView - Image;
         textImage.setText(item.getFieldLabel());
-        textImage.setTypeface(Util.getRobotoLight(c));
 
-        // ImageView - Description
-        info.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
-                dialog.show(((Contribution) c).getFragmentManager(), "Info");
-            }
-        });
+        // TextView - Description
+        if (item.getFieldDescription().equals("")) {
+            info.setVisibility(View.INVISIBLE);
+        } else {
+            info.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
+                    dialog.show(((Contribution) c).getFragmentManager(), "Info");
+                }
+            });
+        }
 
         // ImageView - OnClick
         imgToSelect.setOnClickListener(new View.OnClickListener() {
@@ -323,7 +415,11 @@ public class Model {
         LayoutInflater inflater = LayoutInflater.from(c);
         View modelSpinner = inflater.inflate(R.layout.model_spinner, null, false);
         AppCompatSpinner spinner = (AppCompatSpinner)modelSpinner.findViewById(R.id.spinner);
-        ImageView info = (ImageView)modelSpinner.findViewById(R.id.imageView);
+        TextView title = (TextView)modelSpinner.findViewById(R.id.textSpinner);
+        TextView info = (TextView)modelSpinner.findViewById(R.id.info);
+
+        // Title
+        title.setText(item.getFieldLabel());
 
         // Spinner data
         String[] items = item.getFieldOptions().split("\\|");
@@ -338,14 +434,18 @@ public class Model {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        // ImageView - Description
-        info.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
-                dialog.show(((Contribution) c).getFragmentManager(), "Info");
-            }
-        });
+        // TextView - Description
+        if (item.getFieldDescription().equals("")) {
+            info.setVisibility(View.INVISIBLE);
+        } else {
+            info.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    infoDialogFragment dialog = infoDialogFragment.newInstance(item.getFieldLabel(), item.getFieldDescription());
+                    dialog.show(((Contribution) c).getFragmentManager(), "Info");
+                }
+            });
+        }
 
         // RelativeLayout - Params, view resultante
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -463,8 +563,7 @@ public class Model {
 
         String[] values = new String[2];
 
-        TextInputLayout textInputLayout = (TextInputLayout) layout.getChildAt(0);
-        EditText editText = textInputLayout.getEditText();
+        EditText editText = (EditText) layout.getChildAt(2);
 
         values[0] = layout.getTag().toString();
         if (editText != null) {
@@ -499,6 +598,25 @@ public class Model {
     }
 
     /**
+     * Obtiene el valor de un campo de tipo fecha
+     * @param layout Layout contenedora de los datos
+     * @return String de la fecha en formato yyyy-MM-dd
+     */
+    public static String[] getDateTime (RelativeLayout layout) {
+
+        String[] values = new String[2];
+
+        TextView text = (TextView) layout.getChildAt(1);
+
+        String date = text.getText().toString();
+
+        values[0] = layout.getTag().toString();
+        values[1] = date;
+
+        return values;
+    }
+
+    /**
      * Obtiene el valor seleccionado del Spinner
      * @param layout Layout contenedora de los datos
      * @return Opción seleccionada
@@ -507,7 +625,7 @@ public class Model {
 
         String[] values = new String[2];
 
-        Spinner spinner = (Spinner)layout.getChildAt(0);
+        Spinner spinner = (Spinner)layout.getChildAt(2);
         String result = spinner.getItemAtPosition(spinner.getSelectedItemPosition()).toString();
 
         values[0] = layout.getTag().toString();

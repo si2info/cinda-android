@@ -3,39 +3,36 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        style="@style/text.modelTitle"
         android:text="Medium Text"
         android:id="@+id/textLocation"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:textSize="18sp"/>
+        android:layout_toStartOf="@+id/info"
+        android:layout_marginEnd="16dp" />
 
-    <ImageView
-        android:layout_width="26dp"
-        android:layout_height="26dp"
-        android:id="@+id/imageView"
-        android:src="@drawable/ic_info_outline_black_24dp"
+    <TextView
+        style="@style/text.modelInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/info"
+        android:text="@string/more_info"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/app_name"
         android:layout_gravity="bottom"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:layout_alignBottom="@+id/textLocation"
-        android:tint="@color/infoImage"/>
+        android:tint="@color/infoImage"
+        android:clickable="true" />
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="160dp"
         android:id="@+id/mapLocation"
         android:layout_below="@+id/textLocation"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="8dp"
         android:background="@color/backImage"
@@ -69,7 +66,14 @@
             android:layout_weight="1"
             android:layout_marginTop="8dp" />
 
-
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/separator"
+        android:background="@color/model_separator"
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/mapLocation" />
 
 </RelativeLayout>

@@ -33,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:id="@+id/separator"
-        android:background="@color/separator_model"
+        android:background="@color/model_separator"
         android:layout_marginTop="16dp"
         android:layout_below="@+id/description" />
 

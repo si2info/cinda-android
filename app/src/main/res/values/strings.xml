@@ -86,6 +86,7 @@
     <string name="dictionary">Diccionario</string>
 
     <!-- contribution -->
+    <string name="contribution_title">Nueva contribución</string>
     <string name="loading">Cargando modelo de campaña</string>
     <string name="sendingContribution">Enviando su contribución&#8230;</string>
     <string name="contributionSended">Contribución enviada</string>
@@ -94,6 +95,7 @@
     <string name="other">OTROS</string>
     <string name="selectLocation">Seleccionar Ubicación</string>
     <string name="addImage">Añadir imagen</string>
+    <string name="more_info">+Info</string>
 
     <!-- recycler_topusers -->
     <string name="name">NOMBRE</string>
@@ -128,6 +130,7 @@
     <string name="lngModel">lngModel</string>
 
     <!-- item_dictionary -->
+    <string name="dic_hint">Selecciona...</string>
     <string name="dic_name">Nombre</string>
     <string name="dic_desc">Descripción</string>
 
