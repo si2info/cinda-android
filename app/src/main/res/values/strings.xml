@@ -96,6 +96,7 @@
     <string name="selectLocation">Seleccionar Ubicación</string>
     <string name="addImage">Añadir imagen</string>
     <string name="more_info">+Info</string>
+    <string name="dialog_required_fields">Completa todos los campos requeridos resaltados en rojo para enviar tu contribución.</string>
 
     <!-- recycler_topusers -->
     <string name="name">NOMBRE</string>
@@ -130,7 +131,7 @@
     <string name="lngModel">lngModel</string>
 
     <!-- item_dictionary -->
-    <string name="dic_hint">Selecciona...</string>
+    <string name="dic_hint">Selecciona&#8230;</string>
     <string name="dic_name">Nombre</string>
     <string name="dic_desc">Descripción</string>
 

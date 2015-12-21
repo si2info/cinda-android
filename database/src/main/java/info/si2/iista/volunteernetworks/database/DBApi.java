@@ -494,7 +494,8 @@ public class DBApi {
             model.setFieldName(c.getString(4));
             model.setFieldDescription(c.getString(5));
             model.setFieldType(c.getString(6));
-            model.setFieldRequired(Boolean.valueOf(c.getString(7)));
+            boolean required = Boolean.valueOf(c.getString(7));
+            model.setFieldRequired((required) ? 1 : 0);
             model.setFieldOptions(URLDecoder.decode(c.getString(8), "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

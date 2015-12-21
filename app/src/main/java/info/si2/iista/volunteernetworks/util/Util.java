@@ -563,4 +563,18 @@ public class Util {
                 .show();
     }
 
+    /**
+     * AlertView constructor
+     * @param c Context
+     * @param message Message will be show
+     * @param okListener listener when user click "ok" button
+     */
+    public static void showMessageOK(Context c, String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(c)
+                .setMessage(message)
+                .setPositiveButton(c.getString(R.string.ok), okListener)
+                .create()
+                .show();
+    }
+
 }

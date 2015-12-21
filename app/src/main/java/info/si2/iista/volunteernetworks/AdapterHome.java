@@ -119,9 +119,13 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
             case Item.CAMPAIGN:
 
                 // Header image
-                Picasso.with(context)
-                        .load(item.getImage())
-                        .into(holder.imgCampaign);
+                if (item.getImage() != null) {
+                    if (!item.getImage().equals("")) {
+                        Picasso.with(context)
+                                .load(item.getImage())
+                                .into(holder.imgCampaign);
+                    }
+                }
 
                 int color = Color.parseColor(item.getHeaderColor());
                 holder.backGoToCampaign.getDrawable().mutate().setColorFilter(color, PorterDuff.Mode.SRC_IN);

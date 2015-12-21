@@ -355,6 +355,92 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     }
 
+    public boolean checkRequiredFields () {
+
+        int error = 0;
+
+        // i=0 => LinearLayout loading
+        for (int i=1; i<layout.getChildCount(); i++) {
+            RelativeLayout view = (RelativeLayout) layout.getChildAt(i);
+            TextView textView;
+            String tag = view.getTag().toString();
+            String[] data;
+
+            switch (tag) {
+                case ItemModel.ITEM_EDIT_TEXT:
+                case ItemModel.ITEM_EDIT_TEXT_BIG:
+                case ItemModel.ITEM_EDIT_NUMBER:
+                    data = Model.getEditText(view);
+                    if (model.get(i-1).getFieldRequired() && data[1].equals("")) {
+                        textView = (TextView)layout.findViewById(R.id.title);
+                        textView.setTextColor(ContextCompat.getColor(this, R.color.error));
+                        error++;
+                    }
+                    break;
+
+                case ItemModel.ITEM_DATE:
+                    data = Model.getDate(view);
+                    if (model.get(i-1).getFieldRequired() && data[1].equals("")) {
+                        textView = (TextView)layout.findViewById(R.id.textDate);
+                        textView.setTextColor(ContextCompat.getColor(this, R.color.error));
+                        error++;
+                    }
+                    break;
+
+                case ItemModel.ITEM_DATETIME:
+                    data = Model.getDateTime(view);
+                    if (model.get(i-1).getFieldRequired() && data[1].equals("")) {
+                        textView = (TextView)layout.findViewById(R.id.title);
+                        textView.setTextColor(ContextCompat.getColor(this, R.color.error));
+                        error++;
+                    }
+                    break;
+
+                case ItemModel.ITEM_GEOPOS:
+                    String userPosition = String.valueOf(position.latitude) + "," + String.valueOf(position.longitude);
+                    if (model.get(i-1).getFieldRequired() && (userPosition.equals("") || userPosition.equals("0.0,0.0"))) {
+                        textView = (TextView)layout.findViewById(R.id.textLocation);
+                        textView.setTextColor(ContextCompat.getColor(this, R.color.error));
+                        error++;
+                    }
+                    break;
+
+                case ItemModel.ITEM_IMAGE:
+                    if (model.get(i-1).getFieldRequired() && mCurrentPhotoPath.equals("")) {
+                        textView = (TextView)layout.findViewById(R.id.title);
+                        textView.setTextColor(ContextCompat.getColor(this, R.color.error));
+                        error++;
+                    }
+                    break;
+
+                case ItemModel.ITEM_FILE:
+                    break;
+
+                case ItemModel.ITEM_SPINNER:
+                    data = Model.getStringSpinner(view);
+                    if (model.get(i-1).getFieldRequired() && data[1].equals("")) {
+                        textView = (TextView)layout.findViewById(R.id.textSpinner);
+                        textView.setTextColor(ContextCompat.getColor(this, R.color.error));
+                        error++;
+                    }
+                    break;
+
+                case ItemModel.ITEM_DICTIONARY:
+                    String hintDict = getString(R.string.dic_hint);
+                    TextView value = (TextView)layout.findViewById(R.id.textDictionary);
+                    if (model.get(i-1).getFieldRequired() && value.getText().equals(hintDict)) {
+                        textView = (TextView)layout.findViewById(R.id.title);
+                        textView.setTextColor(ContextCompat.getColor(this, R.color.error));
+                        error++;
+                    }
+                    break;
+            }
+
+        }
+
+        return (error > 0);
+    }
+
     /**
      * Añade a la contribución fecha y hora en la que se envía
      */
@@ -497,8 +583,12 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 return true;
             case R.id.action_send:
                 if (layout.getChildCount() > 1) {
-                    getDataFromLayout();
-                    saveContributionToDB(model, values, false);
+                    if (!checkRequiredFields()) { // Check required fields
+                        getDataFromLayout();
+                        saveContributionToDB(model, values, false);
+                    } else {
+                        Util.showMessageOK(this, getString(R.string.dialog_required_fields), null);
+                    }
                 }
                 return true;
         }
