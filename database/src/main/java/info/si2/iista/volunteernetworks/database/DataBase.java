@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DataBase extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "Shiari.db";
 
     private static final String PRIMARY_KEY = " PRIMARY KEY";
@@ -46,6 +46,7 @@ public class DataBase extends SQLiteOpenHelper {
                     DBCampaign.DESCRIPTION + TYPE_TEXT + COMMA_SEP +
                     DBCampaign.SCOPE + TYPE_TEXT + COMMA_SEP +
                     DBCampaign.IMAGE + TYPE_TEXT + COMMA_SEP +
+                    DBCampaign.COVER + TYPE_TEXT + COMMA_SEP +
                     DBCampaign.IS_SUSCRIBE + TYPE_BOOLEAN + COMMA_SEP +
                     DBCampaign.DATE_START + TYPE_TEXT + COMMA_SEP +
                     DBCampaign.DATE_END + TYPE_TEXT + COMMA_SEP +

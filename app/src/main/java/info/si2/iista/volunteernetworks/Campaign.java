@@ -80,7 +80,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     private RelativeLayout content;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private AppBarLayout appBarLayout;
-    private ImageView header;
+    private ImageView header, cover;
     private RelativeLayout infoCampaign;
     private TextView title;
     private TextSwitcher description;
@@ -139,6 +139,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         header = (ImageView)findViewById(R.id.header);
+        cover = (ImageView)findViewById(R.id.imageCover);
         title = (TextView)findViewById(R.id.title);
         infoCampaign = (RelativeLayout)findViewById(R.id.infoCampaign);
         description = (TextSwitcher)findViewById(R.id.description);
@@ -429,7 +430,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                             }
                         });
 
-                    } else if (posScroll < 105 && isTopUsersVisible) {
+                    } else if (posScroll < 201 && isTopUsersVisible) {
 
                         coordinatorLayout.post(new Runnable() {
                             @Override
@@ -449,7 +450,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                             }
                         });
 
-                    } else if (posScroll > 110 && !isTopUsersVisible) {
+                    } else if (posScroll > 206 && !isTopUsersVisible) {
 
                         coordinatorLayout.post(new Runnable() {
                             @Override
@@ -567,9 +568,22 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         dates.setText(datesCampaigns);
 
         // Header image
-        Picasso.with(this)
-                .load(item.getImage())
-                .into(header);
+        if (item.getCover() != null) {
+            if (!item.getCover().equals("")) {
+                Picasso.with(this)
+                        .load(item.getCover())
+                        .into(header);
+            }
+        }
+
+        // Cover image
+        if (item.getImage() != null) {
+            if (!item.getImage().equals("")) {
+                Picasso.with(this)
+                        .load(item.getImage())
+                        .into(cover);
+            }
+        }
 
         // Update itemCampaign
         if (!fromDB)

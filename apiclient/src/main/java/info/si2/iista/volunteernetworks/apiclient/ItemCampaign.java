@@ -34,6 +34,7 @@ public class ItemCampaign implements Parcelable {
 
     private String scope;
     private String image;
+    private String cover;
 
     @SerializedName("is_subscribed")
     private boolean isSuscribe;
@@ -127,6 +128,14 @@ public class ItemCampaign implements Parcelable {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
     }
 
     public Date getDateStart() {

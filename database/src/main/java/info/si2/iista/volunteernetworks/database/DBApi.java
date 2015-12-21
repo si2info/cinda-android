@@ -116,8 +116,8 @@ public class DBApi {
                     sql = "INSERT OR REPLACE INTO " + DBCampaign.TABLE_CAMPAIGNS + " " +
                             "VALUES (" + item.getId() + "," + item.getIdServer() + "," + item.getType() + ",'" +
                             item.getHeaderColor() + "','" + ecodedTitle + "','" + encodedShortDesc + "','" +
-                            encodedDesc + "','" + econdedScope + "','" + item.getImage() + "','" + item.isSuscribe() + "','" +
-                            dateToString(item.getDateStart()) + "','" + dateToString(item.getDateEnd()) + "','" +
+                            encodedDesc + "','" + econdedScope + "','" + item.getImage() + "','" + item.getCover() + "','" +
+                            item.isSuscribe() + "','" + dateToString(item.getDateStart()) + "','" + dateToString(item.getDateEnd()) + "','" +
                             urlServer + "','" + true + "','" + item.haveTracking() + "','" + item.getStringGeoposition() + "')";
 
                     database.execSQL(sql);
@@ -186,6 +186,7 @@ public class DBApi {
                         DBCampaign.DESCRIPTION + "='" + encodedDesc + "'," +
                         DBCampaign.SCOPE + "='" + econdedScope + "'," +
                         DBCampaign.IMAGE + "='" + item.getImage() + "'," +
+                        DBCampaign.COVER + "='" + item.getCover() + "'," +
                         DBCampaign.IS_SUSCRIBE + "='" + item.isSuscribe() + "'," +
                         DBCampaign.DATE_START + "='" + dateToString(item.getDateStart()) + "'," +
                         DBCampaign.DATE_END + "='" + dateToString(item.getDateEnd()) + "', " +
@@ -331,13 +332,14 @@ public class DBApi {
             campaign.setDescription(URLDecoder.decode(c.getString(6), "UTF-8"));
             campaign.setScope(URLDecoder.decode(c.getString(7), "UTF-8"));
             campaign.setImage(c.getString(8));
-            campaign.setIsSuscribe(Boolean.valueOf(c.getString(9)));
-            campaign.setDateStart(stringToDate(c.getString(10)));
-            campaign.setDateEnd(stringToDate(c.getString(11)));
-            // c == 12 -> url server - dato interno
-            // c == 13 -> is active
-            campaign.setHaveTracking(Boolean.valueOf(c.getString(14)));
-            campaign.setGeoposition(c.getString(15));
+            campaign.setCover(c.getString(9));
+            campaign.setIsSuscribe(Boolean.valueOf(c.getString(10)));
+            campaign.setDateStart(stringToDate(c.getString(11)));
+            campaign.setDateEnd(stringToDate(c.getString(12)));
+            // c == 13 -> url server - dato interno
+            // c == 14 -> is active
+            campaign.setHaveTracking(Boolean.valueOf(c.getString(15)));
+            campaign.setGeoposition(c.getString(16));
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

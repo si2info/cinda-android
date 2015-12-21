@@ -18,6 +18,7 @@ public class DBCampaign {
     public static final String SHORT_DESCRIPTION = "shortDescription";
     public static final String SCOPE = "scope";
     public static final String IMAGE = "image";
+    public static final String COVER = "cover";
     public static final String IS_SUSCRIBE = "isSuscribe";
     public static final String DATE_START = "dateStart";
     public static final String DATE_END = "dateEnd";

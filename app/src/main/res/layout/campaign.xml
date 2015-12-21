@@ -94,17 +94,27 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/infoCampaign">
 
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="96dp"
+                        android:id="@+id/imageCover"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="36dp"
+                        android:contentDescription="@string/app_name" />
+
                     <TextSwitcher
                         style="@style/campaign"
                         android:id="@+id/description"
                         android:measureAllChildren="false"
-                        android:layout_marginTop="36dp"
+                        android:layout_marginTop="16dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginLeft="16dp"
                         android:layout_marginEnd="16dp"
                         android:layout_marginRight="16dp"
                         android:minHeight="30dp"
-                        android:autoLink="web"/>
+                        android:autoLink="web"
+                        android:layout_below="@+id/imageCover" />
 
                     <Button
                         style="@style/suscribirse"
@@ -220,9 +230,7 @@
                     android:id="@+id/textContribute"
                     android:layout_below="@+id/tab_layout"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
                     android:gravity="center"
                     android:visibility="gone"
                     android:paddingLeft="16dp"
@@ -250,7 +258,6 @@
             android:id="@+id/topUser1"
             android:src="@drawable/test_logo_si2"
             android:scaleType="centerCrop"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             app:sriv_border_width="4dp"
             app:sriv_border_color="@color/white"
@@ -263,7 +270,6 @@
             android:id="@+id/topUser2"
             android:src="@drawable/test_logo_si2"
             android:scaleType="centerCrop"
-            android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             app:sriv_border_width="4dp"
             app:sriv_border_color="@color/white"
@@ -276,7 +282,6 @@
             android:id="@+id/topUser3"
             android:src="@drawable/test_logo_si2"
             android:scaleType="centerCrop"
-            android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             app:sriv_border_width="4dp"
             app:sriv_border_color="@color/white"
@@ -286,7 +291,6 @@
         <RelativeLayout
             android:layout_width="54dp"
             android:layout_height="54dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:visibility="invisible">
 
@@ -309,9 +313,7 @@
                 android:layout_alignTop="@+id/topUser4"
                 android:layout_alignBottom="@+id/topUser4"
                 android:layout_alignStart="@+id/topUser4"
-                android:layout_alignLeft="@+id/topUser4"
                 android:layout_alignEnd="@+id/topUser4"
-                android:layout_alignRight="@+id/topUser4"
                 android:gravity="center_vertical|center_horizontal"
                 android:textStyle="bold"
                 android:textSize="18sp" />

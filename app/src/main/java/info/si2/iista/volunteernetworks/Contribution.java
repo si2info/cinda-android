@@ -442,7 +442,8 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
             if (position == null)
                 position = new LatLng(lat, lng);
 
-//            changeImgLocation(position);
+            if (lat != 0.0 && lng != 0.0)
+                changeImgLocation(position);
 
         }
 
