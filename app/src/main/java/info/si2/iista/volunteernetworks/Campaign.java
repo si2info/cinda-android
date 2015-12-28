@@ -441,8 +441,9 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                                 reduce.setFillAfter(true);
 
                                 for (int i=0; i<topUsers.getChildCount(); i++) {
-                                    if (i < users.size())
-                                        topUsers.getChildAt(i).startAnimation(reduce);
+                                    if (users != null)
+                                        if (i < users.size())
+                                            topUsers.getChildAt(i).startAnimation(reduce);
                                 }
 
                                 isTopUsersVisible = false;
@@ -461,8 +462,9 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                                 grow.setFillAfter(true);
 
                                 for (int i=0; i<topUsers.getChildCount(); i++) {
-                                    if (i < users.size())
-                                        topUsers.getChildAt(i).startAnimation(grow);
+                                    if (users != null)
+                                        if (i < users.size())
+                                            topUsers.getChildAt(i).startAnimation(grow);
                                 }
 
                                 isTopUsersVisible = true;
@@ -923,8 +925,10 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     @Override
     public void onContributionItemClick(View view, int position) {
-//        Intent intent = new Intent(this, Test.class);
-//        startActivity(intent);
+        Intent intent = new Intent(this, Contribution.class);
+        intent.putExtra("idCampaign", campaign.getId());
+        intent.putExtra("detail", true);
+        startActivity(intent);
     }
 
     /** TABS **/

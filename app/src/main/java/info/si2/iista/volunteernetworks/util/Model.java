@@ -40,34 +40,34 @@ import info.si2.iista.volunteernetworks.apiclient.ItemModel;
  */
 public class Model {
 
-    public static View getItem (Context c, ItemModel item, int id, boolean lastItem) {
+    public static View getItem (Context c, ItemModel item, int id, boolean lastItem, boolean isDetail) {
 
         switch (item.getFieldType()) {
             case ItemModel.ITEM_DICTIONARY:
-                return getItemDictionary(c, item, id, lastItem);
+                return getItemDictionary(c, item, id, lastItem, isDetail);
 
             case ItemModel.ITEM_EDIT_TEXT:
             case ItemModel.ITEM_EDIT_TEXT_BIG:
             case ItemModel.ITEM_EDIT_NUMBER:
-                return getItemEditText(c, item, id, lastItem);
+                return getItemEditText(c, item, id, lastItem, isDetail);
 
             case ItemModel.ITEM_DATE:
-                return getItemDate(c, item, id, lastItem);
+                return getItemDate(c, item, id, lastItem, isDetail);
 
             case ItemModel.ITEM_DATETIME:
                 return getItemDateTime(c, item, id, lastItem);
 
             case ItemModel.ITEM_GEOPOS:
-                return getItemLocation(c, item, id, lastItem);
+                return getItemLocation(c, item, id, lastItem, isDetail);
 
             case ItemModel.ITEM_IMAGE:
-                return getItemImage(c, item, id, lastItem);
+                return getItemImage(c, item, id, lastItem, isDetail);
 
             case ItemModel.ITEM_FILE:
                 break;
 
             case ItemModel.ITEM_SPINNER:
-                return getItemSpinner(c, item, id, lastItem);
+                return getItemSpinner(c, item, id, lastItem, isDetail);
 
             case ItemModel.ITEM_DESCRIPTION:
                 return getItemDescription(c, item, id, lastItem);
@@ -84,7 +84,7 @@ public class Model {
      * @param id ID de la vista anterior para situar esta debajo
      * @return View RelativeLayout
      */
-    public static View getItemDictionary (final Context c, final ItemModel item, int id, boolean lastItem) {
+    public static View getItemDictionary (final Context c, final ItemModel item, int id, boolean lastItem, boolean isDetail) {
 
         LayoutInflater inflater = LayoutInflater.from(c);
         View modelDictionary = inflater.inflate(R.layout.model_dictionary, null, false);
@@ -96,14 +96,16 @@ public class Model {
         title.setText(item.getFieldLabel());
 
         // TextView - Select value dictionary
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(c, DictionaryValue.class);
-                intent.putExtra("code", Integer.valueOf(item.getFieldOptions()));
-                ((Contribution)c).startActivityForResult(intent, Contribution.DICTIONARY_VALUE_REQUEST);
-            }
-        });
+        if (!isDetail) {
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(c, DictionaryValue.class);
+                    intent.putExtra("code", Integer.valueOf(item.getFieldOptions()));
+                    ((Contribution) c).startActivityForResult(intent, Contribution.DICTIONARY_VALUE_REQUEST);
+                }
+            });
+        }
 
         // TextView - Description
         if (item.getFieldDescription().equals("")) {
@@ -219,7 +221,7 @@ public class Model {
      * @param id ID de la vista anterior para situar esta debajo
      * @return View de tipo EditText
      */
-    public static View getItemEditText (final Context c, final ItemModel item, int id, boolean lastItem) {
+    public static View getItemEditText (final Context c, final ItemModel item, int id, boolean lastItem, boolean isDetail) {
 
         LayoutInflater inflater = LayoutInflater.from(c);
         View modelEditText = inflater.inflate(R.layout.model_edit_text, null, false);
@@ -232,9 +234,10 @@ public class Model {
 
         // Construct View
         editText.setHint(item.getFieldLabel());
-//        editText.setTypeface(Util.getRobotoLight(c));
 
-        editText.setHint("");
+        if (isDetail) {
+            editText.setEnabled(false);
+        }
 
         switch (item.getFieldType()) { // Tipo de texto
             case ItemModel.ITEM_EDIT_TEXT:
@@ -288,7 +291,7 @@ public class Model {
      * @param id ID de la vista anterior para situar esta debajo
      * @return View de tipo ImageView
      */
-    public static View getItemLocation (final Context c, final ItemModel item, int id, boolean lastItem) {
+    public static View getItemLocation (final Context c, final ItemModel item, int id, boolean lastItem, boolean isDetail) {
 
         LayoutInflater inflater = LayoutInflater.from(c);
         View modelMap = inflater.inflate(R.layout.model_location, null, false);
@@ -317,12 +320,14 @@ public class Model {
         imgMap.setTag(item.getFieldType());
 
         // ImageView - OnClick
-        imgMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((Contribution) c).actionMap();
-            }
-        });
+        if (!isDetail) {
+            imgMap.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((Contribution) c).actionMap();
+                }
+            });
+        }
 
         // RelativeLayout - Params, view resultante
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -350,7 +355,7 @@ public class Model {
      * @param id ID de la vista anterior para situar esta debajo
      * @return View de tipo ImageView
      */
-    public static View getItemImage (final Context c, final ItemModel item, int id, boolean lastItem) {
+    public static View getItemImage (final Context c, final ItemModel item, int id, boolean lastItem, boolean isDetail) {
 
         LayoutInflater inflater = LayoutInflater.from(c);
         View modelImage = inflater.inflate(R.layout.model_image, null, false);
@@ -377,12 +382,14 @@ public class Model {
         }
 
         // ImageView - OnClick
-        imgToSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((Contribution) c).checkCameraAndStoragePermission(idImage);
-            }
-        });
+        if (!isDetail) {
+            imgToSelect.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((Contribution) c).checkCameraAndStoragePermission(idImage);
+                }
+            });
+        }
 
         // RelativeLayout - Params, view resultante
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -410,7 +417,7 @@ public class Model {
      * @param id ID de la vista anterior para situar esta debajo
      * @return View de tipo Spinner
      */
-    public static View getItemSpinner (final Context c, final ItemModel item, int id, boolean lastItem) {
+    public static View getItemSpinner (final Context c, final ItemModel item, int id, boolean lastItem, boolean isDetail) {
 
         LayoutInflater inflater = LayoutInflater.from(c);
         View modelSpinner = inflater.inflate(R.layout.model_spinner, null, false);
@@ -430,9 +437,12 @@ public class Model {
 
         // Spinner view
         AdapterSpinner adapter = new AdapterSpinner(c, R.layout.spinner_style, items);
-//        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+
+        if (isDetail) {
+            spinner.setEnabled(false);
+        }
 
         // TextView - Description
         if (item.getFieldDescription().equals("")) {
@@ -473,7 +483,7 @@ public class Model {
      * @param id ID de la vista anterior para situar esta debajo
      * @return View de tipo TextView
      */
-    public static View getItemDate (final Context c, final ItemModel item, int id, boolean lastItem) {
+    public static View getItemDate (final Context c, final ItemModel item, int id, boolean lastItem, boolean isDetail) {
 
         LayoutInflater inflater = LayoutInflater.from(c);
         View modelDate = inflater.inflate(R.layout.model_date, null, false);
@@ -517,7 +527,10 @@ public class Model {
             }
 
         };
-        dialog.setOnDateSetListener(dateSetListener);
+
+        if (!isDetail) {
+            dialog.setOnDateSetListener(dateSetListener);
+        }
 
         // ImageView - Description
         info.setOnClickListener(new View.OnClickListener() {

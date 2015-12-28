@@ -107,6 +107,9 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     // Dictionary
     private Dictionary dictionary;
 
+    // View mode detail
+    boolean isDetail;
+
     // Request
     private static final int PERMISSIONS_REQUEST_LOCATION = 1;
     private static final int PERMISSIONS_REQUEST_CAMERA = 2;
@@ -137,7 +140,15 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
         // Get model
         if (getIntent().getExtras() != null) {
+
+            // ID Campaign
             int id = getIntent().getIntExtra("idCampaign", -1);
+
+            // Is view mode detail
+            if (getIntent().getExtras().containsKey("detail")) {
+                isDetail = getIntent().getExtras().getBoolean("detail");
+            }
+
             if (id != -1) {
                 initializated = Util.getBoolPreferenceModel(this, getString(R.string.isModelLoaded));
                 if (initializated) {
@@ -233,9 +244,9 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
             View view;
             boolean lastItem = (i == items.size()-1);
             if (i != 0) {
-                view = Model.getItem(Contribution.this, items.get(i), items.get(i-1).getId(), lastItem);
+                view = Model.getItem(Contribution.this, items.get(i), items.get(i-1).getId(), lastItem, isDetail);
             } else {
-                view = Model.getItem(Contribution.this, items.get(i), -1, lastItem);
+                view = Model.getItem(Contribution.this, items.get(i), -1, lastItem, isDetail);
             }
 
             if (view != null) {
