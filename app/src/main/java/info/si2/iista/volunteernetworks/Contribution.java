@@ -96,6 +96,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     private int idImage;
     private String mCurrentPhotoPath;
     private boolean fromCamera;
+    private ArrayList<String> imagesPath;
 
     // Flags
     private boolean initializated;
@@ -272,6 +273,9 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         dialog = new ProgressDialogFragment();
         dialog.show(getFragmentManager(), "Sending contribution");
 
+        // Images
+        int iterator = 0;
+
         // Id Campaign
         int id = -1;
         if (getIntent().getExtras() != null)
@@ -322,16 +326,32 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 case ItemModel.ITEM_IMAGE:
 
                     key = view.getTag().toString();
+                    String path;
 
-                    if (mCurrentPhotoPath != null) {
-                        if (!mCurrentPhotoPath.equals("")) {
-                            values.add(new ItemFormContribution(key, mCurrentPhotoPath, true));
+                    if (imagesPath.size() > iterator) {
+                        path = imagesPath.get(iterator);
+                        if (path != null) {
+                            if (!path.equals("")) {
+                                values.add(new ItemFormContribution(key, path, true));
+                            } else {
+                                values.add(new ItemFormContribution(key, "", false));
+                            }
                         } else {
                             values.add(new ItemFormContribution(key, "", false));
                         }
-                    } else {
-                        values.add(new ItemFormContribution(key, "", false));
                     }
+
+                    iterator++;
+
+//                    if (mCurrentPhotoPath != null) {
+//                        if (!mCurrentPhotoPath.equals("")) {
+//                            values.add(new ItemFormContribution(key, mCurrentPhotoPath, true));
+//                        } else {
+//                            values.add(new ItemFormContribution(key, "", false));
+//                        }
+//                    } else {
+//                        values.add(new ItemFormContribution(key, "", false));
+//                    }
 
                     break;
 
@@ -371,10 +391,12 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 case ItemModel.ITEM_EDIT_TEXT_BIG:
                 case ItemModel.ITEM_EDIT_NUMBER:
                     data = Model.getEditText(view);
+                    textView = (TextView)layout.findViewById(R.id.title);
                     if (model.get(i-1).getFieldRequired() && data[1].equals("")) {
-                        textView = (TextView)layout.findViewById(R.id.title);
                         textView.setTextColor(ContextCompat.getColor(this, R.color.error));
                         error++;
+                    } else {
+                        textView.setTextColor(ContextCompat.getColor(this, R.color.model_title));
                     }
                     break;
 
@@ -980,6 +1002,18 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
         image.setImageBitmap(bitmap);
+
+        addPickPath(mCurrentPhotoPath);
+
+    }
+
+    public void addPickPath (String path) {
+
+        if (imagesPath == null)
+            imagesPath = new ArrayList<>();
+
+        imagesPath.add(path);
+
     }
 
     @Override
