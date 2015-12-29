@@ -103,7 +103,7 @@
                         android:layout_marginTop="36dp"
                         android:contentDescription="@string/app_name" />
 
-                    <TextSwitcher
+                    <TextView
                         style="@style/campaign"
                         android:id="@+id/description"
                         android:measureAllChildren="false"

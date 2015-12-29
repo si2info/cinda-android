@@ -56,6 +56,9 @@
     <string name="other_contribute">Ningún usuario ha contribuído nada aún</string>
 
     <string name="moreUsers"> </string>
+
+    <string name="viewMore">Ver más</string>
+    <string name="viewLess">Ver menos</string>
     
     <!-- Map -->
     <string name="action_map_ok">OK</string>

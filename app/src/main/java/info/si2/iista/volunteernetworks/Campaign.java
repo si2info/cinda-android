@@ -20,7 +20,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
@@ -30,17 +32,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewSwitcher;
 
 import com.joooonho.SelectableRoundedImageView;
 import com.squareup.picasso.Picasso;
@@ -58,6 +57,7 @@ import info.si2.iista.volunteernetworks.apiclient.Virde;
 import info.si2.iista.volunteernetworks.database.DBVirde;
 import info.si2.iista.volunteernetworks.database.OnDBApiResult;
 import info.si2.iista.volunteernetworks.util.ScrollAwareFABBehavior;
+import info.si2.iista.volunteernetworks.util.SpannableText;
 import info.si2.iista.volunteernetworks.util.Util;
 import info.si2.iista.volunteernetworks.util.WrappingLinearLayoutManager;
 
@@ -83,7 +83,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     private ImageView header, cover;
     private RelativeLayout infoCampaign;
     private TextView title;
-    private TextSwitcher description;
+    private TextView description;
     private TextView geoArea;
     private TextView dates;
     private Button suscription;
@@ -115,6 +115,9 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     // Permission Request
     private static final int PERMISSIONS_REQUEST_LOCATION = 1;
 
+    // Data
+    private int lineEndIndex = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,7 +145,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         cover = (ImageView)findViewById(R.id.imageCover);
         title = (TextView)findViewById(R.id.title);
         infoCampaign = (RelativeLayout)findViewById(R.id.infoCampaign);
-        description = (TextSwitcher)findViewById(R.id.description);
+        description = (TextView)findViewById(R.id.description);
         geoArea = (TextView)findViewById(R.id.campaign_geo);
         dates = (TextView)findViewById(R.id.campaign_dates);
         suscription = (Button)findViewById(R.id.suscriptionButton);
@@ -155,21 +158,6 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         // Refresh listener
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-
-        // Set the factory used to create TextViews to switch between.
-        description.setFactory(mFactory);
-
-        /*
-         * Set the in and out animations. Using the fade_in/out animations
-         * provided by the framework.
-         */
-        Animation in = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
-        Animation out = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
-        description.setInAnimation(in);
-        description.setOutAnimation(out);
-
-        // Set the initial text without an animation
-        description.setCurrentText(" ");
 
         // Suscribe / Unsuscribe
         suscription.setOnClickListener(new View.OnClickListener() {
@@ -494,23 +482,6 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     }
 
-    /**
-     * The {@link android.widget.ViewSwitcher.ViewFactory} used to create {@link android.widget.TextView}s that the
-     * {@link android.widget.TextSwitcher} will switch between.
-     */
-    private ViewSwitcher.ViewFactory mFactory = new ViewSwitcher.ViewFactory() {
-
-        @SuppressWarnings("deprecation")
-        @Override
-        public View makeView() {
-
-            // Create a new TextView
-            TextView t = new TextView(getApplicationContext());
-            t.setTextAppearance(getApplicationContext(), R.style.campaign);
-            return t;
-        }
-    };
-
     public void setStyleButton (boolean isSuscribe, Button view) {
 
         if (isSuscribe) {
@@ -562,8 +533,8 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         // Data campaign
         title.setText(item.getTitle());
 
-        description.setText(formatDescription(item.getDescription()));
-        description.setTag(0);
+        description.setText(item.getDescription());
+        makeTextViewResizable(description, 5, getString(R.string.viewMore), true);
         geoArea.setText(Html.fromHtml(item.getScope()));
 
         String datesCampaigns = Util.parseDateToString(item.getDateStart()) + " - " + Util.parseDateToString(item.getDateEnd());
@@ -591,41 +562,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         if (!fromDB)
             DBVirde.getInstance(this).updateCampaign(item);
 
-        description.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (description.getTag() == 0) { // Expand
-
-                    description.setText(Html.fromHtml(item.getDescription()));
-                    description.setTag(1);
-
-                } else { // Collapse
-
-                    description.setText(formatDescription(item.getDescription()));
-                    description.setTag(0);
-
-                }
-            }
-        });
-
         nestedScroll.smoothScrollTo(0, 0);
-
-    }
-
-    /**
-     * Formatea el texto reduciéndolo a 250 caracteres y añadiendo un "Continuar leyendo"
-     * @param text Texto a reducir
-     * @return String texto reducido + "Continuar leyendo"
-     */
-    public Spanned formatDescription (String text) {
-
-        String descriptionText;
-        if (text.length() > 250)
-            descriptionText = text.substring(0, 250) + "... <font color=\"#333333\">" + getString(R.string.continue_reading) + "</font>";
-        else
-            descriptionText = text;
-
-        return Html.fromHtml(descriptionText);
 
     }
 
@@ -1003,6 +940,79 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         recyclerContributions.setVisibility(View.GONE);
         contributeText.setVisibility(View.GONE);
         contributeProgress.setVisibility(View.VISIBLE);
+
+    }
+
+    public void makeTextViewResizable(final TextView tv, final int maxLine, final String expandText, final boolean viewMore) {
+
+        if (tv.getTag() == null) {
+            tv.setTag(tv.getText());
+        }
+
+        ViewTreeObserver vto = tv.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            @SuppressWarnings("deprecation")
+            @Override
+            public void onGlobalLayout() {
+
+                ViewTreeObserver obs = tv.getViewTreeObserver();
+                obs.removeGlobalOnLayoutListener(this);
+                if (maxLine == 0) {
+                    int lineEndIndex = tv.getLayout().getLineEnd(0);
+                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + "... " + expandText;
+                    tv.setText(text);
+                    tv.setMovementMethod(LinkMovementMethod.getInstance());
+                    tv.setText(addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, expandText,
+                                    viewMore), TextView.BufferType.SPANNABLE);
+                } else if (maxLine > 0 && tv.getLineCount() >= maxLine) {
+                    if (lineEndIndex == 0)
+                        lineEndIndex = tv.getLayout().getLineEnd(maxLine - 1);
+                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + "... " + expandText;
+                    tv.setText(text);
+                    tv.setMovementMethod(LinkMovementMethod.getInstance());
+                    tv.setText(addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, expandText,
+                                    viewMore), TextView.BufferType.SPANNABLE);
+                } else {
+                    int lineEndIndex = tv.getLayout().getLineEnd(tv.getLayout().getLineCount() - 1);
+                    String text = tv.getText().subSequence(0, lineEndIndex) + " " + expandText;
+                    tv.setText(text);
+                    tv.setMovementMethod(LinkMovementMethod.getInstance());
+                    tv.setText(addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, expandText,
+                                    viewMore), TextView.BufferType.SPANNABLE);
+                }
+            }
+        });
+
+    }
+
+    private SpannableStringBuilder addClickablePartTextViewResizable(final Spanned strSpanned, final TextView tv,
+                                                                            final String spanableText, final boolean viewMore) {
+        String str = strSpanned.toString();
+        SpannableStringBuilder ssb = new SpannableStringBuilder(strSpanned);
+
+        if (str.contains(spanableText)) {
+
+
+            ssb.setSpan(new SpannableText(true){
+                @Override
+                public void onClick(View widget) {
+                    if (viewMore) {
+                        tv.setLayoutParams(tv.getLayoutParams());
+                        tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
+                        tv.invalidate();
+                        makeTextViewResizable(tv, -1, getString(R.string.viewLess), false);
+                    } else {
+                        tv.setLayoutParams(tv.getLayoutParams());
+                        tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
+                        tv.invalidate();
+                        makeTextViewResizable(tv, 5, getString(R.string.viewMore), true);
+                    }
+                }
+            }, str.indexOf(spanableText), str.indexOf(spanableText) + spanableText.length(), 0);
+
+        }
+        return ssb;
 
     }
 
