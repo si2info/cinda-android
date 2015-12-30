@@ -108,7 +108,8 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     private Dictionary dictionary;
 
     // View mode detail
-    boolean isDetail;
+    private boolean isDetail;
+    private int idContribution;
 
     // Request
     private static final int PERMISSIONS_REQUEST_LOCATION = 1;
@@ -147,6 +148,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
             // Is view mode detail
             if (getIntent().getExtras().containsKey("detail")) {
                 isDetail = getIntent().getExtras().getBoolean("detail");
+                idContribution = getIntent().getExtras().getInt("idContribution");
             }
 
             if (id != -1) {
@@ -186,7 +188,8 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 } else {
 
                     // Hide loading feedback
-                    loading.setVisibility(View.GONE);
+                    if (!isDetail)
+                        loading.setVisibility(View.GONE);
 
                     // Google Api Client - Location
                     buildGoogleApiClient();
@@ -233,6 +236,22 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     DBVirde.getInstance(this).insertDictionary(dictionary);
                 }
                 break;
+
+            case Virde.FROM_GET_CONTRIBUTION_DETAIL:
+                if (result.first.isError()) {
+                    Util.makeToast(this, result.first.getMensaje(), 0);
+                } else {
+
+                    ArrayList<ItemModelValue> contribution = new ArrayList<>();
+
+                    for (Object object : result.second) {
+                        contribution.add((ItemModelValue)object);
+                    }
+
+                    setDataToLayout(contribution);
+
+                }
+                break;
         }
     }
 
@@ -276,6 +295,86 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
             if (fromCamera)
                 ToolCam.galleryAddPic(getApplicationContext());
         }
+
+        if (isDetail)
+            Virde.getInstance(this).getContributionDetail(idContribution);
+
+    }
+
+    public ItemModelValue searchModelValue (ArrayList<ItemModel> copyModel, ArrayList<ItemModelValue> contribution, String key) {
+
+        for (int i=0; i<copyModel.size(); i++) {
+            if (copyModel.get(i).getFieldType().equals(key)) {
+                for (int j=0; j<contribution.size(); j++) {
+                    if (copyModel.get(i).getFieldName().equals(contribution.get(j).getField())){
+                        copyModel.remove(i);
+                        return contribution.get(j);
+                    }
+                }
+            }
+        }
+
+        return null;
+
+    }
+
+    public void setDataToLayout (ArrayList<ItemModelValue> contribution) {
+
+        /* Esta copia del modelo será usada para ir eliminando el campo encontrado a rellenar,
+         * con el propósito de que si se encuentran varios campos seguidos del mismo tipo no se obtenga el mismo valor.
+         */
+        ArrayList<ItemModel> copyModel = new ArrayList<>(model);
+
+        // i=0 => LinearLayout loading
+        for (int i=1; i<layout.getChildCount(); i++) {
+            RelativeLayout view = (RelativeLayout) layout.getChildAt(i);
+            String tag = view.getTag().toString();
+            ItemModelValue value = searchModelValue(copyModel, contribution, tag);
+
+            if (value != null) {
+                switch (tag) {
+                    case ItemModel.ITEM_EDIT_TEXT:
+                    case ItemModel.ITEM_EDIT_TEXT_BIG:
+                    case ItemModel.ITEM_EDIT_NUMBER:
+                        Model.setDataToEditText(view, value);
+                        break;
+
+                    case ItemModel.ITEM_DATE:
+                        Model.setDataToDate(view, value);
+                        break;
+
+                    case ItemModel.ITEM_DATETIME:
+                        Model.setDataToDateTime(view, value);
+                        break;
+
+                    case ItemModel.ITEM_GEOPOS:
+                        if (Model.checkItemMap(view, value)) {
+                            String[] position = value.getValue().split(",");
+                            LatLng latLng = new LatLng(Double.parseDouble(position[0]), Double.parseDouble(position[1]));
+                            changeImgLocation(latLng);
+                        }
+                        break;
+
+                    case ItemModel.ITEM_IMAGE:
+                        Model.setDataToImage(this, view, value);
+                        break;
+
+                    case ItemModel.ITEM_FILE:
+                        break;
+
+                    case ItemModel.ITEM_SPINNER:
+                        Model.setDataToSpinner(this, view, value);
+                        break;
+
+                    case ItemModel.ITEM_DICTIONARY:
+                        Model.setDataToDictionary(view, value);
+                        break;
+                }
+            }
+        }
+
+        // Remove feedback layout
+        loading.setVisibility(View.GONE);
 
     }
 
@@ -353,16 +452,6 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     }
 
                     iterator++;
-
-//                    if (mCurrentPhotoPath != null) {
-//                        if (!mCurrentPhotoPath.equals("")) {
-//                            values.add(new ItemFormContribution(key, mCurrentPhotoPath, true));
-//                        } else {
-//                            values.add(new ItemFormContribution(key, "", false));
-//                        }
-//                    } else {
-//                        values.add(new ItemFormContribution(key, "", false));
-//                    }
 
                     break;
 
@@ -600,7 +689,8 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_contribution, menu);
+        if (!isDetail)
+            getMenuInflater().inflate(R.menu.menu_contribution, menu);
         return true;
     }
 
@@ -832,7 +922,8 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 } else {
 
                     // Hide loading feedback
-                    loading.setVisibility(View.GONE);
+                    if (!isDetail)
+                        loading.setVisibility(View.GONE);
 
                     // Google Api Client - Location
                     buildGoogleApiClient();

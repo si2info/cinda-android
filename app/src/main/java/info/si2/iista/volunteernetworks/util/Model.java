@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.datetimepicker.date.DatePickerDialog;
+import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,6 +33,7 @@ import info.si2.iista.volunteernetworks.Contribution;
 import info.si2.iista.volunteernetworks.DictionaryValue;
 import info.si2.iista.volunteernetworks.R;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
+import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -487,10 +489,11 @@ public class Model {
 
         LayoutInflater inflater = LayoutInflater.from(c);
         View modelDate = inflater.inflate(R.layout.model_date, null, false);
+        TextView title = (TextView)modelDate.findViewById(R.id.title);
         final TextView textDate = (TextView)modelDate.findViewById(R.id.textDate);
-        ImageView info = (ImageView)modelDate.findViewById(R.id.imageView);
+        TextView info = (TextView)modelDate.findViewById(R.id.info);
 
-        final String itemLabel = item.getFieldLabel() + ": %s";
+        title.setText(item.getFieldLabel());
         final Calendar myCalendar = Calendar.getInstance();
         final DatePickerDialog dialog = new DatePickerDialog();
 
@@ -498,7 +501,7 @@ public class Model {
         String todayString = Util.parseDateToString(today);
 
         // Texto contendor de la fecha
-        textDate.setText(String.format(itemLabel, todayString));
+        textDate.setText(todayString);
         textDate.setTypeface(Util.getRobotoLight(c));
         textDate.setTag(item.getFieldType());
 
@@ -518,7 +521,7 @@ public class Model {
                     Date date = sdf.parse(stringDate);
                     stringDate = Util.parseDateToString(date);
 
-                    textDate.setText(String.format(itemLabel, stringDate));
+                    textDate.setText(stringDate);
 
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -528,9 +531,7 @@ public class Model {
 
         };
 
-        if (!isDetail) {
-            dialog.setOnDateSetListener(dateSetListener);
-        }
+        dialog.setOnDateSetListener(dateSetListener);
 
         // ImageView - Description
         info.setOnClickListener(new View.OnClickListener() {
@@ -541,12 +542,14 @@ public class Model {
             }
         });
 
-        textDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.show(((Activity) c).getFragmentManager(), "DatePickerDialog");
-            }
-        });
+        if (!isDetail) {
+            textDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.show(((Activity) c).getFragmentManager(), "DatePickerDialog");
+                }
+            });
+        }
 
         // RelativeLayout - Params, view resultante
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -600,8 +603,6 @@ public class Model {
         TextView text = (TextView) layout.getChildAt(0);
 
         String parseDate = text.getText().toString();
-        int pos = parseDate.indexOf(":") + 2;
-        parseDate = parseDate.substring(pos);
         parseDate = Util.parseDateToStringServer(Util.parseStringToDate("dd, MMM yyyy", parseDate));
 
         values[0] = layout.getTag().toString();
@@ -646,6 +647,149 @@ public class Model {
 
         return values;
     }
+
+    /**
+     * Modo vista de contribución - Setea el valor al campo para su visualización
+     * @param view View contenedora del item a setear
+     * @param value Value a setear
+     */
+    public static void setDataToEditText (RelativeLayout view, ItemModelValue value) {
+
+        if (!value.getValue().equals("") && !value.getValue().equals("false")) {
+            EditText editText = (EditText) view.findViewById(R.id.editText);
+            editText.setText(value.getValue());
+        } else {
+            view.setVisibility(View.GONE);
+        }
+
+    }
+
+    /**
+     * Modo vista de contribución - Setea el valor al campo para su visualización
+     * @param view View contenedora del item a setear
+     * @param value Value a setear
+     */
+    public static void setDataToDate (RelativeLayout view, ItemModelValue value) {
+
+        if (!value.getValue().equals("") && !value.getValue().equals("false")) {
+            TextView textView = (TextView)view.findViewById(R.id.textDate);
+            textView.setText(value.getValue());
+        } else {
+            view.setVisibility(View.GONE);
+        }
+
+    }
+
+    /**
+     * Modo vista de contribución - Setea el valor al campo para su visualización
+     * @param view View contenedora del item a setear
+     * @param value Value a setear
+     */
+    public static void setDataToDateTime (RelativeLayout view, ItemModelValue value) {
+
+        if (!value.getValue().equals("") && !value.getValue().equals("false")) {
+            TextView textView = (TextView) view.findViewById(R.id.dateTime);
+            textView.setText(value.getValue());
+        } else {
+            view.setVisibility(View.GONE);
+        }
+
+    }
+
+    /**
+     * Modo vista de contribución - Setea el valor al campo para su visualización
+     * @param view View contenedora del item a setear
+     * @param value Value a setear
+     */
+    public static void setDataToSpinner (Context c, RelativeLayout view, ItemModelValue value) {
+
+        // Spinner view
+        if (!value.getValue().equals("") && !value.getValue().equals("false")) {
+
+            Spinner spinner = (Spinner)view.findViewById(R.id.spinner);
+
+            String[] items = new String[1];
+            items[0] = value.getValue();
+            AdapterSpinner adapter = new AdapterSpinner(c, R.layout.spinner_style, items);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+
+        } else {
+            view.setVisibility(View.GONE);
+        }
+
+    }
+
+    /**
+     * Modo vista de contribución - Setea el valor al campo para su visualización
+     * @param view View contenedora del item a setear
+     * @param value Value a setear
+     */
+    public static void setDataToDictionary (RelativeLayout view, ItemModelValue value) {
+
+        if (!value.getValue().equals("") && !value.getValue().equals("false")) {
+            TextView textView = (TextView) view.findViewById(R.id.textDictionary);
+            textView.setText(value.getValue());
+        } else {
+            view.setVisibility(View.GONE);
+        }
+
+    }
+
+    /**
+     * Modo vista de contribución - Setea el valor al campo para su visualización
+     * @param view View contenedora del item a setear
+     * @param value Value a setear
+     */
+    public static void setDataToImage (Context c, RelativeLayout view, ItemModelValue value) {
+
+        if (value.getValue() != null) {
+            ImageView imageView = (ImageView)view.findViewById(R.id.imageSelected);
+            if (!value.getValue().equals("") && !value.getValue().equals("false")) {
+                Picasso.with(c)
+                        .load(value.getValue())
+                        .into(imageView);
+            } else {
+                view.setVisibility(View.GONE);
+            }
+        } else {
+            view.setVisibility(View.GONE);
+        }
+
+    }
+
+    /**
+     * Check if position[] have a correct lat and lng
+     * @param value Value to check
+     * @param view View to hide if value is null or zero
+     * @return Boolean true if have a correct value
+     */
+    public static boolean checkItemMap (RelativeLayout view, ItemModelValue value) {
+
+        if (value.getValue() != null) {
+            if (!value.getValue().equals("")) {
+                String[] position = value.getValue().split(",");
+                if (position.length == 2) {
+                    if (!position[0].equals("0.0") && !position[1].equals("0.0")) {
+                        return true;
+                    } else {
+                        view.setVisibility(View.GONE);
+                    }
+                } else {
+                    view.setVisibility(View.GONE);
+                }
+            } else {
+                view.setVisibility(View.GONE);
+            }
+        } else {
+            view.setVisibility(View.GONE);
+        }
+
+        return false;
+
+    }
+
+    /** Util **/
 
     public static class infoDialogFragment extends DialogFragment {
 

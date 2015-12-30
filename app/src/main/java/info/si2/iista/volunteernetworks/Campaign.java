@@ -865,6 +865,10 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         Intent intent = new Intent(this, Contribution.class);
         intent.putExtra("idCampaign", campaign.getId());
         intent.putExtra("detail", true);
+        if (fromTab == 0)
+            intent.putExtra("idContribution", myContributions.get(position).getId());
+        else
+            intent.putExtra("idContribution", otherContributions.get(position).getId());
         startActivity(intent);
     }
 

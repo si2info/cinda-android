@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,6 +47,7 @@ public class ApiClient {
     private static final String URL_GET_CONTRIBUTIONS = "/API/campaign/%s/listData/";
     private static final String URL_GET_LIST_VOLUNTEERS = "/API/campaign/%s/listVolunteers/";
     private static final String URL_DICTIONARY = "/API/dictionary/";
+    private static final String URL_CONTRIBUTION = "/API/contribution/";
 
     private static Context context;
 
@@ -218,7 +220,7 @@ public class ApiClient {
                     .setDateFormat("yyyy-MM-dd HH:mm:ss");
             Gson gson = gsonBuilder.create();
 
-            if (!respStr.equals("0")) {
+            if (isJSONValid(respStr) && !respStr.equals("0")) {
                 ItemModel[] items = gson.fromJson(respStr, ItemModel[].class);
                 Collections.addAll(result, items);
             }
@@ -542,6 +544,48 @@ public class ApiClient {
             return new Pair<>(new Result(false, null, from, 0), result);
 
         } catch (IOException e) {
+            e.printStackTrace();
+            return new Pair<>(new Result(true, message, from, 0), null);
+        }
+
+    }
+
+    public Pair<Result, ArrayList<ItemModelValue>> getContributionDetail (String idContribution) {
+
+        // FROM
+        int from = Virde.FROM_GET_CONTRIBUTION_DETAIL;
+        String message = "Inténtelo más tarde";
+
+        ArrayList<ItemModelValue> result = new ArrayList<>();
+        OkHttpClient client = getOkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(HOST + URL_CONTRIBUTION + idContribution)
+                .build();
+
+        try {
+
+            Response response = client.newCall(request).execute();
+            String respStr  = response.body().string();
+
+            if (!respStr.equals("0")) {
+
+                JSONObject obj = new JSONObject(respStr);
+                Iterator iterator = obj.keys();
+                while(iterator.hasNext()){
+                    String key = (String)iterator.next();
+                    String value = obj.getString(key);
+                    result.add(new ItemModelValue(key, value));
+                }
+
+            }
+
+            return new Pair<>(new Result(false, null, from, 0), result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Pair<>(new Result(true, message, from, 0), null);
+        } catch (JSONException e) {
             e.printStackTrace();
             return new Pair<>(new Result(true, message, from, 0), null);
         }

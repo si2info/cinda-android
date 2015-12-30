@@ -27,6 +27,7 @@ public class Virde {
     public static final int FROM_GET_LIST_VOLUNTEERS = 9;
     public static final int FROM_GET_SERVER_INFO = 10;
     public static final int FROM_GET_DICTIONARY = 11;
+    public static final int FROM_GET_CONTRIBUTION_DETAIL = 12;
 
     public static Virde getInstance() {
         if (context == null)
@@ -106,6 +107,10 @@ public class Virde {
 
     public void getDictionary(int idCampaign, int idDictionary, int idServer) {
         new VirdeGetDictionary().execute(String.valueOf(idCampaign), String.valueOf(idDictionary), String.valueOf(idServer));
+    }
+
+    public void getContributionDetail(int idContribution) {
+        new VirdeGetContributionDetail().execute(String.valueOf(idContribution));
     }
 
     /** AsyncTasks **/
@@ -268,6 +273,21 @@ public class Virde {
         protected Pair<Result, ArrayList<Dictionary>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
             return apiClient.getDictionary(params[0], params[1], params[2]);
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onApiClientRequestResult(result);
+        }
+
+    }
+
+    class VirdeGetContributionDetail extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemModelValue>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<ItemModelValue>> doInBackground(String... params) {
+            ApiClient apiClient = ApiClient.getInstance();
+            return apiClient.getContributionDetail(params[0]);
         }
 
         @Override
