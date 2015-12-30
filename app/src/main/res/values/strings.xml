@@ -1,109 +1,109 @@
 <resources>
 
-    <string name="app_name">Volunteers Network</string>
+    <string name="app_name">Cinda</string>
 
     <!-- Parse -->
     <string name="parseApplicationID">GmZfs4Q3ispg7C5mrT5sfFk2PpPs0HXudLP7tkTr</string>
     <string name="parseClientKey">LjphrT3LxgdumkViIhKiQfnEapWJ63U5TrL9x4Zl</string>
 
     <!-- Request permissions -->
-    <string name="permission_contacts_explanation">Necesitamos conocer tu correo para que puedas enviar contribuciones, ¿estás de acuerdo?</string>
-    <string name="permission_camera_and_storage">Necesitamos que autorices algunos permisos para poder utilizar la cámara</string>
-    <string name="permission_camera_and_storage_bad">Para utilizar esta función debes aceptar todos los permisos</string>
-    <string name="permission_location">Para utilizar esta función debes autorizar el uso de localización</string>
+    <string name="permission_contacts_explanation">We need to know your mail so you can send contributions, do you agree?</string>
+    <string name="permission_camera_and_storage">You need authorize some permissions to use the camera</string>
+    <string name="permission_camera_and_storage_bad">To use this feature you must accept all permissions</string>
+    <string name="permission_location">To use this feature, you must allow the use of location</string>
 
     <!-- activity_main -->
-    <string name="shiari_advice">¡Empieza a usar Shiari!</string>
-    <string name="shiari_advice_desc">Descubre y contribuye en las campañas de Shiari proporcionando tu correo</string>
-    <string name="activate">Activar</string>
+    <string name="shiari_advice">Start using Cinda!</string>
+    <string name="shiari_advice_desc">Discover and contributes Cinda campaigns providing your email</string>
+    <string name="activate">Activate</string>
 
     <!-- menu_main -->
-    <string name="action_sync">Sincronizar</string>
-    <string name="action_servers">Servidores</string>
-    <string name="action_about">Acerca de</string>
+    <string name="action_sync">Synchronize</string>
+    <string name="action_servers">Servers</string>
+    <string name="action_about">About</string>
 
     <!-- menu_contribution -->
-    <string name="action_send">Enviar</string>
+    <string name="action_send">Send</string>
 
     <!-- menu_campaign -->
-    <string name="action_tracking">Grabar ruta</string>
+    <string name="action_tracking">Record route</string>
 
     <!-- menu init, pause, continue, stop -->
-    <string name="action_init">Iniciar</string>
-    <string name="action_pause">Pausar</string>
-    <string name="action_continue">Continuar</string>
-    <string name="action_stop">Parar</string>
+    <string name="action_init">Start</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_stop">Stop</string>
 
     <!-- menu_dictionary -->
-    <string name="action_search">Buscar</string>
-    <string name="search_hint">Buscar en el diccionario</string>
+    <string name="action_search">Search</string>
+    <string name="search_hint">Search in dictionary</string>
 
     <!-- item_campaign -->
-    <string name="suscribe">Suscribirse</string>
-    <string name="unsuscribe">Dejar de seguir</string>
+    <string name="suscribe">Subscribe</string>
+    <string name="unsuscribe">Stop following</string>
 
     <!-- campaign -->
-    <string name="campaignDateTitle">FECHAS</string>
-    <string name="campaignGeoTitle">ÁMBITO GEOGRÁFICO</string>
+    <string name="campaignDateTitle">DATES</string>
+    <string name="campaignGeoTitle">GEOGRAPHIC AMBIT</string>
 
-    <string name="campaign_my_data">DATOS CONTRIBUIDOS POR MI</string>
+    <string name="campaign_my_data">MY CONTRIBUTIONS</string>
     <string name="campaign_desc"> </string>
     <string name="campaign_date"> </string>
     <string name="campaign_geo"> </string>
 
-    <string name="continue_reading">Continuar leyendo</string>
-    <string name="my_contribute">Aún no has hecho ninguna contribución</string>
-    <string name="other_contribute">Ningún usuario ha contribuído nada aún</string>
+    <string name="continue_reading">Continue reading</string>
+    <string name="my_contribute">You have not made any contribution</string>
+    <string name="other_contribute">Nobody has contributed anything yet</string>
 
     <string name="moreUsers"> </string>
 
-    <string name="viewMore">Ver más</string>
-    <string name="viewLess">Ver menos</string>
+    <string name="viewMore">See more</string>
+    <string name="viewLess">Show less</string>
     
     <!-- Map -->
     <string name="action_map_ok">OK</string>
 
     <!-- Servers -->
     <string name="defaultServer">http://virde.dev.si2soluciones.es</string>
-    <string name="defaultDescServer">Servidor por defecto de Shiari. Descubre campañas y aporta tu contribución.</string>
-    <string name="serverNoDesc">Servidor sin descripción.</string>
+    <string name="defaultDescServer">Cinda default server. Discover campaigns and provides your contribution.</string>
+    <string name="serverNoDesc">Server without description.</string>
     <string name="isDefaultServer">isDefaultServer</string>
-    <string name="delete_text">¿Seguro que quiere eliminar este servidor?</string>
-    <string name="new_server">Nuevo servidor</string>
-    <string name="name_server">Url de servidor</string>
-    <string name="desc_server">Descripción de servidor</string>
+    <string name="delete_text">Are you sure you want to delete this server?</string>
+    <string name="new_server">New server</string>
+    <string name="name_server">URL server</string>
+    <string name="desc_server">Description server</string>
     <string name="ok">OK</string>
-    <string name="yes">Si</string>
-    <string name="now">Ahora</string>
-    <string name="later">Después</string>
+    <string name="yes">Yes</string>
+    <string name="now">Now</string>
+    <string name="later">Later</string>
     <string name="no">No</string>
-    <string name="add">Añadir</string>
-    <string name="cancel">Cancelar</string>
-    <string name="sendAgain">Volver a intentar</string>
-    <string name="completeAll">Complete la url del servidor</string>
-    <string name="invalidUrl">El servidor proporcionado no es correcto</string>
-    <string name="checkingServer">Conectando con el nuevo servidor&#8230;</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="sendAgain">Try again</string>
+    <string name="completeAll">Complete the server URL</string>
+    <string name="invalidUrl">The server provided is incorrect</string>
+    <string name="checkingServer">Connecting to new server&#8230;</string>
 
     <!-- DictionaryValue -->
-    <string name="select">SELECCIONA</string>
-    <string name="dictionary">Diccionario</string>
+    <string name="select">SELECT</string>
+    <string name="dictionary">Dictionary</string>
 
     <!-- contribution -->
-    <string name="contribution_title">Nueva contribución</string>
-    <string name="loading">Cargando modelo de campaña</string>
-    <string name="sendingContribution">Enviando su contribución&#8230;</string>
-    <string name="contributionSended">Contribución enviada</string>
-    <string name="contributionNoSend">No ha sido posible enviar su contribución, ha quedado guardada para una posterior sincronización desde la opción \"Sincronizar\".</string>
-    <string name="myShipments">MIS ENVÍOS</string>
-    <string name="other">OTROS</string>
-    <string name="selectLocation">Seleccionar Ubicación</string>
-    <string name="addImage">Añadir imagen</string>
+    <string name="contribution_title">New contribution</string>
+    <string name="loading">Loading campaigning model</string>
+    <string name="sendingContribution">Sending your contribution&#8230;</string>
+    <string name="contributionSended">contribution sent</string>
+    <string name="contributionNoSend">Unable to send the contribution. Your contribution has been saved for later synchronization from the \"Sync\" option".</string>
+    <string name="myShipments">MY SENDING</string>
+    <string name="other">OTHER</string>
+    <string name="selectLocation">Select Location</string>
+    <string name="addImage">Add image</string>
     <string name="more_info">+Info</string>
-    <string name="dialog_required_fields">Completa todos los campos requeridos resaltados en rojo para enviar tu contribución.</string>
+    <string name="dialog_required_fields">Complete all required fields highlighted in red to submit your contribution.</string>
 
     <!-- recycler_topusers -->
-    <string name="name">NOMBRE</string>
-    <string name="sends">ENVÍOS</string>
+    <string name="name">NAME</string>
+    <string name="sends">SENDINGS</string>
 
     <!-- item_topuser -->
     <string name="n_top">1</string>
@@ -134,24 +134,24 @@
     <string name="lngModel">lngModel</string>
 
     <!-- item_dictionary -->
-    <string name="dic_hint">Selecciona&#8230;</string>
-    <string name="dic_name">Nombre</string>
-    <string name="dic_desc">Descripción</string>
+    <string name="dic_hint">Select&#8230;</string>
+    <string name="dic_name">Name</string>
+    <string name="dic_desc">Description</string>
 
     <!-- Dialog -->
-    <string name="dialog_send_tracking">¿Deseas enviar ahora tu recorrido como contribución o enviar más tarde?\n\nSi selecciona más tarde podrá sincronizar sus contribuciones desde la opción "Sincronizar".</string>
-    <string name="dialog_init_tracking">¿Quieres comenzar a grabar tu ruta?</string>
+    <string name="dialog_send_tracking">Do you want to send now your route as a contribution or send later?\n\nIf you select later you can synchronize their contributions from the "Synchronize".</string>
+    <string name="dialog_init_tracking">Do you want to start recording your route?</string>
 
     <!-- Camera -->
-    <string name="album_name">Shiari</string>
+    <string name="album_name">Cinda</string>
 
     <!-- GPX -->
-    <string name="base_dir">Shiari</string>
+    <string name="base_dir">Cinda</string>
     <string name="gpx_dir_name">gpx</string>
 
     <!-- Errors -->
-    <string name="userCantOperate">Inténtelo más tarde</string>
-    <string name="noID">Modelo no disponible</string>
+    <string name="userCantOperate">Try again later</string>
+    <string name="noID">Model not available</string>
 
     <!-- Push -->
     <string name="parseDebugChannel">DebugChannel</string>

@@ -1,0 +1,182 @@
+<resources>
+
+    <string name="app_name">Cinda</string>
+
+    <!-- Parse -->
+    <string name="parseApplicationID">GmZfs4Q3ispg7C5mrT5sfFk2PpPs0HXudLP7tkTr</string>
+    <string name="parseClientKey">LjphrT3LxgdumkViIhKiQfnEapWJ63U5TrL9x4Zl</string>
+
+    <!-- Request permissions -->
+    <string name="permission_contacts_explanation">Necesitamos conocer tu correo para que puedas enviar contribuciones, ¿estás de acuerdo?</string>
+    <string name="permission_camera_and_storage">Necesitamos que autorices algunos permisos para poder utilizar la cámara</string>
+    <string name="permission_camera_and_storage_bad">Para utilizar esta función debes aceptar todos los permisos</string>
+    <string name="permission_location">Para utilizar esta función debes autorizar el uso de localización</string>
+
+    <!-- activity_main -->
+    <string name="shiari_advice">¡Empieza a usar Shiari!</string>
+    <string name="shiari_advice_desc">Descubre y contribuye en las campañas de Shiari proporcionando tu correo</string>
+    <string name="activate">Activar</string>
+
+    <!-- menu_main -->
+    <string name="action_sync">Sincronizar</string>
+    <string name="action_servers">Servidores</string>
+    <string name="action_about">Acerca de</string>
+
+    <!-- menu_contribution -->
+    <string name="action_send">Enviar</string>
+
+    <!-- menu_campaign -->
+    <string name="action_tracking">Grabar ruta</string>
+
+    <!-- menu init, pause, continue, stop -->
+    <string name="action_init">Iniciar</string>
+    <string name="action_pause">Pausar</string>
+    <string name="action_continue">Continuar</string>
+    <string name="action_stop">Parar</string>
+
+    <!-- menu_dictionary -->
+    <string name="action_search">Buscar</string>
+    <string name="search_hint">Buscar en el diccionario</string>
+
+    <!-- item_campaign -->
+    <string name="suscribe">Suscribirse</string>
+    <string name="unsuscribe">Dejar de seguir</string>
+
+    <!-- campaign -->
+    <string name="campaignDateTitle">FECHAS</string>
+    <string name="campaignGeoTitle">ÁMBITO GEOGRÁFICO</string>
+
+    <string name="campaign_my_data">DATOS CONTRIBUIDOS POR MI</string>
+    <string name="campaign_desc"> </string>
+    <string name="campaign_date"> </string>
+    <string name="campaign_geo"> </string>
+
+    <string name="continue_reading">Continuar leyendo</string>
+    <string name="my_contribute">Aún no has hecho ninguna contribución</string>
+    <string name="other_contribute">Ningún usuario ha contribuído nada aún</string>
+
+    <string name="moreUsers"> </string>
+
+    <string name="viewMore">Ver más</string>
+    <string name="viewLess">Ver menos</string>
+    
+    <!-- Map -->
+    <string name="action_map_ok">OK</string>
+
+    <!-- Servers -->
+    <string name="defaultServer">http://virde.dev.si2soluciones.es</string>
+    <string name="defaultDescServer">Servidor por defecto de Shiari. Descubre campañas y aporta tu contribución.</string>
+    <string name="serverNoDesc">Servidor sin descripción.</string>
+    <string name="isDefaultServer">isDefaultServer</string>
+    <string name="delete_text">¿Seguro que quiere eliminar este servidor?</string>
+    <string name="new_server">Nuevo servidor</string>
+    <string name="name_server">Url de servidor</string>
+    <string name="desc_server">Descripción de servidor</string>
+    <string name="ok">OK</string>
+    <string name="yes">Si</string>
+    <string name="now">Ahora</string>
+    <string name="later">Después</string>
+    <string name="no">No</string>
+    <string name="add">Añadir</string>
+    <string name="cancel">Cancelar</string>
+    <string name="sendAgain">Volver a intentar</string>
+    <string name="completeAll">Complete la url del servidor</string>
+    <string name="invalidUrl">El servidor proporcionado no es correcto</string>
+    <string name="checkingServer">Conectando con el nuevo servidor&#8230;</string>
+
+    <!-- DictionaryValue -->
+    <string name="select">SELECCIONA</string>
+    <string name="dictionary">Diccionario</string>
+
+    <!-- contribution -->
+    <string name="contribution_title">Nueva contribución</string>
+    <string name="loading">Cargando modelo de campaña</string>
+    <string name="sendingContribution">Enviando su contribución&#8230;</string>
+    <string name="contributionSended">Contribución enviada</string>
+    <string name="contributionNoSend">No ha sido posible enviar su contribución, ha quedado guardada para una posterior sincronización desde la opción \"Sincronizar\".</string>
+    <string name="myShipments">MIS ENVÍOS</string>
+    <string name="other">OTROS</string>
+    <string name="selectLocation">Seleccionar Ubicación</string>
+    <string name="addImage">Añadir imagen</string>
+    <string name="more_info">+Info</string>
+    <string name="dialog_required_fields">Completa todos los campos requeridos resaltados en rojo para enviar tu contribución.</string>
+
+    <!-- recycler_topusers -->
+    <string name="name">NOMBRE</string>
+    <string name="sends">ENVÍOS</string>
+
+    <!-- item_topuser -->
+    <string name="n_top">1</string>
+    <string name="n_sends">12</string>
+    
+    <!-- Server Shared Preferences -->
+    <string name="userPreferences">userPreferences</string>
+    <string name="id_server">idServer</string>
+    <string name="serverUrl">serverUrl</string>
+    <string name="serverName">serverName</string>
+    <string name="serverDesc">serverDesc</string>
+    <string name="serverMapsApi">serverMapsApi</string>
+    <string name="serverParseApi">serverParseApi</string>
+    <string name="serverParseKey">serverParseKey</string>
+
+    <!-- User Shared Preferences -->
+    <string name="username">username</string>
+    <string name="mail">mail</string>
+    <string name="device_id">deviceID</string>
+    <string name="token">token</string>
+
+    <string name="modelPreferences">modelPreferences</string>
+    <string name="activeModel">activeModel</string>
+    <string name="idImage">idImage</string>
+    <string name="isModelLoaded">isModelLoaded</string>
+    <string name="currentPhotoPath">currentPhotoPath</string>
+    <string name="latModel">latModel</string>
+    <string name="lngModel">lngModel</string>
+
+    <!-- item_dictionary -->
+    <string name="dic_hint">Selecciona&#8230;</string>
+    <string name="dic_name">Nombre</string>
+    <string name="dic_desc">Descripción</string>
+
+    <!-- Dialog -->
+    <string name="dialog_send_tracking">¿Deseas enviar ahora tu recorrido como contribución o enviar más tarde?\n\nSi selecciona más tarde podrá sincronizar sus contribuciones desde la opción "Sincronizar".</string>
+    <string name="dialog_init_tracking">¿Quieres comenzar a grabar tu ruta?</string>
+
+    <!-- Camera -->
+    <string name="album_name">Shiari</string>
+
+    <!-- GPX -->
+    <string name="base_dir">Shiari</string>
+    <string name="gpx_dir_name">gpx</string>
+
+    <!-- Errors -->
+    <string name="userCantOperate">Inténtelo más tarde</string>
+    <string name="noID">Modelo no disponible</string>
+
+    <!-- Push -->
+    <string name="parseDebugChannel">DebugChannel</string>
+    <string name="parseProductionChannel">ProductionChannel</string>
+
+    <!-- Test String -->
+        <!-- activity_main -->
+        <string name="verdi_server"> </string>
+        <string name="verdi_server_url"> </string>
+        <string name="verdi_server_desc"> </string>
+
+        <!-- item_campaign -->
+        <string name="issue_title"> </string>
+        <string name="issue_description"> </string>
+
+        <!-- item_campaign_user -->
+        <string name="user"> </string>
+        <string name="campaign_user_title"> </string>
+        <string name="campaign_user_data"> </string>
+
+        <!-- item_campaign_sync -->
+        <string name="campaign_sync_title"> </string>
+        <string name="campaign_sync_desc"> </string>
+
+        <!-- Server -->
+        <string name="urlServer"> </string>
+
+</resources>
