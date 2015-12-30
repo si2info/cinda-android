@@ -659,21 +659,23 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
     public void changeImgLocation (LatLng latLng) {
 
-        String url = "http://maps.google.com/maps/api/staticmap?center=" + latLng.latitude + ","
-                + latLng.longitude + "&zoom=15&size=300x200&scale=2&sensor=false&markers=color:red%7C"
-                + latLng.latitude + ","+ latLng.longitude
-                + "&key=" + getString(R.string.google_maps_key);
+        if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
+            String url = "http://maps.google.com/maps/api/staticmap?center=" + latLng.latitude + ","
+                    + latLng.longitude + "&zoom=15&size=300x200&scale=2&sensor=false&markers=color:red%7C"
+                    + latLng.latitude + "," + latLng.longitude
+                    + "&key=" + getString(R.string.google_maps_key);
 
-        if (viewLocation != null) {
+            if (viewLocation != null) {
 
-            ImageView img = (ImageView)viewLocation.findViewById(R.id.mapLocation);
-            LinearLayout view = (LinearLayout)viewLocation.findViewById(R.id.feedback);
+                ImageView img = (ImageView) viewLocation.findViewById(R.id.mapLocation);
+                LinearLayout view = (LinearLayout) viewLocation.findViewById(R.id.feedback);
 
-            view.setVisibility(View.GONE);
+                view.setVisibility(View.GONE);
 
-            Picasso.with(getApplicationContext())
-                    .load(url)
-                    .into(img);
+                Picasso.with(getApplicationContext())
+                        .load(url)
+                        .into(img);
+            }
         }
 
     }
