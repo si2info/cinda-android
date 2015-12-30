@@ -39,6 +39,7 @@ public class DictionaryValue extends AppCompatActivity implements AdapterDiction
 
     // Data
     private Dictionary dictionary;
+    private Dictionary searchDictionary; // lowercase and remove accents
     private ArrayList<ItemDictionary> searched;
 
     // Views
@@ -165,9 +166,13 @@ public class DictionaryValue extends AppCompatActivity implements AdapterDiction
 
                 searched.clear();
 
-                for (ItemDictionary item : dictionary.getTerms()) {
+                for (int i=0; i<searchDictionary.getTerms().size(); i++) {
+
+                    ItemDictionary item = searchDictionary.getTerms().get(i);
+
                     if (item.getName().contains(newText) || item.getDescription().contains(newText))
-                        searched.add(item);
+                        searched.add(dictionary.getTerms().get(i));
+
                 }
 
                 adapterSearch = new AdapterDictionary(DictionaryValue.this, searched);
@@ -243,6 +248,7 @@ public class DictionaryValue extends AppCompatActivity implements AdapterDiction
 
                     if (result.second.size() > 0) {
                         dictionary = (Dictionary) result.second.get(0);
+                        searchDictionary = formatDictionary();
                         initView();
                     }
 
@@ -253,6 +259,34 @@ public class DictionaryValue extends AppCompatActivity implements AdapterDiction
 
     @Override
     public void onDBApiUpdateResult(Result result) {
+
+    }
+
+    public Dictionary formatDictionary () {
+
+        Dictionary copy = new Dictionary();
+        copy.setName(dictionary.getName());
+        copy.setDescription(dictionary.getDescription());
+        copy.setCode(dictionary.getCode());
+        copy.setIdServer(dictionary.getIdServer());
+        ArrayList<ItemDictionary> terms = new ArrayList<>();
+
+        for (ItemDictionary item : dictionary.getTerms()) {
+
+//            if (item.getDescription().contains("licénidos")) {
+//                int a = 9;
+//                a = 3;
+//            }
+
+            ItemDictionary copyItem = (ItemDictionary)item.clone();
+            copyItem.setName(Util.stripAccents(item.getName().toLowerCase()));
+            copyItem.setDescription(Util.stripAccents(item.getDescription().toLowerCase()));
+            terms.add(copyItem);
+
+        }
+
+        copy.setTerms(terms);
+        return copy;
 
     }
 

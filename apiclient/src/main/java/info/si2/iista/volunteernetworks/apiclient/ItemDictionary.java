@@ -5,7 +5,7 @@ package info.si2.iista.volunteernetworks.apiclient;
  * Date: 15/12/15
  * Project: Shiari
  */
-public class ItemDictionary {
+public class ItemDictionary implements Cloneable {
 
     private String code, name, description;
 
@@ -35,6 +35,16 @@ public class ItemDictionary {
 
     public int getType() {
         return Item.DICTIONARY;
+    }
+
+    public Object clone() {
+
+        try {
+            return super.clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -575,6 +576,17 @@ public class Util {
                 .setPositiveButton(c.getString(R.string.ok), okListener)
                 .create()
                 .show();
+    }
+
+    /**
+     * Elimina los acentos de una cadena String
+     * @param s String a eliminar acentos
+     * @return String sin acentos
+     */
+    public static String stripAccents(String s) {
+        s = Normalizer.normalize(s, Normalizer.Form.NFD);
+        s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return s;
     }
 
 }
