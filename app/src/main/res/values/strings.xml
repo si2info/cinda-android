@@ -13,8 +13,8 @@
     <string name="permission_location">To use this feature, you must allow the use of location</string>
 
     <!-- activity_main -->
-    <string name="shiari_advice">Start using Cinda!</string>
-    <string name="shiari_advice_desc">Discover and contributes Cinda campaigns providing your email</string>
+    <string name="app_advice">Start using Cinda!</string>
+    <string name="app_advice_desc">Discover and contributes Cinda campaigns providing your email</string>
     <string name="activate">Activate</string>
 
     <!-- menu_main -->
@@ -94,7 +94,7 @@
     <string name="sendingContribution">Sending your contribution&#8230;</string>
     <string name="contributionSended">contribution sent</string>
     <string name="contributionNoSend">Unable to send the contribution. Your contribution has been saved for later synchronization from the \"Sync\" option".</string>
-    <string name="myShipments">MY SENDING</string>
+    <string name="myShipments">MY SENDINGS</string>
     <string name="other">OTHER</string>
     <string name="selectLocation">Select Location</string>
     <string name="addImage">Add image</string>
@@ -132,6 +132,8 @@
     <string name="currentPhotoPath">currentPhotoPath</string>
     <string name="latModel">latModel</string>
     <string name="lngModel">lngModel</string>
+
+    <string name="isParseInitializated">isParseInitializated</string>
 
     <!-- item_dictionary -->
     <string name="dic_hint">Select&#8230;</string>

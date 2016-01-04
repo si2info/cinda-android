@@ -18,6 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.parse.DeleteCallback;
+import com.parse.Parse;
+import com.parse.ParseInstallation;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -30,6 +33,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import info.si2.iista.volunteernetworks.R;
+import info.si2.iista.volunteernetworks.apiclient.ItemParse;
 import info.si2.iista.volunteernetworks.apiclient.ItemServer;
 
 /**
@@ -199,6 +203,21 @@ public class Util {
         SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.userPreferences), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(key, value);
+        editor.apply();
+
+    }
+
+    /**
+     * Guarda un valor asociado a una key en SharedPreferences de las preferencias del usuario
+     * @param c Context
+     * @param key String key del valor
+     * @param value Integer valor a guardar
+     */
+    public static void saveBoolPreference (Context c, String key, boolean value) {
+
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.userPreferences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(key, value);
         editor.apply();
 
     }
@@ -491,6 +510,53 @@ public class Util {
         editor.putString(c.getString(R.string.serverParseKey), server.getParseKeys().getKey());
         editor.putBoolean(c.getString(R.string.isDefaultServer), true);
         editor.apply();
+
+        // Change Parse initialization
+//        initParse(c, server.getParseKeys());
+
+    }
+
+    /**
+     * Parse initialization
+     * @param c Context
+     * @param parse Parse aplicationID and clientKey
+     */
+    private static void initParse (final Context c, final ItemParse parse) {
+
+        boolean isParseInit = getBoolPreference(c, c.getString(R.string.isParseInitializated));
+        String parseAppID = Util.getPreference(c, c.getString(R.string.serverParseApi));
+        String clientKey = Util.getPreference(c, c.getString(R.string.serverParseKey));
+
+        if (!isParseInit) { // Init Parse
+
+            Parse.enableLocalDatastore(c);
+            Parse.initialize(c, parse.getApi(), parse.getKey());
+            ParseInstallation.getCurrentInstallation().saveInBackground();
+
+            Util.savePreference(c, c.getString(R.string.serverParseApi), parse.getApi());
+            Util.savePreference(c, c.getString(R.string.serverParseKey), parse.getKey());
+
+            Util.saveBoolPreference(c, c.getString(R.string.isParseInitializated), true);
+
+        } else if (parseAppID.equals(parse.getApi()) && clientKey.equals(parse.getKey())) { // Change parse account
+
+            if (ParseInstallation.getCurrentInstallation() != null) {
+                ParseInstallation.getCurrentInstallation().deleteInBackground(new DeleteCallback() {
+                    @Override
+                    public void done(com.parse.ParseException e) {
+
+                        Parse.enableLocalDatastore(c);
+                        Parse.initialize(c, parse.getApi(), parse.getKey());
+                        ParseInstallation.getCurrentInstallation().saveInBackground();
+
+                        Util.savePreference(c, c.getString(R.string.serverParseApi), parse.getApi());
+                        Util.savePreference(c, c.getString(R.string.serverParseKey), parse.getKey());
+
+                    }
+                });
+            }
+
+        }
 
     }
 
