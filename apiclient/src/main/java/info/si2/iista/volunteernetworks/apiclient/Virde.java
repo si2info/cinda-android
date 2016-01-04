@@ -106,8 +106,8 @@ public class Virde {
         new VirdeSendGpx().execute(item);
     }
 
-    public void getDictionary(int idCampaign, int idDictionary, int idServer) {
-        new VirdeGetDictionary().execute(String.valueOf(idCampaign), String.valueOf(idDictionary), String.valueOf(idServer));
+    public void getDictionary(int idDictionary, int idServer) {
+        new VirdeGetDictionary().execute(String.valueOf(idDictionary), String.valueOf(idServer));
     }
 
     public void getContributionDetail(int idContribution) {
@@ -273,7 +273,7 @@ public class Virde {
         @Override
         protected Pair<Result, ArrayList<Dictionary>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
-            return apiClient.getDictionary(params[0], params[1], params[2]);
+            return apiClient.getDictionary(params[0], params[1]);
         }
 
         @Override

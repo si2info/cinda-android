@@ -952,7 +952,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
                 if (exist == 0) {
                     int idServer = Util.getIntPreference(this, getString(R.string.id_server));
-                    Virde.getInstance(this).getDictionary(model.get(0).getIdCampaign(), dictionary.getCode(), idServer);
+                    Virde.getInstance(this).getDictionary(dictionary.getCode(), idServer);
                 }
 
                 break;

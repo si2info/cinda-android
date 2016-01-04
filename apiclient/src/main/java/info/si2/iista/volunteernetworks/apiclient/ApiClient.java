@@ -524,7 +524,7 @@ public class ApiClient {
 
     }
 
-    public Pair<Result, ArrayList<Dictionary>> getDictionary (String idCampaign, String idDictionary, String idServer) {
+    public Pair<Result, ArrayList<Dictionary>> getDictionary (String idDictionary, String idServer) {
 
         // FROM
         int from = Virde.FROM_GET_DICTIONARY;
