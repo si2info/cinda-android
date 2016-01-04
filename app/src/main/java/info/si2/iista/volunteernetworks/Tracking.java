@@ -8,6 +8,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -22,6 +23,11 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import info.si2.iista.volunteernetworks.apiclient.ItemGpx;
+import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
+import info.si2.iista.volunteernetworks.apiclient.Result;
+import info.si2.iista.volunteernetworks.apiclient.Virde;
+import info.si2.iista.volunteernetworks.database.DBVirde;
+import info.si2.iista.volunteernetworks.database.OnDBApiResult;
 import info.si2.iista.volunteernetworks.util.Util;
 
 /**
@@ -29,7 +35,7 @@ import info.si2.iista.volunteernetworks.util.Util;
  * Date: 2/12/15
  * Project: Shiari
  */
-public class Tracking extends AppCompatActivity {
+public class Tracking extends AppCompatActivity implements OnApiClientResult, OnDBApiResult {
 
     // Map
     private GoogleMap googleMap;
@@ -38,11 +44,15 @@ public class Tracking extends AppCompatActivity {
     // Locations
     private ArrayList<LatLng> locationsRecorded;
 
-    // Tipe menu
-    public static final int MENU_PLAY = 1;
-    public static final int MENU_PAUSE_STOP = 2;
-    public static final int MENU_CONTINUE_STOP = 3;
-    public static int menuType = MENU_PLAY; // 1 = Play /-/ 2 = Pause | Stop /-/ 3 = Continue | Stop
+    // Type menu
+    public static final int MENU_PLAY = 1; // Play
+    public static final int MENU_PAUSE_STOP = 2; // Pause | Stop
+    public static final int MENU_CONTINUE_STOP = 3; // Continue | Stop
+    public static int menuType = MENU_PLAY;
+
+    // ItemGPX
+    private ItemGpx itemGpx;
+    private boolean sendNow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +104,8 @@ public class Tracking extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 menuType = MENU_PAUSE_STOP;
                 invalidateOptionsMenu();
+                Util.saveIntPreference(Tracking.this, getString(R.string.idCampaignTracking),
+                        getIntent().getExtras().getInt("idCampaign"));
                 startToTracking();
             }
         };
@@ -272,22 +284,17 @@ public class Tracking extends AppCompatActivity {
                 DialogInterface.OnClickListener nowListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String fileDir = Util.saveGpxFile(Tracking.this, locationsRecorded);
-                        locationsRecorded.clear();
-                        googleMap.clear();
-
-
-
+                        sendNow = true;
+                        ItemGpx itemGpx = makeItemGpx();
+                        saveItemGpxToDB(itemGpx);
                     }
                 };
 
                 DialogInterface.OnClickListener laterListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String fileDir = Util.saveGpxFile(Tracking.this, locationsRecorded);
-                        locationsRecorded.clear();
-                        googleMap.clear();
-                        // TODO save to db
+                        ItemGpx itemGpx = makeItemGpx();
+                        saveItemGpxToDB(itemGpx);
                         finish();
                     }
                 };
@@ -299,23 +306,94 @@ public class Tracking extends AppCompatActivity {
 
     }
 
-    public ItemGpx makeItemGpx (String dir) {
+    public ItemGpx makeItemGpx () {
 
         Date now = new Date();
+        String idUser = Util.getPreference(this, getString(R.string.idUser));
+        String idGpx = idUser + Util.parseDateToString("yyyyMMddHHmmss", now);
+        String fileDir = Util.saveGpxFile(Tracking.this, locationsRecorded, idGpx);
 
         ItemGpx gpx = new ItemGpx();
-        gpx.setId("XXX" + Util.parseDateToString("yyyyMMddHHmmss", now));
-        gpx.setDir(dir);
+        gpx.setId(idGpx);
+        gpx.setDir(fileDir);
         gpx.setDate(now);
-        gpx.setIdServer(0);
-        gpx.setIdCampaign(0);
+        gpx.setIdServer(Util.getIntPreference(this, getString(R.string.id_server)));
+        gpx.setIdCampaign(Util.getIntPreference(this, getString(R.string.idCampaignTracking)));
+        gpx.setIdVolunteer(Integer.valueOf(idUser));
         gpx.setSync(false);
+
+        // Clear map and locations
+        locationsRecorded.clear();
+        googleMap.clear();
 
         return gpx;
 
     }
 
+    public void saveItemGpxToDB (ItemGpx item) {
+
+        itemGpx = item;
+        DBVirde.getInstance(this).insertGpx(item);
+
+    }
+
+    /** Api Client **/
+
+    @Override
+    public void onApiClientRequestResult(Pair<Result, ArrayList> result) {
+        switch (result.first.getResultFrom()) {
+            case Virde.FROM_SEND_GPX_CONTRIBUTION:
+                if (result.first.isError()) {
+                    showErrorDialog(getString(R.string.gpx_not_send));
+                } else {
+                    // TODO put sync this item
+                    Util.makeToast(getApplicationContext(), getString(R.string.gpx_send), 0);
+                    finish();
+                }
+                break;
+        }
+    }
+
+    /** Data Base **/
+
+    @Override
+    public void onDBApiInsertResult(Result result) {
+        switch (result.getResultFrom()) {
+            case DBVirde.FROM_INSERT_GPX:
+                if (result.isError()) {
+                    Util.makeToast(getApplicationContext(), result.getMensaje(), 0);
+                } else {
+                    if (sendNow)
+                        Virde.getInstance(this).sendGpxContribution(itemGpx);
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onDBApiSelectResult(Pair<Result, ArrayList> result) {
+
+    }
+
+    @Override
+    public void onDBApiUpdateResult(Result result) {
+
+    }
+
     /** Dialog **/
+
+    public void showErrorDialog (String message) {
+
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        };
+
+        showMessageOK(this, message, listener);
+
+    }
 
     /**
      * AlertView constructor
@@ -330,6 +408,15 @@ public class Tracking extends AppCompatActivity {
                 .setMessage(message)
                 .setPositiveButton(c.getString(R.string.now), nowListener)
                 .setNegativeButton(c.getString(R.string.later), laterListener)
+                .create()
+                .show();
+    }
+
+    private void showMessageOK(Context c, String message, DialogInterface.OnClickListener listener) {
+        new AlertDialog.Builder(c)
+                .setMessage(message)
+                .setPositiveButton(c.getString(R.string.ok), listener)
+                .setCancelable(false)
                 .create()
                 .show();
     }

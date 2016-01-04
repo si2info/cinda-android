@@ -562,12 +562,11 @@ public class Util {
 
     /** File .GPX **/
 
-    public static String saveGpxFile (Context c, ArrayList<LatLng> locations) {
+    public static String saveGpxFile (Context c, ArrayList<LatLng> locations, String fileName) {
 
         // File name
         Date now = new Date();
         String dateNowSt = parseDateToString("yyyyMMddHHmmss", now);
-        String fileName = c.getString(R.string.app_name) + "_" + dateNowSt;
 
         // File content
         String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?><gpx xmlns=\"http://www.topografix.com/GPX/1/1\" creator=\"MapSource 6.15.5\" version=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"  xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\"><trk>\n";
@@ -575,7 +574,11 @@ public class Util {
 
         String segments = "";
         for (LatLng latLng : locations) {
-            segments += "<trkpt lat=\"" + latLng.latitude + "\" lon=\"" + latLng.longitude + "\"></trkpt>\n";
+            segments += "<trkpt lat=\"" + latLng.latitude + "\" lon=\"" + latLng.longitude + "\">\n";
+            segments += "<ele>0</ele>\n";
+            segments += "<name>0</name>\n";
+            segments += "<time>0</time>\n";
+            segments += "</trkpt>\n";
         }
 
         String footer = "</trkseg></trk></gpx>";

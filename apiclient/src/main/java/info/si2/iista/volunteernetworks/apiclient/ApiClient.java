@@ -48,6 +48,7 @@ public class ApiClient {
     private static final String URL_GET_LIST_VOLUNTEERS = "/API/campaign/%s/listVolunteers/";
     private static final String URL_DICTIONARY = "/API/dictionary/";
     private static final String URL_CONTRIBUTION = "/API/contribution/";
+    private static final String URL_GPX_CONTRIBUTION = "/API/tracking/send/";
 
     private static Context context;
 
@@ -260,15 +261,24 @@ public class ApiClient {
             Response response = client.newCall(request).execute();
             String respStr  = response.body().string();
 
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            Gson gson = gsonBuilder.create();
-            String token = gson.fromJson(respStr, String.class);
+            JSONArray array = new JSONArray(respStr);
 
-            result.add(token);
+            if (array.length() >= 2) {
+
+                int idUser = array.getInt(0);
+                String token = array.getString(1);
+
+                result.add(String.valueOf(idUser));
+                result.add(token);
+
+            }
 
             return new Pair<>(new Result(false, null, from, 0), result);
 
         } catch (IOException e) {
+            e.printStackTrace();
+            return new Pair<>(new Result(true, message, from, 1), new ArrayList<String>());
+        } catch (JSONException e) {
             e.printStackTrace();
             return new Pair<>(new Result(true, message, from, 1), new ArrayList<String>());
         }
@@ -351,8 +361,8 @@ public class ApiClient {
 
         Request request = new Request.Builder()
                 .url(HOST + String.format(URL_SEND_CONTRIBUTION, String.valueOf(idCampaign)))
-                        .post(formEncodingBuilder.build())
-                        .build();
+                .post(formEncodingBuilder.build())
+                .build();
 
         String isPosItemSync = values.get(values.size() - 1).getKey();
         String posItemSync = values.get(values.size() - 1).getValue();
@@ -470,7 +480,7 @@ public class ApiClient {
 
     public Pair<Result, ArrayList<Integer>> sendGpxContribution (ItemGpx item) {
 
-        int from = Virde.FROM_USER_REGISTER;
+        int from = Virde.FROM_SEND_GPX_CONTRIBUTION;
         String message = "Intente enviar la contribución más tarde";
         ArrayList<Integer> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
@@ -487,27 +497,29 @@ public class ApiClient {
 
         File gpx = new File(item.getDir());
         formEncodingBuilder.addFormDataPart("tracking", gpx.getName(),
-                RequestBody.create(MediaType.parse("application/gpx; charset=utf-8"), gpx));
+                RequestBody.create(MediaType.parse("application/xml"), gpx));
 
         Request request = new Request.Builder()
-                .url(HOST + URL_REGISTER_USER)
+                .url(HOST + URL_GPX_CONTRIBUTION)
                 .post(formEncodingBuilder.build())
                 .build();
+
+        String respStr;
 
         try {
 
             Response response = client.newCall(request).execute();
-            String respStr  = response.body().string();
-
-            if (respStr.equals("0")) {
-                return new Pair<>(new Result(true, message, from, 1), new ArrayList<Integer>());
-            } else {
-                return new Pair<>(new Result(false, null, from, 0), result);
-            }
+            respStr = response.body().string();
 
         } catch (IOException e) {
             e.printStackTrace();
             return new Pair<>(new Result(true, message, from, 1), new ArrayList<Integer>());
+        }
+
+        if (!respStr.equals("0")) {
+            return new Pair<>(new Result(false, message, from, 1), new ArrayList<Integer>());
+        } else {
+            return new Pair<>(new Result(true, null, from, 0), result);
         }
 
     }

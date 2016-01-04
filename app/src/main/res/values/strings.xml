@@ -124,6 +124,7 @@
     <string name="mail">mail</string>
     <string name="device_id">deviceID</string>
     <string name="token">token</string>
+    <string name="idUser">idUser</string>
 
     <string name="modelPreferences">modelPreferences</string>
     <string name="activeModel">activeModel</string>
@@ -146,6 +147,11 @@
 
     <!-- Camera -->
     <string name="album_name">Cinda</string>
+
+    <!-- Tracking -->
+    <string name="idCampaignTracking">idCampaignTracking</string>
+    <string name="gpx_send">Contribution sent</string>
+    <string name="gpx_not_send">Their contribution could not be sent, try again later from the \"Synchronize\" option.</string>
 
     <!-- GPX -->
     <string name="base_dir">Cinda</string>

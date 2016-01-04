@@ -610,16 +610,20 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                 }
 
             } else {
-                Intent intent = new Intent(this, Tracking.class);
-                startActivity(intent);
+                intentToTracking();
             }
 
         } else {
-
-            Intent intent = new Intent(this, Tracking.class);
-            startActivity(intent);
-
+            intentToTracking();
         }
+
+    }
+
+    public void intentToTracking () {
+
+        Intent intent = new Intent(this, Tracking.class);
+        intent.putExtra("idCampaign", campaign.getId());
+        startActivity(intent);
 
     }
 
@@ -830,8 +834,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         switch (requestCode) {
             case PERMISSIONS_REQUEST_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // Permission granted
-                    Intent intent = new Intent(this, Tracking.class);
-                    startActivity(intent);
+                    intentToTracking();
                 }
                 break;
         }

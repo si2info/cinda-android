@@ -107,6 +107,10 @@
     <string name="dialog_send_tracking">¿Deseas enviar ahora tu recorrido como contribución o enviar más tarde?\n\nSi selecciona más tarde podrá sincronizar sus contribuciones desde la opción "Sincronizar".</string>
     <string name="dialog_init_tracking">¿Quieres comenzar a grabar tu ruta?</string>
 
+    <!-- Tracking -->
+    <string name="gpx_send">Contribución enviada</string>
+    <string name="gpx_not_send">Su contribución no se pudo enviar, inténtelo más tarde desde la opción \"Sincronizar\".</string>
+
     <!-- Errors -->
     <string name="userCantOperate">Inténtelo más tarde</string>
     <string name="noID">Modelo no disponible</string>

@@ -316,8 +316,13 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                     mSwipeRefreshLayout.setEnabled(true);
                 } else {
                     userCanOperate = true;
-                    String token = (String) result.second.get(0);
-                    Util.savePreference(this, getString(R.string.token), token);
+
+                    if (result.second.size() >= 2) {
+                        String idUser = (String) result.second.get(0);
+                        String token = (String) result.second.get(1);
+                        Util.savePreference(this, getString(R.string.idUser), idUser);
+                        Util.savePreference(this, getString(R.string.token), token);
+                    }
 
                     // Get campaigns and feedback to user
                     doRefresh();

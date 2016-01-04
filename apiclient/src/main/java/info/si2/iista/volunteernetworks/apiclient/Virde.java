@@ -28,6 +28,7 @@ public class Virde {
     public static final int FROM_GET_SERVER_INFO = 10;
     public static final int FROM_GET_DICTIONARY = 11;
     public static final int FROM_GET_CONTRIBUTION_DETAIL = 12;
+    public static final int FROM_SEND_GPX_CONTRIBUTION = 13;
 
     public static Virde getInstance() {
         if (context == null)
