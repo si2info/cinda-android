@@ -438,17 +438,23 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     key = view.getTag().toString();
                     String path;
 
-                    if (imagesPath.size() > iterator) {
-                        path = imagesPath.get(iterator);
-                        if (path != null) {
-                            if (!path.equals("")) {
-                                values.add(new ItemFormContribution(key, path, true));
+                    if (imagesPath != null) {
+                        if (imagesPath.size() > iterator) {
+                            path = imagesPath.get(iterator);
+                            if (path != null) {
+                                if (!path.equals("")) {
+                                    values.add(new ItemFormContribution(key, path, true));
+                                } else {
+                                    values.add(new ItemFormContribution(key, "", false));
+                                }
                             } else {
                                 values.add(new ItemFormContribution(key, "", false));
                             }
                         } else {
                             values.add(new ItemFormContribution(key, "", false));
                         }
+                    } else {
+                        values.add(new ItemFormContribution(key, "", false));
                     }
 
                     iterator++;
@@ -456,6 +462,11 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     break;
 
                 case ItemModel.ITEM_FILE:
+                    break;
+
+                case ItemModel.ITEM_DESCRIPTION:
+                    key = view.getTag().toString();
+                    values.add(new ItemFormContribution(key, ""));
                     break;
 
                 case ItemModel.ITEM_SPINNER:

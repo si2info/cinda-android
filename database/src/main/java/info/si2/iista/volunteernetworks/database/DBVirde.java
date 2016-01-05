@@ -13,6 +13,7 @@ import info.si2.iista.volunteernetworks.apiclient.ItemGpx;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
 import info.si2.iista.volunteernetworks.apiclient.ItemServer;
+import info.si2.iista.volunteernetworks.apiclient.ItemSync;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 
 /**
@@ -47,11 +48,12 @@ public class DBVirde {
 
     public static final int FROM_INSERT_GPX = 17;
     public static final int FROM_SELECT_GPX = 18;
-    public static final int FROM_UPDATE_GPX = 19;
+    public static final int FROM_SELECT_GPX_TO_SYNC = 19;
+    public static final int FROM_UPDATE_GPX = 20;
 
-    public static final int FROM_INSERT_DICTIONARY = 20;
-    public static final int FROM_SELECT_DICTIONARY = 21;
-    public static final int FROM_CHECK_IF_DICTIONARY_EXISTS = 22;
+    public static final int FROM_INSERT_DICTIONARY = 21;
+    public static final int FROM_SELECT_DICTIONARY = 22;
+    public static final int FROM_CHECK_IF_DICTIONARY_EXISTS = 23;
 
 
     public static DBVirde getInstance() {
@@ -160,6 +162,10 @@ public class DBVirde {
 
     public void selectGpxs (int idServer, int idCampaign) {
         new DBVirdeSelectGpx().execute(idServer, idCampaign);
+    }
+
+    public void selectGpxsToSync () {
+        new DBVirdeSelectGpxToSync().execute();
     }
 
     public void insertGpx (ItemGpx item) {
@@ -442,6 +448,21 @@ public class DBVirde {
         protected Pair<Result, ArrayList<ItemGpx>> doInBackground(Integer... integers) {
             DBApi apiClient = DBApi.getInstance((Context) context);
             return apiClient.selectGpxs(integers[0], integers[1]);
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onDBApiSelectResult(result);
+        }
+
+    }
+
+    class DBVirdeSelectGpxToSync extends AsyncTask<Integer, Void, Pair<Result, ArrayList<ItemSync>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<ItemSync>> doInBackground(Integer... integers) {
+            DBApi apiClient = DBApi.getInstance((Context) context);
+            return apiClient.selectGpxsToSync();
         }
 
         @Override

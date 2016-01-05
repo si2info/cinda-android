@@ -37,6 +37,7 @@ public class TrackingService extends Service implements LocationListener, Google
     public static final int NOTIFICATION_TRACKING_ID = 417;
 
     // Update interval
+    private String campaign;
     private static final long INTERVAL = 1000 * 10;
     private static final long FASTEST_INTERVAL = 1000 * 10;
 
@@ -84,6 +85,11 @@ public class TrackingService extends Service implements LocationListener, Google
         switch (action) {
 
             case ACTION_INIT:
+                if (checkCampaignName(intent)) {
+                    campaign = intent.getExtras().getString("campaign");
+                } else {
+                    campaign = getString(R.string.recording_route);
+                }
                 Tracking.menuType = Tracking.MENU_PAUSE_STOP;
                 NotificationCompat.Builder builder = createTrackingNotification(this, true);
                 startForeground(NOTIFICATION_TRACKING_ID, builder.build());
@@ -241,7 +247,7 @@ public class TrackingService extends Service implements LocationListener, Google
                         .setContentTitle(context.getString(R.string.app_name))
                         .setOngoing(true)
                         .setVisibility(Notification.VISIBILITY_PUBLIC)
-                        .setContentText("Campaña X");
+                        .setContentText(campaign);
 
         // Action notification
         mBuilder.setContentIntent(getTrackingPI(context));
@@ -301,6 +307,17 @@ public class TrackingService extends Service implements LocationListener, Google
         return new NotificationCompat.Action(R.drawable.ic_stop_white_24dp,
                 context.getString(R.string.action_stop), pi);
 
+    }
+
+    public boolean checkCampaignName (Intent intent) {
+
+        if (intent.getExtras() != null) {
+            if (intent.getExtras().containsKey("campaign")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

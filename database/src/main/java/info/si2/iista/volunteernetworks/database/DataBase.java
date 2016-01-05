@@ -13,7 +13,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 6;
-    public static final String DATABASE_NAME = "Shiari.db";
+    public static final String DATABASE_NAME = "Cinda.db";
 
     private static final String PRIMARY_KEY = " PRIMARY KEY";
     private static final String AUTOINCREMENT = " AUTOINCREMENT";
@@ -23,7 +23,7 @@ public class DataBase extends SQLiteOpenHelper {
     private static final String COMMA_SEP = ",";
 
     private static final String SQL_CREATE_SERVER =
-            "CREATE TABLE " + DBServer.TABLE_SERVER + " (" +
+            "CREATE TABLE " + DBServer.TABLE + " (" +
                     DBServer.ID + TYPE_INT + PRIMARY_KEY + COMMA_SEP +
                     DBServer.TYPE + TYPE_INT + COMMA_SEP +
                     DBServer.NAME + TYPE_INT + COMMA_SEP +
@@ -36,7 +36,7 @@ public class DataBase extends SQLiteOpenHelper {
                     ");";
 
     private static final String SQL_CREATE_CAMPAIGNS =
-            "CREATE TABLE " + DBCampaign.TABLE_CAMPAIGNS + " (" +
+            "CREATE TABLE " + DBCampaign.TABLE + " (" +
                     DBCampaign.ID + TYPE_INT + PRIMARY_KEY + COMMA_SEP +
                     DBCampaign.ID_SERVER + TYPE_INT + COMMA_SEP +
                     DBCampaign.TYPE + TYPE_INT + COMMA_SEP +
@@ -54,11 +54,11 @@ public class DataBase extends SQLiteOpenHelper {
                     DBCampaign.IS_ACTIVE + TYPE_BOOLEAN + COMMA_SEP +
                     DBCampaign.HAVE_TRACKING + TYPE_BOOLEAN + COMMA_SEP +
                     DBCampaign.GEOPOSITION + TYPE_TEXT + COMMA_SEP +
-                    "FOREIGN KEY("+ DBCampaign.ID_SERVER + ") REFERENCES " + DBServer.TABLE_SERVER + "(" + DBServer.ID + ")" +
+                    "FOREIGN KEY("+ DBCampaign.ID_SERVER + ") REFERENCES " + DBServer.TABLE + "(" + DBServer.ID + ")" +
                     " );";
 
     private static final String SQL_CREATE_MODEL =
-            "CREATE TABLE " + DBModel.TABLE_MODEL + " (" +
+            "CREATE TABLE " + DBModel.TABLE + " (" +
                     DBModel.ID + TYPE_INT + PRIMARY_KEY + COMMA_SEP +
                     DBModel.ID_CAMPAIGN + TYPE_INT + COMMA_SEP +
                     DBModel.POSITION + TYPE_INT + COMMA_SEP +
@@ -68,11 +68,11 @@ public class DataBase extends SQLiteOpenHelper {
                     DBModel.TYPE + TYPE_TEXT + COMMA_SEP +
                     DBModel.REQUIRED + TYPE_BOOLEAN + COMMA_SEP +
                     DBModel.OPTIONS + TYPE_TEXT + COMMA_SEP +
-                    "FOREIGN KEY("+ DBModel.ID + ") REFERENCES " + DBCampaign.TABLE_CAMPAIGNS + "(" + DBCampaign.ID + ")" +
+                    "FOREIGN KEY("+ DBModel.ID + ") REFERENCES " + DBCampaign.TABLE + "(" + DBCampaign.ID + ")" +
                     " );";
 
     private static final String SQL_CREATE_MODEL_VALUE =
-            "CREATE TABLE " + DBModelValue.TABLE_MODEL_VALUE + " (" +
+            "CREATE TABLE " + DBModelValue.TABLE + " (" +
                     DBModelValue.ID + TYPE_INT + COMMA_SEP +
                     DBModelValue.ID_CAMP + TYPE_INT + COMMA_SEP +
                     DBModelValue.FIELD + TYPE_TEXT + COMMA_SEP +
@@ -81,58 +81,58 @@ public class DataBase extends SQLiteOpenHelper {
                     DBModelValue.ORDER + TYPE_INT + COMMA_SEP +
                     DBModelValue.IS_SYNC + TYPE_BOOLEAN + COMMA_SEP +
                     PRIMARY_KEY + "(" + DBModelValue.ID + "," + DBModelValue.FIELD + ")" + COMMA_SEP +
-                    "FOREIGN KEY("+ DBModelValue.ID_CAMP + ") REFERENCES " + DBModel.TABLE_MODEL + "(" + DBModel.ID + ")" +
+                    "FOREIGN KEY("+ DBModelValue.ID_CAMP + ") REFERENCES " + DBModel.TABLE + "(" + DBModel.ID + ")" +
                     ");";
 
     private static final String SQL_CREATE_GPX =
-            "CREATE TABLE " + DBGpxContribution.TABLE_GPX + " (" +
+            "CREATE TABLE " + DBGpxContribution.TABLE + " (" +
                     DBGpxContribution.ID + TYPE_INT + PRIMARY_KEY + COMMA_SEP +
                     DBGpxContribution.ID_SERVER + TYPE_INT + COMMA_SEP +
                     DBGpxContribution.ID_CAMPAIGN + TYPE_INT + COMMA_SEP +
                     DBGpxContribution.DIR + TYPE_TEXT + COMMA_SEP +
                     DBGpxContribution.DATE + TYPE_TEXT + COMMA_SEP +
                     DBGpxContribution.IS_SYNC + TYPE_BOOLEAN + COMMA_SEP +
-                    "FOREIGN KEY("+ DBGpxContribution.ID_CAMPAIGN + ") REFERENCES " + DBModel.TABLE_MODEL + "(" + DBModel.ID + ")" +
+                    "FOREIGN KEY("+ DBGpxContribution.ID_CAMPAIGN + ") REFERENCES " + DBModel.TABLE + "(" + DBModel.ID + ")" +
                     ");";
 
     private static final String SQL_CREATE_DICTIONARY =
-            "CREATE TABLE " + DBDictionary.TABLE_DICTIONARY + " (" +
+            "CREATE TABLE " + DBDictionary.TABLE + " (" +
                     DBDictionary.ID_DICTIONARY + TYPE_INT + COMMA_SEP +
                     DBDictionary.ID_SERVER + TYPE_INT + COMMA_SEP +
                     DBDictionary.NAME + TYPE_TEXT + COMMA_SEP +
                     DBDictionary.DESCRIPTION + TYPE_TEXT + COMMA_SEP +
-                    "FOREIGN KEY("+ DBDictionary.ID_SERVER + ") REFERENCES " + DBCampaign.TABLE_CAMPAIGNS + "(" + DBCampaign.ID + ")" +
+                    "FOREIGN KEY("+ DBDictionary.ID_SERVER + ") REFERENCES " + DBCampaign.TABLE + "(" + DBCampaign.ID + ")" +
                     ");";
 
     private static final String SQL_CREATE_DICTIONARY_TERM =
-            "CREATE TABLE " + DBDictionaryTerm.TABLE_TERMS + " (" +
+            "CREATE TABLE " + DBDictionaryTerm.TABLE + " (" +
                     DBDictionaryTerm.ID_DICTIONARY + TYPE_INT + COMMA_SEP +
                     DBDictionaryTerm.NAME + TYPE_TEXT + COMMA_SEP +
                     DBDictionaryTerm.DESCRIPTION + TYPE_TEXT + COMMA_SEP +
                     DBDictionaryTerm.CODE + TYPE_INT + COMMA_SEP +
-                    "FOREIGN KEY("+ DBDictionaryTerm.ID_DICTIONARY + ") REFERENCES " + DBDictionary.TABLE_DICTIONARY + "(" + DBDictionary.ID_DICTIONARY + ")" +
+                    "FOREIGN KEY("+ DBDictionaryTerm.ID_DICTIONARY + ") REFERENCES " + DBDictionary.TABLE + "(" + DBDictionary.ID_DICTIONARY + ")" +
                     ");";
 
     private static final String SQL_DELETE_CAMPAIGNS =
-            "DROP TABLE IF EXISTS " + DBCampaign.TABLE_CAMPAIGNS;
+            "DROP TABLE IF EXISTS " + DBCampaign.TABLE;
 
     private static final String SQL_DELETE_MODELS =
-            "DROP TABLE IF EXISTS " + DBModel.TABLE_MODEL;
+            "DROP TABLE IF EXISTS " + DBModel.TABLE;
 
     private static final String SQL_DELETE_MODELS_ITEM =
-            "DROP TABLE IF EXISTS " + DBModelValue.TABLE_MODEL_VALUE;
+            "DROP TABLE IF EXISTS " + DBModelValue.TABLE;
 
     private static final String SQL_DELETE_SERVER =
-            "DROP TABLE IF EXISTS " + DBServer.TABLE_SERVER;
+            "DROP TABLE IF EXISTS " + DBServer.TABLE;
 
     private static final String SQL_DELETE_GPX =
-            "DROP TABLE IF EXISTS " + DBGpxContribution.TABLE_GPX;
+            "DROP TABLE IF EXISTS " + DBGpxContribution.TABLE;
 
     private static final String SQL_DELETE_DICTIONARY =
-            "DROP TABLE IF EXISTS " + DBDictionary.TABLE_DICTIONARY;
+            "DROP TABLE IF EXISTS " + DBDictionary.TABLE;
 
     private static final String SQL_DELETE_DICTIONARY_TERMS =
-            "DROP TABLE IF EXISTS " + DBDictionaryTerm.TABLE_TERMS;
+            "DROP TABLE IF EXISTS " + DBDictionaryTerm.TABLE;
 
     public DataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

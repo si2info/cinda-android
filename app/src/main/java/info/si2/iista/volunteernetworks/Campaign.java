@@ -623,6 +623,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
         Intent intent = new Intent(this, Tracking.class);
         intent.putExtra("idCampaign", campaign.getId());
+        intent.putExtra("titleCampaign", campaign.getTitle());
         startActivity(intent);
 
     }

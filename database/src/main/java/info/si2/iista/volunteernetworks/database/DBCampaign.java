@@ -8,7 +8,7 @@ package info.si2.iista.volunteernetworks.database;
 public class DBCampaign {
 
     // Table Campaign
-    public static final String TABLE_CAMPAIGNS = "campaign";
+    public static final String TABLE = "campaign";
     public static final String ID = "id";
     public static final String ID_SERVER = "id_server";
     public static final String TYPE = "type";

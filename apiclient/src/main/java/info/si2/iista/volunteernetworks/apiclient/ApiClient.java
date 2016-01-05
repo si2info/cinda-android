@@ -478,11 +478,11 @@ public class ApiClient {
 
     }
 
-    public Pair<Result, ArrayList<Integer>> sendGpxContribution (ItemGpx item) {
+    public Pair<Result, ArrayList<String>> sendGpxContribution (ItemGpx item) {
 
         int from = Virde.FROM_SEND_GPX_CONTRIBUTION;
         String message = "Intente enviar la contribución más tarde";
-        ArrayList<Integer> result = new ArrayList<>();
+        ArrayList<String> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
 
         if (HOST.equals(""))
@@ -513,13 +513,14 @@ public class ApiClient {
 
         } catch (IOException e) {
             e.printStackTrace();
-            return new Pair<>(new Result(true, message, from, 1), new ArrayList<Integer>());
+            return new Pair<>(new Result(true, message, from, 1), new ArrayList<String>());
         }
 
         if (!respStr.equals("0")) {
-            return new Pair<>(new Result(false, message, from, 1), new ArrayList<Integer>());
+            result.add(item.getId());
+            return new Pair<>(new Result(false, message, from, 1), result);
         } else {
-            return new Pair<>(new Result(true, null, from, 0), result);
+            return new Pair<>(new Result(true, null, from, 0), new ArrayList<String>());
         }
 
     }

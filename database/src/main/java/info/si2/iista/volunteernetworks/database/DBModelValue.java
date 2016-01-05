@@ -8,7 +8,7 @@ package info.si2.iista.volunteernetworks.database;
 public class DBModelValue {
 
     // Table Model
-    public static final String TABLE_MODEL_VALUE = "modelValue";
+    public static final String TABLE = "modelValue";
     public static final String ID = "id";
     public static final String ID_CAMP = "idCampaign";
     public static final String FIELD = "field";

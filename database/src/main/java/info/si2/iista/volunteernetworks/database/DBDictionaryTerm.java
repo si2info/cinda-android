@@ -8,7 +8,7 @@ package info.si2.iista.volunteernetworks.database;
 public class DBDictionaryTerm {
 
     // Table Model
-    public static final String TABLE_TERMS = "dictionary_term";
+    public static final String TABLE = "dictionary_term";
     public static final String ID_DICTIONARY = "idDictionary";
     public static final String NAME = "name";
     public static final String DESCRIPTION = "description";

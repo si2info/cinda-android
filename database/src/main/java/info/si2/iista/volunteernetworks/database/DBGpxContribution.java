@@ -8,7 +8,7 @@ package info.si2.iista.volunteernetworks.database;
 public class DBGpxContribution {
 
     // Table Model
-    public static final String TABLE_GPX = "gpx_contribution";
+    public static final String TABLE = "gpx_contribution";
     public static final String ID = "id"; // idUser + date
     public static final String ID_SERVER = "idServer";
     public static final String ID_CAMPAIGN = "idCampaign";

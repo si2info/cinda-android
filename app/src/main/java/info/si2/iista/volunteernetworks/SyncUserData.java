@@ -221,6 +221,23 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
                         }
                     }
 
+                    DBVirde.getInstance(this).selectGpxsToSync();
+
+                }
+                break;
+
+            case DBVirde.FROM_SELECT_GPX_TO_SYNC:
+                if (result.first.isError()) {
+                    Log.e("DBVirde", "Can't select model items");
+                } else {
+
+                    for (Object object : result.second) {
+                        ItemSync item  = (ItemSync)object;
+                        item.setTitle(getString(R.string.tracking) + " - " + item.getTitle());
+                        items.add(item);
+                        adapter.notifyItemInserted(items.size()-1);
+                    }
+
                 }
                 break;
         }

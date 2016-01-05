@@ -149,9 +149,11 @@
     <string name="album_name">Cinda</string>
 
     <!-- Tracking -->
+    <string name="tracking">Route</string>
     <string name="idCampaignTracking">idCampaignTracking</string>
     <string name="gpx_send">Contribution sent</string>
     <string name="gpx_not_send">Their contribution could not be sent, try again later from the \"Synchronize\" option.</string>
+    <string name="recording_route">Recording route</string>
 
     <!-- GPX -->
     <string name="base_dir">Cinda</string>

@@ -51,6 +51,7 @@ public class Tracking extends AppCompatActivity implements OnApiClientResult, On
     public static int menuType = MENU_PLAY;
 
     // ItemGPX
+    private static String titleCampaign;
     private ItemGpx itemGpx;
     private boolean sendNow;
 
@@ -106,6 +107,7 @@ public class Tracking extends AppCompatActivity implements OnApiClientResult, On
                 invalidateOptionsMenu();
                 Util.saveIntPreference(Tracking.this, getString(R.string.idCampaignTracking),
                         getIntent().getExtras().getInt("idCampaign"));
+                titleCampaign = getIntent().getExtras().getString("titleCampaign");
                 startToTracking();
             }
         };
@@ -185,6 +187,7 @@ public class Tracking extends AppCompatActivity implements OnApiClientResult, On
         // Bind to LocalService
         Intent intent = new Intent(this, TrackingService.class);
         intent.setAction(TrackingService.ACTION_INIT);
+        intent.putExtra("campaign", titleCampaign);
         startService(intent);
 
     }
@@ -347,8 +350,8 @@ public class Tracking extends AppCompatActivity implements OnApiClientResult, On
                     showErrorDialog(getString(R.string.gpx_not_send));
                 } else {
                     // TODO put sync this item
-                    Util.makeToast(getApplicationContext(), getString(R.string.gpx_send), 0);
-                    finish();
+                    itemGpx.setSync(true);
+                    DBVirde.getInstance(this).updateGpx(itemGpx);
                 }
                 break;
         }
@@ -377,7 +380,16 @@ public class Tracking extends AppCompatActivity implements OnApiClientResult, On
 
     @Override
     public void onDBApiUpdateResult(Result result) {
-
+        switch (result.getResultFrom()) {
+            case DBVirde.FROM_UPDATE_GPX:
+                if (result.isError()) {
+                    Util.makeToast(getApplicationContext(), result.getMensaje(), 0);
+                } else {
+                    Util.makeToast(getApplicationContext(), getString(R.string.gpx_send), 0);
+                    finish();
+                }
+                break;
+        }
     }
 
     /** Dialog **/

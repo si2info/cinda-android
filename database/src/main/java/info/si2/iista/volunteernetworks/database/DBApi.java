@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.format.DateFormat;
 import android.util.Pair;
 
 import java.io.UnsupportedEncodingException;
@@ -17,6 +18,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import info.si2.iista.volunteernetworks.apiclient.Dictionary;
+import info.si2.iista.volunteernetworks.apiclient.Item;
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.apiclient.ItemDictionary;
 import info.si2.iista.volunteernetworks.apiclient.ItemGoogleMaps;
@@ -25,6 +27,7 @@ import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
 import info.si2.iista.volunteernetworks.apiclient.ItemParse;
 import info.si2.iista.volunteernetworks.apiclient.ItemServer;
+import info.si2.iista.volunteernetworks.apiclient.ItemSync;
 import info.si2.iista.volunteernetworks.apiclient.Result;
 
 /**
@@ -83,7 +86,7 @@ public class DBApi {
             for (int i = 0; i < nRows; i++) {
 
                 // Comprobar si la campaña existe mediante su ID
-                String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS + " " +
+                String sql = "SELECT * FROM " + DBCampaign.TABLE + " " +
                         "WHERE " + DBCampaign.ID + " = '" + items.get(i).getId() + "' " +
                         "AND " + DBCampaign.ID_SERVER + " = " + String.valueOf(idServer);
 
@@ -113,7 +116,7 @@ public class DBApi {
 
 
 
-                    sql = "INSERT OR REPLACE INTO " + DBCampaign.TABLE_CAMPAIGNS + " " +
+                    sql = "INSERT OR REPLACE INTO " + DBCampaign.TABLE + " " +
                             "VALUES (" + item.getId() + "," + item.getIdServer() + "," + item.getType() + ",'" +
                             item.getHeaderColor() + "','" + ecodedTitle + "','" + encodedShortDesc + "','" +
                             encodedDesc + "','" + econdedScope + "','" + item.getImage() + "','" + item.getCover() + "','" +
@@ -153,7 +156,7 @@ public class DBApi {
             open(); // Open DB
 
             // Comprobar si la campaña existe mediante su ID
-            String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS + " " +
+            String sql = "SELECT * FROM " + DBCampaign.TABLE + " " +
                         "WHERE " + DBCampaign.ID + " = '" + item.getId() + "'";
 
             Cursor c = database.rawQuery(sql, null);
@@ -177,7 +180,7 @@ public class DBApi {
                 if (item.getScope() != null)
                     econdedScope = URLEncoder.encode(item.getScope(), "UTF-8");
 
-                sql = "UPDATE " + DBCampaign.TABLE_CAMPAIGNS + " " +
+                sql = "UPDATE " + DBCampaign.TABLE + " " +
                         "SET " + DBCampaign.ID + "=" + item.getId() + "," +
                         DBCampaign.TYPE + "=" + item.getType() + "," +
                         DBCampaign.COLOR + "='" + item.getHeaderColor() + "'," +
@@ -213,7 +216,7 @@ public class DBApi {
 
         int from = DBVirde.FROM_SELECT_CAMPAIGNS;
         ArrayList<ItemCampaign> result = new ArrayList<>();
-        String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS +
+        String sql = "SELECT * FROM " + DBCampaign.TABLE +
                     " WHERE " + DBCampaign.IS_ACTIVE + "='true'" +
                     " AND " + DBCampaign.ID_SERVER + "=" + idServer;
 
@@ -242,7 +245,7 @@ public class DBApi {
 
         int from = DBVirde.FROM_SELECT_CAMPAIGN;
         ArrayList<ItemCampaign> result = new ArrayList<>();
-        String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS +
+        String sql = "SELECT * FROM " + DBCampaign.TABLE +
                     " WHERE " + DBCampaign.ID + "=" + id;
         open();
 
@@ -269,7 +272,7 @@ public class DBApi {
 
         int from = DBVirde.FROM_SELECT_CAMPAIGNS_FROM_ID;
         ArrayList<ItemCampaign> result = new ArrayList<>();
-        String sql = "SELECT * FROM " + DBCampaign.TABLE_CAMPAIGNS + " " +
+        String sql = "SELECT * FROM " + DBCampaign.TABLE + " " +
                      "WHERE " + DBCampaign.ID + ">" + String.valueOf(idCampaign) + " " +
                      "ORDER BY " + DBCampaign.ID + " ASC";
 
@@ -307,7 +310,7 @@ public class DBApi {
         }
         ids = ids.substring(0, ids.length()-1);
 
-        String sql = "UPDATE " + DBCampaign.TABLE_CAMPAIGNS +
+        String sql = "UPDATE " + DBCampaign.TABLE +
                 " SET " + DBCampaign.IS_ACTIVE + "='false'" +
                 " WHERE " + DBCampaign.ID + " NOT IN (" + ids + ")";
 
@@ -364,7 +367,7 @@ public class DBApi {
             for (int i = 0; i < nRows; i++) {
 
                 // Comprobar si el modelo existe mediante su ID
-                String sql = "SELECT * FROM " + DBModel.TABLE_MODEL + " " +
+                String sql = "SELECT * FROM " + DBModel.TABLE + " " +
                         "WHERE " + DBModel.ID + " = '" + items.get(i).getId() + "'";
 
                 open(); // Open DB
@@ -379,7 +382,7 @@ public class DBApi {
                     if (item.getFieldOptions() != null)
                         options = URLEncoder.encode(item.getFieldOptions(), "UTF-8");
 
-                    sql = "INSERT OR REPLACE INTO " + DBModel.TABLE_MODEL + " " +
+                    sql = "INSERT OR REPLACE INTO " + DBModel.TABLE + " " +
                             "VALUES (" + item.getId() + "," + item.getIdCampaign() + "," + item.getFieldPosition() + ",'" +
                             item.getFieldLabel() + "','" + item.getFieldName() + "','" + item.getFieldDescription() + "','" +
                             item.getFieldType() + "','" + item.getFieldRequired() + "','" + options + "')";
@@ -414,7 +417,7 @@ public class DBApi {
             open(); // Open DB
 
             // Comprobar si la campaña existe mediante su ID
-            String sql = "SELECT * FROM " + DBModel.TABLE_MODEL + " " +
+            String sql = "SELECT * FROM " + DBModel.TABLE + " " +
                          "WHERE " + DBModel.ID + " = '" + item.getId() + "'";
 
             Cursor c = database.rawQuery(sql, null);
@@ -426,7 +429,7 @@ public class DBApi {
                 if (item.getFieldOptions() != null)
                     options = URLEncoder.encode(item.getFieldOptions(), "UTF-8");
 
-                sql = "UPDATE " + DBModel.TABLE_MODEL + " " +
+                sql = "UPDATE " + DBModel.TABLE + " " +
                         "SET " + DBModel.ID + "=" + item.getId() + "," +
                         DBModel.ID_CAMPAIGN + "=" + item.getIdCampaign() + "," +
                         DBModel.POSITION + "='" + item.getFieldPosition() + "'," +
@@ -457,7 +460,7 @@ public class DBApi {
 
         int from = DBVirde.FROM_SELECT_MODEL;
         ArrayList<ItemModel> result = new ArrayList<>();
-        String sql = "SELECT * FROM " + DBModel.TABLE_MODEL +
+        String sql = "SELECT * FROM " + DBModel.TABLE +
                 " WHERE " + DBModel.ID_CAMPAIGN + "=" + id +
                 " ORDER BY " + DBModel.POSITION + " ASC";
 
@@ -529,7 +532,7 @@ public class DBApi {
                 if (item.getValue() != null)
                     value = URLEncoder.encode(item.getValue(), "UTF-8");
 
-                String sql = "INSERT OR REPLACE INTO " + DBModelValue.TABLE_MODEL_VALUE + " " +
+                String sql = "INSERT OR REPLACE INTO " + DBModelValue.TABLE + " " +
                              "VALUES (" + id + "," + item.getIdModel() + ",'" + item.getField() + "','" +
                              value + "','" + item.getFieldType() + "'," + item.getOrder() + ",'" + item.isSync() + "')";
 
@@ -561,7 +564,7 @@ public class DBApi {
                 ItemModelValue item = items.get(i);
 
                 // Comprobar si el valor del modelo existe mediante su ID y Field
-                String sql = "SELECT * FROM " + DBModelValue.TABLE_MODEL_VALUE + " " +
+                String sql = "SELECT * FROM " + DBModelValue.TABLE + " " +
                         "WHERE " + DBModelValue.ID + " = '" + item.getId() + "' " +
                         "AND " + DBModelValue.FIELD + " = '" + item.getField() + "'";
 
@@ -575,7 +578,7 @@ public class DBApi {
                     if (item.getValue() != null)
                         value = URLEncoder.encode(item.getValue(), "UTF-8");
 
-                    sql = "UPDATE " + DBModelValue.TABLE_MODEL_VALUE + " " +
+                    sql = "UPDATE " + DBModelValue.TABLE + " " +
                             "SET " + DBModelValue.ID + "=" + item.getId() + "," +
                             DBModelValue.ID_CAMP + "=" + item.getIdModel() + "," +
                             DBModelValue.FIELD + "='" + item.getField() + "'," +
@@ -611,10 +614,10 @@ public class DBApi {
 
         String sql;
         if (id == -1) {
-            sql = "SELECT * FROM " + DBModelValue.TABLE_MODEL_VALUE +
+            sql = "SELECT * FROM " + DBModelValue.TABLE +
                  " ORDER BY " + DBModelValue.ID + " ASC";
         } else {
-            sql = "SELECT * FROM " + DBModelValue.TABLE_MODEL_VALUE +
+            sql = "SELECT * FROM " + DBModelValue.TABLE +
                  " WHERE " + DBModelValue.ID + "=" + id +
                  " ORDER BY " + DBModelValue.ID + " ASC";
         }
@@ -677,9 +680,9 @@ public class DBApi {
             if (item.getDir() != null)
                 dir = URLEncoder.encode(item.getDir(), "UTF-8");
 
-            String sql = "INSERT OR REPLACE INTO " + DBGpxContribution.TABLE_GPX + " " +
+            String sql = "INSERT OR REPLACE INTO " + DBGpxContribution.TABLE + " " +
                     "VALUES (" + item.getId() + "," + item.getIdServer() + "," + item.getIdCampaign() + ",'" +
-                    dir + "','" + dateToString(item.getDate()) + "','" + item.isSync() + "')";
+                    dir + "','" + parseDateToString("dd/MM/yyyy 'a las' HH:mm", item.getDate()) + "','" + item.isSync() + "')";
 
             database.execSQL(sql);
 
@@ -697,32 +700,32 @@ public class DBApi {
 
     public synchronized Result updateGPX (ItemGpx item) {
 
-        int from = DBVirde.FROM_UPDATE_MODEL;
+        int from = DBVirde.FROM_UPDATE_GPX;
 
         try {
 
             open(); // Open DB
 
-            // Comprobar si la campaña existe mediante su ID
-            String sql = "SELECT * FROM " + DBModel.TABLE_MODEL + " " +
-                    "WHERE " + DBModel.ID + " = '" + item.getId() + "'";
+            // Comprobar si el GPX existe mediante su ID
+            String sql = "SELECT * FROM " + DBGpxContribution.TABLE + " " +
+                    "WHERE " + DBGpxContribution.ID + " = '" + item.getId() + "'";
 
             Cursor c = database.rawQuery(sql, null);
 
-            if (c.getCount() == 1) { // Si no existe la campaña, añadir
+            if (c.getCount() == 1) {
 
                 // Scope
                 String dir = "";
                 if (item.getDir() != null)
                     dir = URLEncoder.encode(item.getDir(), "UTF-8");
 
-                sql = "UPDATE " + DBGpxContribution.TABLE_GPX + " " +
+                sql = "UPDATE " + DBGpxContribution.TABLE + " " +
                         "SET " + DBGpxContribution.ID + "=" + item.getId() + "," +
                         DBGpxContribution.ID_SERVER + "=" + item.getIdServer() + "," +
                         DBGpxContribution.ID_CAMPAIGN + "='" + item.getIdCampaign() + "'," +
                         DBGpxContribution.DIR + "='" + dir + "'," +
                         DBGpxContribution.DATE + "='" + dateToString(item.getDate()) + "'," +
-                        DBGpxContribution.IS_SYNC + "='" + item.isSync() + "'," +
+                        DBGpxContribution.IS_SYNC + "='" + item.isSync() + "' " +
                         "WHERE " + DBGpxContribution.ID + "=" + item.getId();
 
                 database.execSQL(sql);
@@ -742,11 +745,11 @@ public class DBApi {
 
     public synchronized Pair<Result, ArrayList<ItemGpx>> selectGpxs (int idServer, int idCampaign) {
 
-        int from = DBVirde.FROM_SELECT_MODELITEM;
+        int from = DBVirde.FROM_SELECT_GPX;
         ArrayList<ItemGpx> result = new ArrayList<>();
 
         String sql;
-        sql = "SELECT * FROM " + DBGpxContribution.TABLE_GPX +
+        sql = "SELECT * FROM " + DBGpxContribution.TABLE +
                 " WHERE " + DBGpxContribution.ID_SERVER + "=" + idServer +
                 " AND " + DBGpxContribution.ID_CAMPAIGN + "=" + idCampaign +
                 " ORDER BY " + DBGpxContribution.ID + " ASC";
@@ -769,6 +772,63 @@ public class DBApi {
         close();
 
         return new Pair<>(new Result(false, null, from, 0), result);
+
+    }
+
+    public synchronized Pair<Result, ArrayList<ItemSync>> selectGpxsToSync () {
+
+        int from = DBVirde.FROM_SELECT_GPX_TO_SYNC;
+        ArrayList<ItemSync> result = new ArrayList<>();
+
+        String sql;
+        sql = "SELECT " + DBGpxContribution.TABLE+"."+DBGpxContribution.ID + ", " + DBGpxContribution.DATE + ", " +
+                DBCampaign.TITLE + ", " + DBServer.URL + ", " + DBGpxContribution.IS_SYNC + "\n" +
+                "FROM " + DBServer.TABLE + ", " + DBCampaign.TABLE + ", " + DBGpxContribution.TABLE + "\n" +
+                "WHERE " + DBCampaign.TABLE+"."+DBCampaign.ID_SERVER + " = " + DBServer.TABLE+"."+DBServer.ID + "\n" +
+                "AND " + DBGpxContribution.TABLE+"."+DBGpxContribution.ID_SERVER + " = " + DBServer.TABLE+"."+DBServer.ID + "\n" +
+                "AND " + DBGpxContribution.TABLE+"."+DBGpxContribution.ID_CAMPAIGN + " = " + DBCampaign.TABLE+"."+DBCampaign.ID + "\n" +
+                "ORDER BY " + DBGpxContribution.TABLE+"."+DBGpxContribution.ID + " ASC";
+
+        open();
+
+        Cursor c = database.rawQuery(sql, null);
+
+        if (c.moveToFirst()) {
+
+            do {
+
+                result.add(formatItemGpxFromDBToSync(c));
+
+            } while (c.moveToNext());
+
+        }
+
+        c.close();
+        close();
+
+        return new Pair<>(new Result(false, null, from, 0), result);
+
+    }
+
+    private ItemSync formatItemGpxFromDBToSync(Cursor c) {
+
+        ItemSync item = new ItemSync();
+
+        try {
+
+            item.setType(Item.SYNC);
+            item.setImgCampaign("");
+            item.setId(c.getInt(0));
+            item.setDate(c.getString(1));
+            item.setTitle(URLDecoder.decode(c.getString(2), "UTF-8"));
+            item.setUrl(URLDecoder.decode(c.getString(3), "UTF-8"));
+            item.setIsSync(Boolean.valueOf(c.getString(4)));
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return item;
 
     }
 
@@ -830,7 +890,7 @@ public class DBApi {
             if (item.getDescription() != null)
                 desc = URLEncoder.encode(item.getDescription(), "UTF-8");
 
-            String sql = "INSERT OR REPLACE INTO " + DBServer.TABLE_SERVER + " " +
+            String sql = "INSERT OR REPLACE INTO " + DBServer.TABLE + " " +
                          "(" + DBServer.TYPE + ", " + DBServer.NAME + ", " + DBServer.DESC + ", " + DBServer.URL + ", " +
                          DBServer.GOOGLE_MAPS_STATIC_KEY + ", " + DBServer.PARSE_API  + ", " + DBServer.PARSE_KEY + ", " + DBServer.ACTIVE + ")" +
                          " VALUES (" + item.getType() + ", '" + name + "', '" + desc + "', '" + url + "', '" +
@@ -840,7 +900,7 @@ public class DBApi {
             database.execSQL(sql);
 
             // Get assigned id
-            sql = "SELECT " + DBServer.ID + " FROM " + DBServer.TABLE_SERVER + " ORDER BY " + DBServer.ID + " DESC LIMIT 1";
+            sql = "SELECT " + DBServer.ID + " FROM " + DBServer.TABLE + " ORDER BY " + DBServer.ID + " DESC LIMIT 1";
             Cursor c = database.rawQuery(sql, null);
 
             if (c.moveToFirst()) {
@@ -893,7 +953,7 @@ public class DBApi {
             if (item.getDescription() != null)
                 desc = URLEncoder.encode(item.getDescription(), "UTF-8");
 
-            String sql = "UPDATE " + DBServer.TABLE_SERVER +
+            String sql = "UPDATE " + DBServer.TABLE +
                     " SET " + DBServer.TYPE + "=" + item.getType() + ", " +
                     DBServer.NAME + "='" + name + "', " +
                     DBServer.DESC + "='" + desc + "', " +
@@ -923,7 +983,7 @@ public class DBApi {
 
         open();
 
-        String sql = "DELETE FROM " + DBServer.TABLE_SERVER + " WHERE " + DBServer.ID + "=" + String.valueOf(id);
+        String sql = "DELETE FROM " + DBServer.TABLE + " WHERE " + DBServer.ID + "=" + String.valueOf(id);
         database.execSQL(sql);
 
         close(); // Close DB
@@ -937,7 +997,7 @@ public class DBApi {
 
         int from = DBVirde.FROM_SELECT_SERVERS;
         ArrayList<ItemServer> result = new ArrayList<>();
-        String sql = "SELECT * FROM " + DBServer.TABLE_SERVER +
+        String sql = "SELECT * FROM " + DBServer.TABLE +
                     " ORDER BY " + DBServer.ID + " ASC";
 
         open();
@@ -965,7 +1025,7 @@ public class DBApi {
 
         int from = DBVirde.FROM_SELECT_ACTIVE_SERVER;
         ArrayList<ItemServer> result = new ArrayList<>();
-        String sql = "SELECT * FROM " + DBServer.TABLE_SERVER +
+        String sql = "SELECT * FROM " + DBServer.TABLE +
                     " WHERE " + DBServer.ACTIVE + "='true'";
 
         open();
@@ -1052,7 +1112,7 @@ public class DBApi {
             if (dictionary.getDescription() != null)
                 description = URLEncoder.encode(dictionary.getDescription(), "UTF-8");
 
-            String sql = "INSERT OR REPLACE INTO " + DBDictionary.TABLE_DICTIONARY + " " +
+            String sql = "INSERT OR REPLACE INTO " + DBDictionary.TABLE + " " +
                     " VALUES (" + dictionary.getCode() + ", " + dictionary.getIdServer() + ", '" + name + "', '" +
                     description + "')";
 
@@ -1070,7 +1130,7 @@ public class DBApi {
                 if (dictionary.getDescription() != null)
                     description = URLEncoder.encode(item.getDescription(), "UTF-8");
 
-                sql = "INSERT OR REPLACE INTO " + DBDictionaryTerm.TABLE_TERMS + " " +
+                sql = "INSERT OR REPLACE INTO " + DBDictionaryTerm.TABLE + " " +
                         " VALUES (" + dictionary.getCode() + ", '" + name + "', '" + description +
                         "', " + item.getCode() + ")";
 
@@ -1096,7 +1156,7 @@ public class DBApi {
 
         open();
 
-        String sql = "SELECT * FROM " + DBDictionary.TABLE_DICTIONARY +
+        String sql = "SELECT * FROM " + DBDictionary.TABLE +
                 " WHERE " + DBDictionary.ID_DICTIONARY +  " = " + code;
 
 
@@ -1120,13 +1180,14 @@ public class DBApi {
         int from = DBVirde.FROM_SELECT_DICTIONARY;
         ArrayList<Dictionary> result = new ArrayList<>();
 
-        String sql = "SELECT " + DBDictionary.TABLE_DICTIONARY+"."+DBDictionary.ID_DICTIONARY + ", " +
-                DBDictionary.TABLE_DICTIONARY+"."+DBDictionary.NAME + ", " + DBDictionary.TABLE_DICTIONARY+"."+DBDictionary.DESCRIPTION + ", " +
-                DBDictionaryTerm.TABLE_TERMS+"."+DBDictionaryTerm.NAME + ", " + DBDictionaryTerm.TABLE_TERMS+"."+DBDictionaryTerm.DESCRIPTION + ", " +
-                DBDictionaryTerm.TABLE_TERMS+"."+DBDictionaryTerm.CODE + "\n" +
-                "FROM " + DBDictionary.TABLE_DICTIONARY + ", " + DBDictionaryTerm.TABLE_TERMS + ", " + DBServer.TABLE_SERVER + "\n" +
-                "WHERE " + DBDictionary.TABLE_DICTIONARY+"."+DBDictionary.ID_DICTIONARY + " = " + DBDictionaryTerm.TABLE_TERMS+"."+DBDictionaryTerm.ID_DICTIONARY + "\n" +
-                "AND " + DBDictionary.TABLE_DICTIONARY+"."+DBDictionary.ID_SERVER + " = " + DBServer.TABLE_SERVER+"."+DBServer.ID;
+        String sql = "SELECT " + DBDictionary.TABLE +"."+DBDictionary.ID_DICTIONARY + ", " +
+                DBDictionary.TABLE +"."+DBDictionary.NAME + ", " + DBDictionary.TABLE +"."+DBDictionary.DESCRIPTION + ", " +
+                DBDictionaryTerm.TABLE +"."+DBDictionaryTerm.NAME + ", " + DBDictionaryTerm.TABLE +"."+DBDictionaryTerm.DESCRIPTION + ", " +
+                DBDictionaryTerm.TABLE +"."+DBDictionaryTerm.CODE + "\n" +
+                "FROM " + DBDictionary.TABLE + ", " + DBDictionaryTerm.TABLE + ", " + DBServer.TABLE + "\n" +
+                "WHERE " + DBDictionary.TABLE +"."+DBDictionary.ID_DICTIONARY + " = " + DBDictionaryTerm.TABLE +"."+DBDictionaryTerm.ID_DICTIONARY + "\n" +
+                "AND " + DBDictionary.TABLE +"."+DBDictionary.ID_SERVER + " = " + DBServer.TABLE +"."+DBServer.ID + "\n" +
+                "ORDER BY " + DBDictionaryTerm.TABLE +"."+DBDictionaryTerm.CODE;
 
         open();
 
@@ -1183,6 +1244,15 @@ public class DBApi {
         } else {
             return "";
         }
+
+    }
+
+    private String parseDateToString (String formatSt, Date date) {
+
+        if (date != null)
+            return DateFormat.format(formatSt, date).toString();
+        else
+            return "";
 
     }
 

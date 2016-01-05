@@ -253,10 +253,10 @@ public class Virde {
 
     }
 
-    class VirdeSendGpx extends AsyncTask<ItemGpx, Void, Pair<Result, ArrayList<Integer>>> {
+    class VirdeSendGpx extends AsyncTask<ItemGpx, Void, Pair<Result, ArrayList<String>>> {
 
         @Override
-        protected Pair<Result, ArrayList<Integer>> doInBackground(ItemGpx... params) {
+        protected Pair<Result, ArrayList<String>> doInBackground(ItemGpx... params) {
             ApiClient apiClient = ApiClient.getInstance();
             return apiClient.sendGpxContribution(params[0]);
         }
