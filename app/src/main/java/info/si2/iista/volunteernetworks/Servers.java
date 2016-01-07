@@ -192,7 +192,7 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
         switch (result.getResultFrom()) {
             case DBVirde.FROM_INSERT_SERVER:
                 if (result.isError()) {
-                    Log.e("DBVirde", "Server not inserted");
+                    Log.e("DB" + getString(R.string.app_name), "Server not inserted");
                 } else {
                     items.get(items.size()-1).setId(result.getCodigoError());
                     Util.saveIntPreference(Servers.this, getString(R.string.id_server), result.getCodigoError());
@@ -215,7 +215,7 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
         switch (result.first.getResultFrom()) {
             case DBVirde.FROM_SELECT_SERVERS:
                 if (result.first.isError()) {
-                    Log.e("DBVirde", "Server not selected");
+                    Log.e("DB" + getString(R.string.app_name), "Server not selected");
                 } else {
 
                     for (Object object : result.second) {
@@ -233,12 +233,12 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
         switch (result.getResultFrom()) {
             case DBVirde.FROM_DELETE_SERVER:
                 if (result.isError()) {
-                    Log.e("DBVirde", "Server not deleted");
+                    Log.e("DB" + getString(R.string.app_name), "Server not deleted");
                 }
                 break;
             case DBVirde.FROM_UPDATE_SERVER:
                 if (result.isError()) {
-                    Log.e("DBVirde", "Server not updated");
+                    Log.e("DB" + getString(R.string.app_name), "Server not updated");
                 } else {
 
                     Util.saveIntPreference(Servers.this, getString(R.string.id_server), result.getCodigoError());
@@ -264,7 +264,7 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
                     removeItem();
                     setMainServer(oldUrlServer);
                     Virde.getInstance(this).setActiveServer(oldUrlServer);
-                    Log.e("Virde", "Incorrect Server");
+                    Log.e(getString(R.string.app_name), "Incorrect Server");
                     Util.makeToast(getApplicationContext(), getString(R.string.invalidUrl), 0);
                 } else {
 
@@ -277,9 +277,11 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
 
             case Virde.FROM_GET_SERVER_INFO:
                 if (result.first.isError()) {
+                    removeItem();
+                    setMainServer(oldUrlServer);
+                    Virde.getInstance(this).setActiveServer(oldUrlServer);
+                    Log.e(getString(R.string.app_name), "Incorrect Server");
                     Util.makeToast(getApplicationContext(), getString(R.string.invalidUrl), 0);
-                    items.remove(items.size()-1);
-                    adapter.notifyItemRemoved(items.size());
                 } else {
 
                     // Server
