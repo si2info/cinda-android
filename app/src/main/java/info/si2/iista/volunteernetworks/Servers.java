@@ -52,8 +52,10 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
         setContentView(R.layout.recycler_view);
 
         // Action Bar
-        if (getSupportActionBar() != null)
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getString(R.string.titleServers));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // Views
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -276,6 +278,8 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
             case Virde.FROM_GET_SERVER_INFO:
                 if (result.first.isError()) {
                     Util.makeToast(getApplicationContext(), getString(R.string.invalidUrl), 0);
+                    items.remove(items.size()-1);
+                    adapter.notifyItemRemoved(items.size());
                 } else {
 
                     // Server

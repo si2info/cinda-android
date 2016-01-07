@@ -57,13 +57,15 @@
     <string name="action_map_ok">OK</string>
 
     <!-- Servers -->
+    <string name="titleServers">Servidores CINDA</string>
     <string name="defaultServer">http://virde.dev.si2soluciones.es</string>
     <string name="defaultDescServer">Servidor por defecto de Cinda. Descubre campañas y aporta tu contribución.</string>
     <string name="serverNoDesc">Servidor sin descripción.</string>
     <string name="isDefaultServer">isDefaultServer</string>
     <string name="delete_text">¿Seguro que quiere eliminar este servidor?</string>
     <string name="new_server">Nuevo servidor</string>
-    <string name="name_server">Url de servidor</string>
+    <string name="example_server">Ejemplo: www.cinda.science</string>
+    <string name="help_server">No es necesario que incluyas \"http://\"</string>
     <string name="desc_server">Descripción de servidor</string>
     <string name="ok">OK</string>
     <string name="yes">Si</string>

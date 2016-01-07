@@ -64,13 +64,15 @@
     <string name="action_map_ok">OK</string>
 
     <!-- Servers -->
+    <string name="titleServers">CINDA Servers</string>
     <string name="defaultServer">http://virde.dev.si2soluciones.es</string>
     <string name="defaultDescServer">Cinda default server. Discover campaigns and provides your contribution.</string>
     <string name="serverNoDesc">Server without description.</string>
     <string name="isDefaultServer">isDefaultServer</string>
     <string name="delete_text">Are you sure you want to delete this server?</string>
     <string name="new_server">New server</string>
-    <string name="name_server">URL server</string>
+    <string name="example_server">Example: www.cinda.science</string>
+    <string name="help_server">No es necesario que incluyas \"http://\"</string>
     <string name="desc_server">Description server</string>
     <string name="ok">OK</string>
     <string name="yes">Yes</string>

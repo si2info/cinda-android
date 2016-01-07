@@ -24,9 +24,20 @@
         <android.support.v7.widget.AppCompatEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/name_server"
+            android:hint="@string/example_server"
             android:inputType="textWebEditText" />
 
     </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/help_server"
+        android:id="@+id/textView4"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textSize="12sp"
+        android:layout_marginTop="-5dp" />
 
 </LinearLayout>
