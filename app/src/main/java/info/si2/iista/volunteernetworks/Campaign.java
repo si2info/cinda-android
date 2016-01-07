@@ -689,10 +689,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
                             myContributions.add((ItemContribution)object);
                         }
 
-                        if (myContributions.size() > 0)
-                            myID = myContributions.get(0).getId();
-                        else
-                            myID = -2;
+                        myID = Util.getIntPreference(this, getString(R.string.idUser));
 
                         adapter = new AdapterContributions(Campaign.this, myContributions);
                         adapter.setClickListener(Campaign.this);
@@ -702,11 +699,12 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
                     } else { // Other contributions
 
+                        myID = Util.getIntPreference(this, getString(R.string.idUser));
                         otherContributions = new ArrayList<>();
 
                         for (Object object : result.second) {
                             ItemContribution contribution = (ItemContribution)object;
-                            if (contribution.getId() != myID)
+                            if (contribution.getAuthor_id() != myID)
                                 otherContributions.add(contribution);
                         }
 
