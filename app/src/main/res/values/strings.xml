@@ -149,6 +149,7 @@
     <string name="album_name">Cinda</string>
 
     <!-- Tracking -->
+    <string name="title_tracking">Route log</string>
     <string name="tracking">Route</string>
     <string name="idCampaignTracking">idCampaignTracking</string>
     <string name="gpx_send">Contribution sent</string>

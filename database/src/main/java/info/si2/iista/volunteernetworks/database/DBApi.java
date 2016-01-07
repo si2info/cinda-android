@@ -675,7 +675,7 @@ public class DBApi {
 
             open();
 
-            // Options
+            // Dir gpx
             String dir = "";
             if (item.getDir() != null)
                 dir = URLEncoder.encode(item.getDir(), "UTF-8");
@@ -714,14 +714,13 @@ public class DBApi {
 
             if (c.getCount() == 1) {
 
-                // Scope
+                // Dir gpx
                 String dir = "";
                 if (item.getDir() != null)
                     dir = URLEncoder.encode(item.getDir(), "UTF-8");
 
                 sql = "UPDATE " + DBGpxContribution.TABLE + " " +
-                        "SET " + DBGpxContribution.ID + "=" + item.getId() + "," +
-                        DBGpxContribution.ID_SERVER + "=" + item.getIdServer() + "," +
+                        "SET " + DBGpxContribution.ID_SERVER + "=" + item.getIdServer() + "," +
                         DBGpxContribution.ID_CAMPAIGN + "='" + item.getIdCampaign() + "'," +
                         DBGpxContribution.DIR + "='" + dir + "'," +
                         DBGpxContribution.DATE + "='" + dateToString(item.getDate()) + "'," +
@@ -743,16 +742,44 @@ public class DBApi {
 
     }
 
-    public synchronized Pair<Result, ArrayList<ItemGpx>> selectGpxs (int idServer, int idCampaign) {
+    public synchronized Result updateSyncGPX (ItemGpx item) {
+
+        int from = DBVirde.FROM_UPDATE_SYNC_GPX;
+
+        open(); // Open DB
+
+        // Comprobar si el GPX existe mediante su ID
+        String sql = "SELECT * FROM " + DBGpxContribution.TABLE + " " +
+                "WHERE " + DBGpxContribution.ID + " = '" + item.getId() + "'";
+
+        Cursor c = database.rawQuery(sql, null);
+
+        if (c.getCount() == 1) {
+
+            sql = "UPDATE " + DBGpxContribution.TABLE + " " +
+                    "SET " + DBGpxContribution.IS_SYNC + "='" + item.isSync() + "' " +
+                    "WHERE " + DBGpxContribution.ID + "=" + item.getId();
+
+            database.execSQL(sql);
+
+        }
+
+        c.close();
+        close(); // Close DB
+
+        return new Result(false, null, from, 0);
+
+    }
+
+    public synchronized Pair<Result, ArrayList<ItemGpx>> selectGpx (long idServer, long id) {
 
         int from = DBVirde.FROM_SELECT_GPX;
         ArrayList<ItemGpx> result = new ArrayList<>();
 
         String sql;
         sql = "SELECT * FROM " + DBGpxContribution.TABLE +
-                " WHERE " + DBGpxContribution.ID_SERVER + "=" + idServer +
-                " AND " + DBGpxContribution.ID_CAMPAIGN + "=" + idCampaign +
-                " ORDER BY " + DBGpxContribution.ID + " ASC";
+                " WHERE " + DBGpxContribution.ID_SERVER + " = " + idServer +
+                " AND " + DBGpxContribution.ID + " = " + id;
 
         open();
 
@@ -818,7 +845,7 @@ public class DBApi {
 
             item.setType(Item.SYNC);
             item.setImgCampaign("");
-            item.setId(c.getInt(0));
+            item.setId(c.getLong(0));
             item.setDate(c.getString(1));
             item.setTitle(URLDecoder.decode(c.getString(2), "UTF-8"));
             item.setUrl(URLDecoder.decode(c.getString(3), "UTF-8"));
@@ -837,11 +864,11 @@ public class DBApi {
         ItemGpx item = new ItemGpx();
 
         try {
-            item.setId(c.getString(0));
+            item.setId(c.getLong(0));
             item.setIdServer(c.getInt(1));
             item.setIdCampaign(c.getInt(2));
             item.setDir(URLDecoder.decode(c.getString(3), "UTF-8"));
-            item.setDate(stringToDate(c.getString(4)));
+            item.setDate(formatDateToString("dd/MM/yyyy 'a las' HH:mm", c.getString(4)));
             item.setSync(Boolean.valueOf(c.getString(5)));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -1253,6 +1280,21 @@ public class DBApi {
             return DateFormat.format(formatSt, date).toString();
         else
             return "";
+
+    }
+
+    private Date formatDateToString (String formatSt, String sDate) {
+
+        SimpleDateFormat format = new SimpleDateFormat(formatSt, Locale.getDefault());
+        Date date = null;
+
+        try {
+            date = format.parse(sDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return date;
 
     }
 

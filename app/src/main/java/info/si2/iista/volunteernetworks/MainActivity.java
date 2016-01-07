@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                     if (result.second.size() >= 2) {
                         String idUser = (String) result.second.get(0);
                         String token = (String) result.second.get(1);
-                        Util.savePreference(this, getString(R.string.idUser), idUser);
+                        Util.saveIntPreference(this, getString(R.string.idUser), Integer.valueOf(idUser));
                         Util.savePreference(this, getString(R.string.token), token);
                     }
 

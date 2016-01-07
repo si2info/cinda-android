@@ -12,12 +12,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DataBase extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 7;
     public static final String DATABASE_NAME = "Cinda.db";
 
     private static final String PRIMARY_KEY = " PRIMARY KEY";
     private static final String AUTOINCREMENT = " AUTOINCREMENT";
     private static final String TYPE_INT = " INTEGER ";
+    private static final String TYPE_LONG = " BIGINT ";
     private static final String TYPE_TEXT = " TEXT";
     private static final String TYPE_BOOLEAN = " BOOLEAN";
     private static final String COMMA_SEP = ",";
@@ -86,7 +87,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_GPX =
             "CREATE TABLE " + DBGpxContribution.TABLE + " (" +
-                    DBGpxContribution.ID + TYPE_INT + PRIMARY_KEY + COMMA_SEP +
+                    DBGpxContribution.ID + TYPE_LONG + PRIMARY_KEY + COMMA_SEP +
                     DBGpxContribution.ID_SERVER + TYPE_INT + COMMA_SEP +
                     DBGpxContribution.ID_CAMPAIGN + TYPE_INT + COMMA_SEP +
                     DBGpxContribution.DIR + TYPE_TEXT + COMMA_SEP +

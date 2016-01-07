@@ -9,16 +9,17 @@ import java.util.Date;
  */
 public class ItemGpx {
 
-    private String id, dir;
+    private long id;
+    private String dir;
     private int idServer, idCampaign, idVolunteer;
     private Date date;
     private boolean isSync;
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 

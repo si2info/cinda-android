@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import info.si2.iista.volunteernetworks.apiclient.Item;
 import info.si2.iista.volunteernetworks.apiclient.ItemFormContribution;
+import info.si2.iista.volunteernetworks.apiclient.ItemGpx;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
 import info.si2.iista.volunteernetworks.apiclient.ItemSync;
@@ -90,6 +91,8 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
             case R.id.action_sync:
                 if (modelValues.size() > 0)
                     syncContributions();
+                if (items.size() > 0)
+                    syncTrackings();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -159,6 +162,21 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
         position = 0;
     }
 
+    /**
+     * Sincronización de Trackings no enviados con servidor
+     */
+    public void syncTrackings () {
+
+        for (ItemSync item : items) {
+            if (item.getId() > 10000 && !item.isSync()) {
+                long idServer = Util.getIntPreference(this, getString(R.string.id_server));
+                long idTracking = item.getId();
+                DBVirde.getInstance(this).selectGpx(idServer, idTracking);
+            }
+        }
+
+    }
+
     @Override
     public void onHomeItemClick(View view, int position) {
 
@@ -176,7 +194,7 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
         switch (result.first.getResultFrom()) {
             case DBVirde.FROM_SELECT_MODELITEM:
                 if (result.first.isError()) {
-                    Log.e("DBVirde", "Can't select model items");
+                    Log.e("DBCinda", "Can't select model items");
                 } else {
 
                     modelValues = new ArrayList<>();
@@ -228,7 +246,7 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
 
             case DBVirde.FROM_SELECT_GPX_TO_SYNC:
                 if (result.first.isError()) {
-                    Log.e("DBVirde", "Can't select model items");
+                    Log.e("DBCinda", "Can't select model items");
                 } else {
 
                     for (Object object : result.second) {
@@ -240,6 +258,18 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
 
                 }
                 break;
+
+            case DBVirde.FROM_SELECT_GPX:
+                if (result.first.isError()) {
+                    Log.e("DBCinda", "Can't select model item");
+                } else {
+                    if (result.second.size() > 0) {
+                        ItemGpx itemGpx = (ItemGpx) result.second.get(0);
+                        itemGpx.setIdVolunteer(Util.getIntPreference(this, getString(R.string.idUser)));
+                        Virde.getInstance(this).sendGpxContribution(itemGpx);
+                    }
+                }
+                break;
         }
     }
 
@@ -248,7 +278,12 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
         switch (result.getResultFrom()) {
             case DBVirde.FROM_UPDATE_MODELITEM:
                 if (result.isError()) {
-                    Log.e("DBVirde", "Contribution  not update");
+                    Log.e("DBCinda", "Contribution not update");
+                }
+                break;
+            case DBVirde.FROM_UPDATE_SYNC_GPX:
+                if (result.isError()) {
+                    Log.e("DBCinda", "Contribution GPX not update");
                 }
                 break;
         }
@@ -277,19 +312,25 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
 
     }
 
+    /** API Client **/
+
     @Override
     public void onApiClientRequestResult(Pair<Result, ArrayList> result) {
+
+        ItemSync item;
+        int position = -1;
+
         switch (result.first.getResultFrom()) {
             case Virde.FROM_SEND_CONTRIBUTION:
 
                 // Position item sent
-                int position = result.first.getCodigoError();
+                position = result.first.getCodigoError();
 
-                ItemSync item = items.get(position);
+                item = items.get(position);
                 item.setIsSynchronizing(false);
 
                 if (result.first.isError()) {
-                    Log.e("Virde", "Contribution not send");
+                    Log.e("Cinda", "Contribution not send");
                     item.setIsSync(false);
                 } else {
                     item.setIsSync(true);
@@ -300,6 +341,47 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
 
                     DBVirde.getInstance(SyncUserData.this).updateModelValue(contributions.get(position));
 
+                }
+                adapter.notifyItemChanged(position);
+                break;
+
+            case Virde.FROM_SEND_GPX_CONTRIBUTION:
+
+                // Id item sent
+                String idGpxSt = (String) result.second.get(0);
+                long idGpx = Long.valueOf(idGpxSt);
+
+                // Search item position
+                for (int i=0; i<items.size(); i++) {
+                    long id = items.get(i).getId();
+                    if (idGpx == id){
+                        position = i;
+                        break;
+                    }
+                }
+
+                // State item
+                item = items.get(position);
+                item.setIsSynchronizing(false);
+
+                if (result.first.isError()) {
+                    Log.e("Cinda", result.first.getMensaje());
+                    item.setIsSync(false);
+                } else {
+                    if (position != -1) {
+
+                        // Feedback to user
+                        item = items.get(position);
+                        item.setIsSynchronizing(false);
+                        item.setIsSync(true);
+
+                        // Sync contribution in local db
+                        ItemGpx itemGpx = new ItemGpx();
+                        itemGpx.setId(idGpx);
+                        itemGpx.setSync(true);
+                        DBVirde.getInstance(this).updateSyncGpx(itemGpx);
+
+                    }
                 }
                 adapter.notifyItemChanged(position);
                 break;

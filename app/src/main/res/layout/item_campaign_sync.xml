@@ -7,11 +7,9 @@
         android:layout_height="64dp"
         android:id="@+id/imgUser"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:src="@drawable/test_logo_si2"
         android:scaleType="centerCrop"
         android:paddingBottom="16dp"
@@ -23,10 +21,7 @@
         android:id="@+id/title"
         android:layout_alignTop="@+id/imgUser"
         android:layout_toEndOf="@+id/imgUser"
-        android:layout_toRightOf="@+id/imgUser"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_toLeftOf="@+id/isSync"
         android:layout_toStartOf="@+id/isSync" />
 
     <TextView
@@ -35,8 +30,6 @@
         android:id="@+id/urlServer"
         android:layout_below="@+id/title"
         android:layout_toStartOf="@+id/isSync"
-        android:layout_toLeftOf="@+id/isSync"
-        android:layout_alignLeft="@+id/title"
         android:layout_alignStart="@+id/title" />
 
     <TextView
@@ -44,9 +37,7 @@
         android:text="@string/campaign_sync_desc"
         android:id="@+id/date"
         android:layout_below="@+id/urlServer"
-        android:layout_alignLeft="@+id/title"
         android:layout_alignStart="@+id/title"
-        android:layout_toLeftOf="@+id/isSync"
         android:layout_toStartOf="@+id/isSync" />
 
     <View
@@ -62,11 +53,9 @@
         android:layout_height="48dp"
         android:id="@+id/isSync"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:src="@drawable/ic_done_black_24dp"
         android:padding="12dp"
         android:tint="@color/primary"
@@ -78,13 +67,11 @@
         android:layout_height="48dp"
         android:id="@+id/syncProgressBar"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:indeterminate="true"
         android:padding="8dp"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 </RelativeLayout>

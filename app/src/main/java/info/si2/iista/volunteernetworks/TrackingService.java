@@ -244,7 +244,7 @@ public class TrackingService extends Service implements LocationListener, Google
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.ic_notification)
-                        .setContentTitle(context.getString(R.string.app_name))
+                        .setContentTitle(context.getString(R.string.app_name) + " - " + context.getString(R.string.recording_route))
                         .setOngoing(true)
                         .setVisibility(Notification.VISIBILITY_PUBLIC)
                         .setContentText(campaign);

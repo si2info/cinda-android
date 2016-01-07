@@ -50,10 +50,11 @@ public class DBVirde {
     public static final int FROM_SELECT_GPX = 18;
     public static final int FROM_SELECT_GPX_TO_SYNC = 19;
     public static final int FROM_UPDATE_GPX = 20;
+    public static final int FROM_UPDATE_SYNC_GPX = 21;
 
-    public static final int FROM_INSERT_DICTIONARY = 21;
-    public static final int FROM_SELECT_DICTIONARY = 22;
-    public static final int FROM_CHECK_IF_DICTIONARY_EXISTS = 23;
+    public static final int FROM_INSERT_DICTIONARY = 22;
+    public static final int FROM_SELECT_DICTIONARY = 23;
+    public static final int FROM_CHECK_IF_DICTIONARY_EXISTS = 24;
 
 
     public static DBVirde getInstance() {
@@ -160,8 +161,8 @@ public class DBVirde {
 
         /** GPX **/
 
-    public void selectGpxs (int idServer, int idCampaign) {
-        new DBVirdeSelectGpx().execute(idServer, idCampaign);
+    public void selectGpx (long idServer, long idTracking) {
+        new DBVirdeSelectGpx().execute(idServer, idTracking);
     }
 
     public void selectGpxsToSync () {
@@ -174,6 +175,10 @@ public class DBVirde {
 
     public void updateGpx (ItemGpx item) {
         new DBVirdeUpdateGpx().execute(item);
+    }
+
+    public void updateSyncGpx (ItemGpx item) {
+        new DBVirdeUpdateSyncGpx().execute(item);
     }
 
         /** Dictionary **/
@@ -442,12 +447,12 @@ public class DBVirde {
 
         /** GPX **/
 
-    class DBVirdeSelectGpx extends AsyncTask<Integer, Void, Pair<Result, ArrayList<ItemGpx>>> {
+    class DBVirdeSelectGpx extends AsyncTask<Long, Void, Pair<Result, ArrayList<ItemGpx>>> {
 
         @Override
-        protected Pair<Result, ArrayList<ItemGpx>> doInBackground(Integer... integers) {
+        protected Pair<Result, ArrayList<ItemGpx>> doInBackground(Long... longs) {
             DBApi apiClient = DBApi.getInstance((Context) context);
-            return apiClient.selectGpxs(integers[0], integers[1]);
+            return apiClient.selectGpx(longs[0], longs[1]);
         }
 
         @Override
@@ -493,6 +498,21 @@ public class DBVirde {
         protected Result doInBackground(ItemGpx... items) {
             DBApi apiClient = DBApi.getInstance((Context) context);
             return apiClient.updateGPX(items[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Result result) {
+            context.onDBApiUpdateResult(result);
+        }
+
+    }
+
+    class DBVirdeUpdateSyncGpx extends AsyncTask<ItemGpx, Void, Result> {
+
+        @Override
+        protected Result doInBackground(ItemGpx... items) {
+            DBApi apiClient = DBApi.getInstance((Context) context);
+            return apiClient.updateSyncGPX(items[0]);
         }
 
         @Override

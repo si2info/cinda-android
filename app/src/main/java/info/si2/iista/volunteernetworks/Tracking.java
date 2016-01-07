@@ -61,8 +61,10 @@ public class Tracking extends AppCompatActivity implements OnApiClientResult, On
         setContentView(R.layout.tracking);
 
         // Action bar
-        if (getSupportActionBar() != null)
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getString(R.string.title_tracking));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // Init map
         SupportMapFragment fm = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -317,7 +319,7 @@ public class Tracking extends AppCompatActivity implements OnApiClientResult, On
         String fileDir = Util.saveGpxFile(Tracking.this, locationsRecorded, idGpx);
 
         ItemGpx gpx = new ItemGpx();
-        gpx.setId(idGpx);
+        gpx.setId(Long.valueOf(idGpx));
         gpx.setDir(fileDir);
         gpx.setDate(now);
         gpx.setIdServer(Util.getIntPreference(this, getString(R.string.id_server)));
@@ -349,7 +351,6 @@ public class Tracking extends AppCompatActivity implements OnApiClientResult, On
                 if (result.first.isError()) {
                     showErrorDialog(getString(R.string.gpx_not_send));
                 } else {
-                    // TODO put sync this item
                     itemGpx.setSync(true);
                     DBVirde.getInstance(this).updateGpx(itemGpx);
                 }

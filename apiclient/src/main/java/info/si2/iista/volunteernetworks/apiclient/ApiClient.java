@@ -36,19 +36,19 @@ public class ApiClient {
     private static String HOST = "";
 
     // URLs
-    private static final String URL_SERVER_INFO = "/API/server/info/";
-    private static final String URL_CAMPAIGNS = "/API/campaigns/list/";
-    private static final String URL_DATA_CAMPAIGN = "/API/campaign/";
-    private static final String URL_MODEL_CAMPAIGN = "/API/campaign/%s/model/";
-    private static final String URL_REGISTER_USER = "/API/volunteer/register/";
-    private static final String URL_SUSCRIBE_CAMPAIGN = "/API/campaign/%s/suscribe/";
-    private static final String URL_UNSUSCRIBE_CAMPAIGN = "/API/campaign/%s/unsuscribe/";
-    private static final String URL_SEND_CONTRIBUTION = "/API/campaign/%s/sendData/";
-    private static final String URL_GET_CONTRIBUTIONS = "/API/campaign/%s/listData/";
-    private static final String URL_GET_LIST_VOLUNTEERS = "/API/campaign/%s/listVolunteers/";
-    private static final String URL_DICTIONARY = "/API/dictionary/";
-    private static final String URL_CONTRIBUTION = "/API/contribution/";
-    private static final String URL_GPX_CONTRIBUTION = "/API/tracking/send/";
+    private static final String URL_SERVER_INFO = "/cindaAPI/server/info/";
+    private static final String URL_CAMPAIGNS = "/cindaAPI/campaigns/list/";
+    private static final String URL_DATA_CAMPAIGN = "/cindaAPI/campaign/";
+    private static final String URL_MODEL_CAMPAIGN = "/cindaAPI/campaign/%s/model/";
+    private static final String URL_REGISTER_USER = "/cindaAPI/volunteer/register/";
+    private static final String URL_SUSCRIBE_CAMPAIGN = "/cindaAPI/campaign/%s/suscribe/";
+    private static final String URL_UNSUSCRIBE_CAMPAIGN = "/cindaAPI/campaign/%s/unsuscribe/";
+    private static final String URL_SEND_CONTRIBUTION = "/cindaAPI/campaign/%s/sendData/";
+    private static final String URL_GET_CONTRIBUTIONS = "/cindaAPI/campaign/%s/listData/";
+    private static final String URL_GET_LIST_VOLUNTEERS = "/cindaAPI/campaign/%s/listVolunteers/";
+    private static final String URL_DICTIONARY = "/cindaAPI/dictionary/";
+    private static final String URL_CONTRIBUTION = "/cindaAPI/contribution/";
+    private static final String URL_GPX_CONTRIBUTION = "/cindaAPI/tracking/send/";
 
     private static Context context;
 
@@ -484,6 +484,7 @@ public class ApiClient {
         String message = "Intente enviar la contribución más tarde";
         ArrayList<String> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
+        result.add(String.valueOf(item.getId()));
 
         if (HOST.equals(""))
             HOST = getActiveServer();
@@ -491,7 +492,7 @@ public class ApiClient {
         MultipartBuilder formEncodingBuilder = new MultipartBuilder();
         formEncodingBuilder.type(MultipartBuilder.FORM);
 
-        formEncodingBuilder.addFormDataPart("id", item.getId());
+        formEncodingBuilder.addFormDataPart("id", String.valueOf(item.getId()));
         formEncodingBuilder.addFormDataPart("id_campaign", String.valueOf(item.getIdCampaign()));
         formEncodingBuilder.addFormDataPart("id_volunteer", String.valueOf(item.getIdVolunteer()));
 
@@ -513,14 +514,13 @@ public class ApiClient {
 
         } catch (IOException e) {
             e.printStackTrace();
-            return new Pair<>(new Result(true, message, from, 1), new ArrayList<String>());
+            return new Pair<>(new Result(true, message, from, 1), result);
         }
 
         if (!respStr.equals("0")) {
-            result.add(item.getId());
-            return new Pair<>(new Result(false, message, from, 1), result);
+            return new Pair<>(new Result(false, null, from, 0), result);
         } else {
-            return new Pair<>(new Result(true, null, from, 0), new ArrayList<String>());
+            return new Pair<>(new Result(true, message, from, 1), result);
         }
 
     }

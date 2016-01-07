@@ -7,7 +7,8 @@ package info.si2.iista.volunteernetworks.apiclient;
  */
 public class ItemSync {
 
-    private int type, id;
+    private long id;
+    private int type;
     private String imgCampaign, title, url, date;
     private boolean isSync, isSynchronizing;
 
@@ -22,11 +23,11 @@ public class ItemSync {
         this.isSync = isSync;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

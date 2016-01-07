@@ -123,19 +123,19 @@ public class AdapterSyncUserData extends RecyclerView.Adapter<AdapterSyncUserDat
                 if (item.isSynchronizing()) { // Synchronizing state
 
                     if (!item.isSync()) {
-                        holder.isSync.setVisibility(View.GONE);
+                        holder.isSync.setVisibility(View.INVISIBLE);
                         holder.syncProgress.setVisibility(View.VISIBLE);
                         item.setIsSync(true);
                     }
 
                 } else { // Actual state
                     holder.isSync.setVisibility(View.VISIBLE);
-                    holder.syncProgress.setVisibility(View.GONE);
+                    holder.syncProgress.setVisibility(View.INVISIBLE);
                     setSyncState(item.isSync(), holder.isSync);
                 }
 
                 if (position == items.size()-1) // Not show last separator
-                    holder.separator.setVisibility(View.GONE);
+                    holder.separator.setVisibility(View.INVISIBLE);
 
                 break;
         }
