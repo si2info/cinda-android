@@ -61,6 +61,7 @@
     <string name="viewLess">Show less</string>
     
     <!-- Map -->
+    <string name="map_title">Geolocation</string>
     <string name="action_map_ok">OK</string>
 
     <!-- Servers -->
@@ -98,7 +99,7 @@
     <string name="contributionNoSend">Unable to send the contribution. Your contribution has been saved for later synchronization from the \"Sync\" option".</string>
     <string name="myShipments">MY SENDINGS</string>
     <string name="other">OTHER</string>
-    <string name="selectLocation">Select Location</string>
+    <string name="selectLocation">Active Settings > Ubication\nor select by clicking here</string>
     <string name="addImage">Add image</string>
     <string name="more_info">+Info</string>
     <string name="dialog_required_fields">Complete all required fields highlighted in red to submit your contribution.</string>

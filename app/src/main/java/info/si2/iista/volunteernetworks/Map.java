@@ -32,8 +32,10 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback, Google
         setContentView(R.layout.map);
 
         // Action bar
-        if (getSupportActionBar() != null)
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getString(R.string.map_title));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         if (getIntent().getExtras() != null) {
             double lat = getIntent().getDoubleExtra("lat", 0.0);
@@ -53,10 +55,10 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback, Google
 
         if (position != null) {
             if (position.latitude == 0.0 && position.longitude == 0.0) {
-                position = new LatLng(37.157827, -3.585572);
+                position = new LatLng(37.0486113, -3.3123066);
             }
         } else {
-            position = new LatLng(37.157827, -3.585572);
+            position = new LatLng(37.0486113, -3.3123066);
         }
 
         CameraPosition cameraPosition = new CameraPosition.Builder()

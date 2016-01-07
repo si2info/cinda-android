@@ -54,6 +54,7 @@
     <string name="viewLess">Ver menos</string>
     
     <!-- Map -->
+    <string name="map_title">Geolozalización</string>
     <string name="action_map_ok">OK</string>
 
     <!-- Servers -->
@@ -91,7 +92,7 @@
     <string name="contributionNoSend">No ha sido posible enviar su contribución, ha quedado guardada para una posterior sincronización desde la opción \"Sincronizar\".</string>
     <string name="myShipments">MIS ENVÍOS</string>
     <string name="other">OTROS</string>
-    <string name="selectLocation">Seleccionar Ubicación</string>
+    <string name="selectLocation">Activa Ajustes > Ubicación\no selecciona pulsando aquí</string>
     <string name="addImage">Añadir imagen</string>
     <string name="more_info">+Info</string>
     <string name="dialog_required_fields">Completa todos los campos requeridos resaltados en rojo para enviar tu contribución.</string>

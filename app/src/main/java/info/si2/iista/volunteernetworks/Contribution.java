@@ -658,8 +658,11 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
             double lat = mLastLocation.getLatitude();
             double lng = mLastLocation.getLongitude();
 
-            if (position == null)
+            if (position == null) {
                 position = new LatLng(lat, lng);
+            } else if (position.latitude == 0.0 || position.longitude == 0.0) {
+                position = new LatLng(lat, lng);
+            }
 
             if (lat != 0.0 && lng != 0.0)
                 changeImgLocation(position);
