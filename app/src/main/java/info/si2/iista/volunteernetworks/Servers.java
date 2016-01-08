@@ -90,7 +90,7 @@ public class Servers extends AppCompatActivity implements DialogFragmentAddServe
 
     public void changeServer (int position) {
 
-        ItemServer item = items.get(position-1);
+        ItemServer item = items.get(position);
         item.setActive(true);
         DBVirde.getInstance(this).updateServer(item);
 

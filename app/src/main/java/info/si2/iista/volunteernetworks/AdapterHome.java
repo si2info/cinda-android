@@ -122,7 +122,7 @@ public class AdapterHome extends RecyclerView.Adapter<AdapterHome.ViewHolder> {
                 if (item.getImage() != null) {
                     if (!item.getImage().equals("")) {
                         Picasso.with(context)
-                                .load(item.getImage())
+                                .load(item.getCover())
                                 .into(holder.imgCampaign);
                     }
                 }

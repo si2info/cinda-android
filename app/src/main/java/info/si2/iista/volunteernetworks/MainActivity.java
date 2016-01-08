@@ -415,7 +415,8 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
                     if (items.size() > 0) { // New campaigns
                         int idCampaign = items.get(0).getId();
-                        DBVirde.getInstance(this).getCampaignsFrom(idCampaign);
+                        int idServer = Util.getIntPreference(this, getString(R.string.id_server));
+                        DBVirde.getInstance(this).getCampaignsFrom(idServer, idCampaign);
                     } else { // All campaigns
                         int idServer = Util.getIntPreference(MainActivity.this, getString(R.string.id_server));
                         DBVirde.getInstance(this).getCampaigns(idServer);
@@ -485,6 +486,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                         doRefresh();
                         Virde.getInstance(this).getListCampaigns(Util.getPreference(this, getString(R.string.token)));
                     } else {
+                        Virde.getInstance(this).getListCampaigns(Util.getToken(this));
                         mSwipeRefreshLayout.setRefreshing(false);
                         mSwipeRefreshLayout.setEnabled(true);
                     }

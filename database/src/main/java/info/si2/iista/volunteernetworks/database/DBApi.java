@@ -134,7 +134,7 @@ public class DBApi {
             }
 
             // Not active campaigns
-            disableCampaigns(items);
+//            disableCampaigns(items);
 
             close(); // Close DB
 
@@ -268,12 +268,13 @@ public class DBApi {
 
     }
 
-    public synchronized Pair<Result, ArrayList<ItemCampaign>> getCampaignsFromID (int idCampaign) {
+    public synchronized Pair<Result, ArrayList<ItemCampaign>> getCampaignsFromID (int idServer, int idCampaign) {
 
         int from = DBVirde.FROM_SELECT_CAMPAIGNS_FROM_ID;
         ArrayList<ItemCampaign> result = new ArrayList<>();
         String sql = "SELECT * FROM " + DBCampaign.TABLE + " " +
                      "WHERE " + DBCampaign.ID + ">" + String.valueOf(idCampaign) + " " +
+                     "AND " + DBCampaign.ID_SERVER + "=" + String.valueOf(idServer) + " " +
                      "ORDER BY " + DBCampaign.ID + " ASC";
 
         open();

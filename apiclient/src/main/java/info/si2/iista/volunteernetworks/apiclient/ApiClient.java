@@ -110,8 +110,7 @@ public class ApiClient {
 
     public Pair<Result, ArrayList<ItemCampaign>> getListCampaigns (String token) {
 
-        // FROM
-        int from = Virde.FROM_LIST_CAMPAIGNS;
+        int from = Virde.FROM_LIST_CAMPAIGNS; // FROM
         String message = "No se pudieron obtener las campañas, inténtelo más tarde";
 
         ArrayList<ItemCampaign> result = new ArrayList<>();
@@ -159,8 +158,7 @@ public class ApiClient {
 
     public Pair<Result, ArrayList<ItemCampaign>> getDataCampaign (int id, String token) {
 
-        // FROM
-        int from = Virde.FROM_DATA_CAMPAIGN;
+        int from = Virde.FROM_DATA_CAMPAIGN; // FROM
         String message = "No se pudo obtener la campaña, inténtelo más tarde";
 
         ArrayList<ItemCampaign> result = new ArrayList<>();
@@ -201,8 +199,7 @@ public class ApiClient {
 
     public Pair<Result, ArrayList<ItemModel>> getModelCampaign (int id) {
 
-        // FROM
-        int from = Virde.FROM_MODEL_CAMPAIGN;
+        int from = Virde.FROM_MODEL_CAMPAIGN; // FROM
         String message = "Inténtelo más tarde";
 
         ArrayList<ItemModel> result = new ArrayList<>();
@@ -237,7 +234,7 @@ public class ApiClient {
 
     public Pair<Result, ArrayList<String>> userRegister (String username, String mail, String deviceID) {
 
-        int from = Virde.FROM_USER_REGISTER;
+        int from = Virde.FROM_USER_REGISTER; // FROM
         String message = "Intente acceder más tarde";
         ArrayList<String> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
@@ -287,7 +284,7 @@ public class ApiClient {
 
     public Pair<Result, ArrayList<Integer>> suscription (int idCampaign, String token, boolean suscribe) {
 
-        int from;
+        int from; // FROM
         String message;
         String url;
         ArrayList<Integer> result = new ArrayList<>();
@@ -337,7 +334,7 @@ public class ApiClient {
 
     public Pair<Result, ArrayList<Integer>> sendContribution (ArrayList<ItemFormContribution> values) {
 
-        int from = Virde.FROM_SEND_CONTRIBUTION;
+        int from = Virde.FROM_SEND_CONTRIBUTION; // FROM
         String message = "Intente enviar la contribución más tarde";
         OkHttpClient client = getOkHttpClient();
 
@@ -397,13 +394,11 @@ public class ApiClient {
 
     public Pair<Result, ArrayList<ItemContribution>> getContributions (int id, String token) {
 
-        // FROM
-        int from = Virde.FROM_GET_CONTRIBUTIONS;
+        int from = Virde.FROM_GET_CONTRIBUTIONS; // FROM
         String message = "Contribuciones no disponibles";
 
         ArrayList<ItemContribution> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
-
 
         Request request;
         if (!token.equals("")) { // Contribuciones propias del usuario
@@ -447,7 +442,7 @@ public class ApiClient {
 
     public Pair<Result, ArrayList<ItemUser>> getListVolunteers (int idCampaign) {
 
-        int from = Virde.FROM_GET_LIST_VOLUNTEERS;
+        int from = Virde.FROM_GET_LIST_VOLUNTEERS; // FROM
         ArrayList<ItemUser> result = new ArrayList<>();
         String message = "Lista de usuarios no disponible";
         OkHttpClient client = getOkHttpClient();
@@ -480,14 +475,11 @@ public class ApiClient {
 
     public Pair<Result, ArrayList<String>> sendGpxContribution (ItemGpx item) {
 
-        int from = Virde.FROM_SEND_GPX_CONTRIBUTION;
+        int from = Virde.FROM_SEND_GPX_CONTRIBUTION; // FROM
         String message = "Intente enviar la contribución más tarde";
         ArrayList<String> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
         result.add(String.valueOf(item.getId()));
-
-        if (HOST.equals(""))
-            HOST = getActiveServer();
 
         MultipartBuilder formEncodingBuilder = new MultipartBuilder();
         formEncodingBuilder.type(MultipartBuilder.FORM);
@@ -527,8 +519,7 @@ public class ApiClient {
 
     public Pair<Result, ArrayList<Dictionary>> getDictionary (String idDictionary, String idServer) {
 
-        // FROM
-        int from = Virde.FROM_GET_DICTIONARY;
+        int from = Virde.FROM_GET_DICTIONARY; // FROM
         String message = "Inténtelo más tarde";
 
         ArrayList<Dictionary> result = new ArrayList<>();
@@ -565,8 +556,7 @@ public class ApiClient {
 
     public Pair<Result, ArrayList<ItemModelValue>> getContributionDetail (String idContribution) {
 
-        // FROM
-        int from = Virde.FROM_GET_CONTRIBUTION_DETAIL;
+        int from = Virde.FROM_GET_CONTRIBUTION_DETAIL; // FROM
         String message = "Inténtelo más tarde";
 
         ArrayList<ItemModelValue> result = new ArrayList<>();
@@ -635,6 +625,7 @@ public class ApiClient {
 
     private static OkHttpClient getOkHttpClient () {
 
+        HOST = getActiveServer();
         OkHttpClient client = new OkHttpClient();
         client.setConnectTimeout(10, TimeUnit.SECONDS);
         client.setReadTimeout(10, TimeUnit.SECONDS);
