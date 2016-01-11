@@ -721,7 +721,6 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
         switch (id) {
             case android.R.id.home:
-                Util.restoreModelPreferences(this);
                 finish();
                 return true;
             case R.id.action_send:

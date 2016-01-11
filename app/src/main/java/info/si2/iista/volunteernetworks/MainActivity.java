@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.TranslateAnimation;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -144,12 +145,25 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        // Default server
-        if (!Util.getBoolPreference(this, getString(R.string.isDefaultServer))) {
 
+        if (!Util.checkInternetConnection(this)) { // No internet
+
+            // Feedback no internet connection
+            Util.makeToast(this, getString(R.string.noConnection), 0);
+
+            // Update server info in view
+            updateServerInfo();
+
+            // Load BD campaigns, mode offline
+            int idServer = Util.getIntPreference(this, getString(R.string.id_server));
+            DBVirde.getInstance(this).getCampaigns(idServer);
+
+        } else if (!Util.getBoolPreference(this, getString(R.string.isDefaultServer))) { // First execution
+
+            // Default server
             Virde.getInstance(this).getServerInfo(getString(R.string.defaultServer));
 
-        } else {
+        } else { // Load DB campaigns and get news
 
             // Get active server
             DBVirde.getInstance(this).selectActiveServer();
@@ -314,6 +328,11 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                     Toast.makeText(getApplicationContext(), result.first.getMensaje(), Toast.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                     mSwipeRefreshLayout.setEnabled(true);
+
+                    // Load BD campaigns, mode offline
+                    int idServer = Util.getIntPreference(this, getString(R.string.id_server));
+                    DBVirde.getInstance(this).getCampaigns(idServer);
+
                 } else {
                     userCanOperate = true;
 
@@ -452,16 +471,11 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                         // Server
                         ItemServer server = (ItemServer) result.second.get(0);
 
-                        // Set server info
-                        serverUrl.setText(server.getUrl());
-
-                        if (server.getDescription().length() != 0)
-                            serverDesc.setText(server.getDescription());
-                        else
-                            serverDesc.setText(getString(R.string.serverNoDesc));
-
                         // Shared Preferences
                         Util.initServerSharedPreferences(MainActivity.this, server);
+
+                        // Update server info in view
+                        updateServerInfo();
 
                         // Registro de usuario
                         userCanOperate = false;
@@ -770,6 +784,30 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
         Util.savePreference(this, getString(R.string.username), username);
         Util.savePreference(this, getString(R.string.mail), mail);
         Util.savePreference(this, getString(R.string.device_id), deviceID);
+
+    }
+
+    /**
+     * Update bottom bar with server info
+     */
+    public void updateServerInfo () {
+
+        ImageView icServer = (ImageView)findViewById(R.id.imageServer);
+        String url = Util.getPreference(this, getString(R.string.serverUrl));
+        String desc = Util.getPreference(this, getString(R.string.serverDesc));
+
+        if (Util.checkInternetConnection(this)) {
+            icServer.setImageResource(R.drawable.ic_phonelink_white_24dp);
+        } else {
+            icServer.setImageResource(R.drawable.ic_phonelink_off_white_24dp);
+        }
+
+        serverUrl.setText(url);
+
+        if (desc.length() != 0)
+            serverDesc.setText(desc);
+        else
+            serverDesc.setText(getString(R.string.serverNoDesc));
 
     }
 

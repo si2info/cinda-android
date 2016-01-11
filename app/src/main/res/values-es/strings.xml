@@ -12,6 +12,7 @@
     <string name="app_advice">¡Empieza a usar Cinda!</string>
     <string name="app_advice_desc">Descubre y contribuye en las campañas de Cinda proporcionando tu correo</string>
     <string name="activate">Activar</string>
+    <string name="noConnection">No hay conexión, algunas funciones están desactivadas</string>
 
     <!-- menu_main -->
     <string name="action_sync">Sincronizar</string>

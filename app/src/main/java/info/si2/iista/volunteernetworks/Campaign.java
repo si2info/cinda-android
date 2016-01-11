@@ -878,6 +878,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     protected void onResume() {
         super.onResume();
         appBarLayout.addOnOffsetChangedListener(this);
+        Util.restoreModelPreferences(this);
     }
 
     @Override
