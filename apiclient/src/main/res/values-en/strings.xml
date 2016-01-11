@@ -5,4 +5,17 @@
     <string name="errorRequest">Try to access later</string>
     <string name="noConnection">No connection, certain functions are disabled</string>
 
+    <string name="noCampaigns">Could not get the campaigns, try again later</string>
+    <string name="noCampaign">Could not get the campaign, try again later</string>
+
+    <string name="suscription">Try to subscribe later</string>
+    <string name="noSuscription">Try to unsubscribe later</string>
+
+    <string name="noContributions">Contributions unavailable</string>
+    <string name="noContribution">Try sending the contribution later</string>
+
+    <string name="noUsers">User list unavailable</string>
+
+    <string name="noGpx">Try sending the contribution later</string>
+
 </resources>

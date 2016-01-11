@@ -5,4 +5,17 @@
     <string name="errorRequest">Intente acceder más tarde</string>
     <string name="noConnection">No hay conexión, algunas funciones están desactivadas</string>
 
+    <string name="noCampaigns">No se pudieron obtener las campañas, inténtelo más tarde</string>
+    <string name="noCampaign">No se pudo obtener la campaña, inténtelo más tarde</string>
+
+    <string name="suscription">Intente suscribirse más tarde</string>
+    <string name="noSuscription">Intente desuscribirse más tarde</string>
+
+    <string name="noContributions">Contribuciones no disponibles</string>
+    <string name="noContribution">Intente enviar la contribución más tarde</string>
+
+    <string name="noUsers">Lista de usuarios no disponible</string>
+
+    <string name="noGpx">Intente enviar la contribución más tarde</string>
+
 </resources>

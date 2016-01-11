@@ -113,7 +113,7 @@ public class ApiClient {
     public Pair<Result, ArrayList<ItemCampaign>> getListCampaigns (String token) {
 
         int from = Virde.FROM_LIST_CAMPAIGNS; // FROM
-        String message = "No se pudieron obtener las campañas, inténtelo más tarde";
+        String message = context.getString(R.string.noCampaigns);
 
         ArrayList<ItemCampaign> result = new ArrayList<>();
 
@@ -161,7 +161,7 @@ public class ApiClient {
     public Pair<Result, ArrayList<ItemCampaign>> getDataCampaign (int id, String token) {
 
         int from = Virde.FROM_DATA_CAMPAIGN; // FROM
-        String message = "No se pudo obtener la campaña, inténtelo más tarde";
+        String message = context.getString(R.string.noCampaign);
 
         ArrayList<ItemCampaign> result = new ArrayList<>();
 
@@ -292,11 +292,11 @@ public class ApiClient {
         ArrayList<Integer> result = new ArrayList<>();
         if (suscribe) {
             from = Virde.FROM_SUSCRIBE;
-            message = "Intente suscribirse más tarde";
+            message = context.getString(R.string.suscription);
             url = (HOST + String.format(URL_SUSCRIBE_CAMPAIGN, String.valueOf(idCampaign)));
         } else {
             from = Virde.FROM_UNSUSCRIBE;
-            message = "Intente desuscribirse más tarde";
+            message = context.getString(R.string.noSuscription);
             url = (HOST + String.format(URL_UNSUSCRIBE_CAMPAIGN, String.valueOf(idCampaign)));
         }
 
@@ -337,7 +337,7 @@ public class ApiClient {
     public Pair<Result, ArrayList<Integer>> sendContribution (ArrayList<ItemFormContribution> values) {
 
         int from = Virde.FROM_SEND_CONTRIBUTION; // FROM
-        String message = "Intente enviar la contribución más tarde";
+        String message = context.getString(R.string.noContribution);
         OkHttpClient client = getOkHttpClient();
 
         // Id Campaign
@@ -397,7 +397,7 @@ public class ApiClient {
     public Pair<Result, ArrayList<ItemContribution>> getContributions (int id, String token) {
 
         int from = Virde.FROM_GET_CONTRIBUTIONS; // FROM
-        String message = "Contribuciones no disponibles";
+        String message = context.getString(R.string.noContributions);
 
         ArrayList<ItemContribution> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
@@ -446,7 +446,7 @@ public class ApiClient {
 
         int from = Virde.FROM_GET_LIST_VOLUNTEERS; // FROM
         ArrayList<ItemUser> result = new ArrayList<>();
-        String message = "Lista de usuarios no disponible";
+        String message = context.getString(R.string.noUsers);
         OkHttpClient client = getOkHttpClient();
 
         Request request = new Request.Builder()
@@ -478,7 +478,7 @@ public class ApiClient {
     public Pair<Result, ArrayList<String>> sendGpxContribution (ItemGpx item) {
 
         int from = Virde.FROM_SEND_GPX_CONTRIBUTION; // FROM
-        String message = "Intente enviar la contribución más tarde";
+        String message = context.getString(R.string.noGpx);
         ArrayList<String> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
         result.add(String.valueOf(item.getId()));
