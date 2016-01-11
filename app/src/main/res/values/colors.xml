@@ -32,6 +32,7 @@
     <color name="card_campaign">#AA000000</color>
     <color name="campaign">#303030</color>
     <color name="moreUsers">#ff3300</color>
+    <color name="backgroundImage">#3C3C3C</color>
 
     <!-- Model -->
     <color name="backImage">#f0f0f0</color>

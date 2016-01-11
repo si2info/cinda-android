@@ -94,14 +94,28 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/infoCampaign">
 
-                    <ImageView
+                    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:id="@+id/coverContainer"
                         android:layout_width="match_parent"
-                        android:layout_height="96dp"
-                        android:id="@+id/imageCover"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_marginTop="36dp"
-                        android:contentDescription="@string/app_name" />
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="96dp"
+                            android:id="@+id/imageCover"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginTop="36dp"
+                            android:contentDescription="@string/app_name" />
+
+                        </LinearLayout>
+
+                    </FrameLayout>
 
                     <TextView
                         style="@style/campaign"
@@ -114,7 +128,7 @@
                         android:layout_marginRight="16dp"
                         android:minHeight="30dp"
                         android:autoLink="web"
-                        android:layout_below="@+id/imageCover" />
+                        android:layout_below="@+id/coverContainer" />
 
                     <Button
                         style="@style/suscribirse"
@@ -321,6 +335,13 @@
         </RelativeLayout>
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/expanded_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:contentDescription="@string/app_name" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/FAB_button"
