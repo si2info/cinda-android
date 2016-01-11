@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(getString(R.string.app_name));
+        toolbar.setTitle("  " + getString(R.string.app_name));
         toolbar.setLogo(R.drawable.app_logo);
         setSupportActionBar(toolbar);
 

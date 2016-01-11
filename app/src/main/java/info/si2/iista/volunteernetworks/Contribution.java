@@ -520,7 +520,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 case ItemModel.ITEM_EDIT_NUMBER:
                     data = Model.getEditText(view);
                     textView = (TextView)layout.findViewById(R.id.title);
-                    if (model.get(i-1).getFieldRequired() && data[1].equals("")) {
+                    if (model.get(i).getFieldRequired() && data[1].equals("")) {
                         textView.setTextColor(ContextCompat.getColor(this, R.color.error));
                         error++;
                     } else {
@@ -530,7 +530,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
                 case ItemModel.ITEM_DATE:
                     data = Model.getDate(view);
-                    if (model.get(i-1).getFieldRequired() && data[1].equals("")) {
+                    if (model.get(i).getFieldRequired() && data[1].equals("")) {
                         textView = (TextView)layout.findViewById(R.id.textDate);
                         textView.setTextColor(ContextCompat.getColor(this, R.color.error));
                         error++;
@@ -539,7 +539,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
                 case ItemModel.ITEM_DATETIME:
                     data = Model.getDateTime(view);
-                    if (model.get(i-1).getFieldRequired() && data[1].equals("")) {
+                    if (model.get(i).getFieldRequired() && data[1].equals("")) {
                         textView = (TextView)layout.findViewById(R.id.title);
                         textView.setTextColor(ContextCompat.getColor(this, R.color.error));
                         error++;
@@ -548,7 +548,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
                 case ItemModel.ITEM_GEOPOS:
                     String userPosition = String.valueOf(position.latitude) + "," + String.valueOf(position.longitude);
-                    if (model.get(i-1).getFieldRequired() && (userPosition.equals("") || userPosition.equals("0.0,0.0"))) {
+                    if (model.get(i).getFieldRequired() && (userPosition.equals("") || userPosition.equals("0.0,0.0"))) {
                         textView = (TextView)layout.findViewById(R.id.textLocation);
                         textView.setTextColor(ContextCompat.getColor(this, R.color.error));
                         error++;
@@ -556,7 +556,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                     break;
 
                 case ItemModel.ITEM_IMAGE:
-                    if (model.get(i-1).getFieldRequired() && mCurrentPhotoPath.equals("")) {
+                    if (model.get(i).getFieldRequired() && mCurrentPhotoPath.equals("")) {
                         textView = (TextView)layout.findViewById(R.id.title);
                         textView.setTextColor(ContextCompat.getColor(this, R.color.error));
                         error++;
@@ -568,7 +568,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
                 case ItemModel.ITEM_SPINNER:
                     data = Model.getStringSpinner(view);
-                    if (model.get(i-1).getFieldRequired() && data[1].equals("")) {
+                    if (model.get(i).getFieldRequired() && data[1].equals("")) {
                         textView = (TextView)layout.findViewById(R.id.textSpinner);
                         textView.setTextColor(ContextCompat.getColor(this, R.color.error));
                         error++;
@@ -578,7 +578,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 case ItemModel.ITEM_DICTIONARY:
                     String hintDict = getString(R.string.dic_hint);
                     TextView value = (TextView)layout.findViewById(R.id.textDictionary);
-                    if (model.get(i-1).getFieldRequired() && value.getText().equals(hintDict)) {
+                    if (model.get(i).getFieldRequired() && value.getText().equals(hintDict)) {
                         textView = (TextView)layout.findViewById(R.id.title);
                         textView.setTextColor(ContextCompat.getColor(this, R.color.error));
                         error++;
