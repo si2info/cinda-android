@@ -49,8 +49,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
     // Views
     private RecyclerView recyclerView;
-    private TextView serverUrl;
-    private TextView serverDesc;
+    private TextView serverName, serverUrl, serverDesc;
     private RelativeLayout permissionLayout;
 
     // OnActivityResult
@@ -67,9 +66,11 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
     // Animate server info
     private RelativeLayout serverInfo;
     private static final Interpolator INTERPOLATOR = new FastOutSlowInInterpolator();
-    private int sizeInfoServer = 60;
-    private int sizeDescServer = -40;
-    private int sizeInfoDescServer = 300;
+    private int sizeInfoServer = 56;
+    private int sizeDescServer = -62;
+    private int sizeInfoDescServer = 320;
+    private int sizeInfoServerToClose = -62;
+    private int sizeDescServerToClose = -120;
     private long duration = 400L;
     private boolean isAnimatingInfoOut;   // Info
     private boolean isAnimatingInfoIn;    // Info
@@ -89,13 +90,14 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("");
+        toolbar.setTitle(getString(R.string.app_name));
         toolbar.setLogo(R.drawable.app_logo);
         setSupportActionBar(toolbar);
 
         // Views
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        serverName = (TextView)findViewById(R.id.serverName);
         serverUrl = (TextView)findViewById(R.id.serverUrl);
         serverDesc = (TextView)findViewById(R.id.serverDesc);
         serverInfo = (RelativeLayout)findViewById(R.id.serverInfo);
@@ -593,7 +595,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                 // Set new params
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                params.bottomMargin = Util.convertDpToPixel(getApplicationContext(), -100);
+                params.bottomMargin = Util.convertDpToPixel(getApplicationContext(), sizeDescServerToClose);
                 serverInfo.setLayoutParams(params);
 
                 isDescShowing = false;
@@ -611,7 +613,8 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
     public void animateInfoIn(View view) {
 
-        TranslateAnimation anim = new TranslateAnimation(0, 0, Animation.RELATIVE_TO_SELF, -Util.convertDpToPixel(getApplicationContext(), sizeInfoServer));
+        final int sizeAnim = -Util.convertDpToPixel(getApplicationContext(), sizeInfoServer);
+        TranslateAnimation anim = new TranslateAnimation(0, 0, Animation.RELATIVE_TO_SELF, sizeAnim);
 
         anim.setDuration(duration);
         anim.setFillEnabled(false);
@@ -632,7 +635,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                 // Set new params
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                params.bottomMargin = Util.convertDpToPixel(getApplicationContext(), -40);
+                params.bottomMargin = Util.convertDpToPixel(getApplicationContext(), sizeInfoServerToClose);
                 serverInfo.setLayoutParams(params);
 
             }
@@ -669,7 +672,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
                 // Set new params
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                params.bottomMargin = Util.convertDpToPixel(getApplicationContext(), -40);
+                params.bottomMargin = Util.convertDpToPixel(getApplicationContext(), sizeInfoServerToClose);
                 serverInfo.setLayoutParams(params);
 
             }
@@ -787,12 +790,20 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
 
     }
 
+    public void openServers (View view) {
+
+        Intent intent = new Intent(this, Servers.class);
+        startActivity(intent);
+
+    }
+
     /**
      * Update bottom bar with server info
      */
     public void updateServerInfo () {
 
         ImageView icServer = (ImageView)findViewById(R.id.imageServer);
+        String name = Util.getPreference(this, getString(R.string.serverName));
         String url = Util.getPreference(this, getString(R.string.serverUrl));
         String desc = Util.getPreference(this, getString(R.string.serverDesc));
 
@@ -802,6 +813,7 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
             icServer.setImageResource(R.drawable.ic_phonelink_off_white_24dp);
         }
 
+        serverName.setText(name);
         serverUrl.setText(url);
 
         if (desc.length() != 0)
