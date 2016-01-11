@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="userNotLogged">Intente acceder más tarde</string>
+    <string name="errorRequest">Intente acceder más tarde</string>
+    <string name="noConnection">No hay conexión, algunas funciones están desactivadas</string>
+
+</resources>

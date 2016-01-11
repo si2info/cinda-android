@@ -747,7 +747,7 @@ public class Model {
             ImageView imageView = (ImageView)view.findViewById(R.id.imageSelected);
             if (!value.getValue().equals("") && !value.getValue().equals("false")) {
                 Picasso.with(c)
-                        .load(value.getValue())
+                        .load(value.getFieldType())
                         .into(imageView);
             } else {
                 view.setVisibility(View.GONE);

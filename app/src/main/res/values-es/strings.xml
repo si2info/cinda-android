@@ -86,6 +86,7 @@
     <string name="dictionary">Diccionario</string>
 
     <!-- contribution -->
+    <string name="contribution">Contribución</string>
     <string name="contribution_title">Nueva contribución</string>
     <string name="loading">Cargando modelo de campaña</string>
     <string name="sendingContribution">Enviando su contribución&#8230;</string>

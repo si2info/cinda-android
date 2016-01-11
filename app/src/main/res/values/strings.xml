@@ -93,6 +93,7 @@
     <string name="dictionary">Dictionary</string>
 
     <!-- contribution -->
+    <string name="contribution">Contribution</string>
     <string name="contribution_title">New contribution</string>
     <string name="loading">Loading campaigning model</string>
     <string name="sendingContribution">Sending your contribution&#8230;</string>

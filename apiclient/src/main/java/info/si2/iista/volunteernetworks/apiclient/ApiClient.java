@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
+import info.si2.iista.bolunteernetworks.apiclient.R;
+
 /**
  * Developer: Jose Miguel Mingorance
  * Date: 7/9/15
@@ -75,7 +77,7 @@ public class ApiClient {
 
         // FROM
         int from = Virde.FROM_GET_SERVER_INFO;
-        String message = "Inténtelo más tarde";
+        String message = context.getString(R.string.errorRequest);
 
         ArrayList<ItemServer> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
@@ -200,7 +202,7 @@ public class ApiClient {
     public Pair<Result, ArrayList<ItemModel>> getModelCampaign (int id) {
 
         int from = Virde.FROM_MODEL_CAMPAIGN; // FROM
-        String message = "Inténtelo más tarde";
+        String message = context.getString(R.string.errorRequest);
 
         ArrayList<ItemModel> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
@@ -235,7 +237,7 @@ public class ApiClient {
     public Pair<Result, ArrayList<String>> userRegister (String username, String mail, String deviceID) {
 
         int from = Virde.FROM_USER_REGISTER; // FROM
-        String message = "Intente acceder más tarde";
+        String message = context.getString(R.string.userNotLogged);
         ArrayList<String> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
 
@@ -520,7 +522,7 @@ public class ApiClient {
     public Pair<Result, ArrayList<Dictionary>> getDictionary (String idDictionary, String idServer) {
 
         int from = Virde.FROM_GET_DICTIONARY; // FROM
-        String message = "Inténtelo más tarde";
+        String message = context.getString(R.string.errorRequest);
 
         ArrayList<Dictionary> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();
@@ -557,7 +559,7 @@ public class ApiClient {
     public Pair<Result, ArrayList<ItemModelValue>> getContributionDetail (String idContribution) {
 
         int from = Virde.FROM_GET_CONTRIBUTION_DETAIL; // FROM
-        String message = "Inténtelo más tarde";
+        String message = context.getString(R.string.errorRequest);
 
         ArrayList<ItemModelValue> result = new ArrayList<>();
         OkHttpClient client = getOkHttpClient();

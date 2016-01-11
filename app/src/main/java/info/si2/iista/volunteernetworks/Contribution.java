@@ -149,6 +149,12 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
             if (getIntent().getExtras().containsKey("detail")) {
                 isDetail = getIntent().getExtras().getBoolean("detail");
                 idContribution = getIntent().getExtras().getInt("idContribution");
+
+                if (!isDetail && getSupportActionBar() != null)
+                    getSupportActionBar().setTitle(getString(R.string.contribution_title));
+                else
+                    getSupportActionBar().setTitle(getString(R.string.contribution));
+
             }
 
             if (id != -1) {
@@ -308,6 +314,13 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                 for (int j=0; j<contribution.size(); j++) {
                     if (copyModel.get(i).getFieldName().equals(contribution.get(j).getField())){
                         copyModel.remove(i);
+
+                        if (j+1 < contribution.size()) {
+                            if (contribution.get(j+1).getField().endsWith("_thumbnail")) {
+                                contribution.get(j).setFieldType(contribution.get(j+1).getValue());
+                            }
+                        }
+
                         return contribution.get(j);
                     }
                 }
@@ -326,7 +339,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         ArrayList<ItemModel> copyModel = new ArrayList<>(model);
 
         // i=0 => LinearLayout loading
-        for (int i=1; i<layout.getChildCount(); i++) {
+        for (int i=0; i<layout.getChildCount(); i++) {
             RelativeLayout view = (RelativeLayout) layout.getChildAt(i);
             String tag = view.getTag().toString();
             ItemModelValue value = searchModelValue(copyModel, contribution, tag);
@@ -366,6 +379,10 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
                         Model.setDataToSpinner(this, view, value);
                         break;
 
+                    case ItemModel.ITEM_DESCRIPTION:
+                        view.setVisibility(View.GONE);
+                        break;
+
                     case ItemModel.ITEM_DICTIONARY:
                         Model.setDataToDictionary(view, value);
                         break;
@@ -399,7 +416,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         values.add(new ItemFormContribution("token", Util.getPreference(this, getString(R.string.token))));
 
         // i=0 => LinearLayout loading
-        for (int i=1; i<layout.getChildCount(); i++) {
+        for (int i=0; i<layout.getChildCount(); i++) {
 
             RelativeLayout view = (RelativeLayout) layout.getChildAt(i);
             String tag = view.getTag().toString();
@@ -491,7 +508,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         int error = 0;
 
         // i=0 => LinearLayout loading
-        for (int i=1; i<layout.getChildCount(); i++) {
+        for (int i=0; i<layout.getChildCount(); i++) {
             RelativeLayout view = (RelativeLayout) layout.getChildAt(i);
             TextView textView;
             String tag = view.getTag().toString();

@@ -1,36 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/layout">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/loading"
-            android:background="@android:color/white">
+            android:layout_height="wrap_content"
+            android:id="@+id/layout">
 
-            <ProgressBar
-                style="?android:attr/android:progressBarStyleLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/progressBar"
-                android:indeterminate="true"
-                android:paddingTop="16dp" />
+        </RelativeLayout>
 
-            <TextView
-                style="@style/loading"
-                android:text="@string/loading"
-                android:id="@+id/textView"
-                android:gravity="center_horizontal" />
+    </ScrollView>
 
-        </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/loading"
+        android:background="@android:color/white">
 
-    </RelativeLayout>
+        <ProgressBar
+            style="?android:attr/android:progressBarStyleLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar"
+            android:indeterminate="true"
+            android:paddingTop="16dp" />
 
-</ScrollView>
+        <TextView
+            style="@style/loading"
+            android:text="@string/loading"
+            android:id="@+id/textView"
+            android:gravity="center_horizontal" />
+
+    </LinearLayout>
+
+</RelativeLayout>
