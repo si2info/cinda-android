@@ -89,7 +89,8 @@ public class ApplicationVirde extends MultiDexApplication {
 Example
 {"aps": {
 "alert": "Titulo de prueba",
-"content":"Esto es un mensaje con contenido de prueba al enviar una push con Parse"
+"content":"Esto es un mensaje con contenido de prueba al enviar una push con Parse",
+"cid": 459
 }
 }
 */

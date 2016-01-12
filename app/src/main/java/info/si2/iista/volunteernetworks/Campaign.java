@@ -76,6 +76,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
     // Views
     private CoordinatorLayout coordinatorLayout;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
     private LinearLayout topUsers;
     private NestedScrollView nestedScroll;
     private RelativeLayout content;
@@ -118,6 +119,10 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
     // Data
     private int lineEndIndex = 0;
 
+    // Push
+    private boolean fromPush;
+    private int idCampaign;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,7 +136,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // CollapsingToolbar
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
+        collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
         collapsingToolbarLayout.setTitle("");
 
         // Views
@@ -207,8 +212,13 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
         // Obtener datos de campaña con el ID
         if (getIntent().getExtras() != null) {
-            campaign = getIntent().getParcelableExtra("campaign");
-            position = getIntent().getIntExtra("position", -1);
+            if (!getIntent().getExtras().containsKey("fromPush")) {
+                campaign = getIntent().getParcelableExtra("campaign");
+                position = getIntent().getIntExtra("position", -1);
+            } else {
+                fromPush = getIntent().getBooleanExtra("fromPush", false);
+                idCampaign = getIntent().getIntExtra("idCampaign", -1);
+            }
         }
 
         if (campaign != null) {
@@ -219,6 +229,12 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
             // Get campaign
             getCampaign(campaign.getId());
+
+            // Get model campaign
+            getModelCampaign(campaign.getId());
+
+            // Top users
+            Virde.getInstance(this).getListVolunteers(campaign.getId());
 
             // Feedback to user
             doRefresh();
@@ -244,11 +260,19 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
         });
 
-        // Obtener modelo de la campaña
-        getModelCampaign(campaign.getId());
+        if (fromPush) {
+            campaign = new ItemCampaign();
+            campaign.setId(idCampaign);
 
-        // Top users
-        Virde.getInstance(this).getListVolunteers(campaign.getId());
+            // Obtener modelo de la campaña
+            getModelCampaign(campaign.getId());
+
+            // Top users
+            Virde.getInstance(this).getListVolunteers(campaign.getId());
+
+            String token = Util.getToken(this);
+            Virde.getInstance(this).getDataCampaign(idCampaign, token);
+        }
 
     }
 
@@ -549,6 +573,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
         setStyleButton(item.isSuscribe(), suscription);
 
         // Data campaign
+        collapsingToolbarLayout.setTitle(item.getTitle());
         title.setText(item.getTitle());
 
         description.setText(item.getDescription());
@@ -660,7 +685,11 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
         Intent returnIntent = new Intent();
 
-        if (buttonSuscribeTouch) {
+        if (fromPush) {
+            returnIntent.setClass(this, MainActivity.class);
+            returnIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(returnIntent);
+        } else if (buttonSuscribeTouch) {
             returnIntent.putExtra("isSuscribed", campaign.isSuscribe());
             returnIntent.putExtra("position", position);
             setResult(RESULT_OK, returnIntent);
@@ -700,8 +729,7 @@ public class Campaign extends AppCompatActivity implements OnApiClientResult, On
 
                     // Item campaign
                     ItemCampaign item = (ItemCampaign) result.second.get(0);
-                    campaign.setCover(item.getCover());
-                    campaign.setImage(item.getImage());
+                    campaign = item;
                     updateActivityInfo(item);
 
                 }

@@ -17,8 +17,9 @@ import android.support.v4.content.ContextCompat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import info.si2.iista.volunteernetworks.MainActivity;
+import info.si2.iista.volunteernetworks.Campaign;
 import info.si2.iista.volunteernetworks.R;
+import info.si2.iista.volunteernetworks.util.Util;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -32,6 +33,7 @@ public class PushReceiver extends BroadcastReceiver {
 
         String title = "";
         String message = "";
+        int id = 0;
 
         try {
 
@@ -44,7 +46,10 @@ public class PushReceiver extends BroadcastReceiver {
             if (push.has("content"))
                 message = push.getString("content");
 
-            generateNotification(context, title, message);
+            if (push.has("cid"))
+                id = push.getInt("cid");
+
+            generateNotification(context, id, title, message);
 
 
         } catch (JSONException e) {
@@ -53,11 +58,11 @@ public class PushReceiver extends BroadcastReceiver {
 
     }
 
-    private void generateNotification(Context context, String title, String message) {
+    private void generateNotification(Context context, int id, String title, String message) {
 
-        Intent intent = new Intent(context, MainActivity.class);
-//        intent.putExtra("title", title);
-//        intent.putExtra("message", message);
+        Intent intent = new Intent(context, Campaign.class);
+        intent.putExtra("fromPush", true);
+        intent.putExtra("idCampaign", id);
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
         int appColorInt = ContextCompat.getColor(context, R.color.primary);
@@ -80,10 +85,27 @@ public class PushReceiver extends BroadcastReceiver {
                 .setLargeIcon(largeIcon)
                 .setContentTitle(title)
                 .setContentText(message)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(message))
                 .setContentIntent(pendingIntent)
                 .setSound(soundUri)
                 .setAutoCancel(true).build();
-        mNotificationManager.notify(0, notification);
+        mNotificationManager.notify(getNumNotification(context), notification);
+
+    }
+
+    /**
+     * Genera un número entero consecutivo identificador de la notificación
+     * @param c Context
+     * @return Integer
+     */
+    private int getNumNotification (Context c) {
+
+        int not = Util.getIntPreference(c, c.getString(R.string.nNotification));
+        not++;
+        Util.saveIntPreference(c, c.getString(R.string.nNotification), not);
+
+        return not;
 
     }
 

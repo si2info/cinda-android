@@ -170,6 +170,7 @@
     <string name="noID">Model not available</string>
 
     <!-- Push -->
+    <string name="nNotification">nNotification</string>
     <string name="parseDebugChannel">DebugChannel</string>
     <string name="parseProductionChannel">ProductionChannel</string>
 
