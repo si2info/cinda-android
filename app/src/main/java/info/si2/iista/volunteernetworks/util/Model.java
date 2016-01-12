@@ -5,7 +5,10 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.Html;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,6 +36,7 @@ import info.si2.iista.volunteernetworks.AdapterSpinner;
 import info.si2.iista.volunteernetworks.Contribution;
 import info.si2.iista.volunteernetworks.DictionaryValue;
 import info.si2.iista.volunteernetworks.R;
+import info.si2.iista.volunteernetworks.ZoomImage;
 import info.si2.iista.volunteernetworks.apiclient.ItemModel;
 import info.si2.iista.volunteernetworks.apiclient.ItemModelValue;
 
@@ -741,14 +746,40 @@ public class Model {
      * @param view View contenedora del item a setear
      * @param value Value a setear
      */
-    public static void setDataToImage (Context c, RelativeLayout view, ItemModelValue value) {
+    public static void setDataToImage (final Context c, final RelativeLayout view, final ItemModelValue value) {
 
         if (value.getValue() != null) {
+
             ImageView imageView = (ImageView)view.findViewById(R.id.imageSelected);
             if (!value.getValue().equals("") && !value.getValue().equals("false")) {
                 Picasso.with(c)
                         .load(value.getFieldType())
                         .into(imageView);
+
+                LinearLayout add = (LinearLayout) view.findViewById(R.id.feedback);
+                add.setVisibility(View.GONE);
+
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        TextView textView = (TextView)view.findViewById(R.id.title);
+                        ImageView image = (ImageView) view.findViewById(R.id.imageSelected);
+                        Intent intent = new Intent(c, ZoomImage.class);
+                        intent.putExtra("img", value.getValue());
+                        intent.putExtra("title", textView.getText().toString());
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            ActivityOptionsCompat options = ActivityOptionsCompat.
+                                    makeSceneTransitionAnimation((Activity) c, image, "transitionZoom");
+                            ActivityCompat.startActivity((Activity) c, intent, options.toBundle());
+                        } else {
+                            c.startActivity(intent);
+                        }
+
+                    }
+                });
+
             } else {
                 view.setVisibility(View.GONE);
             }

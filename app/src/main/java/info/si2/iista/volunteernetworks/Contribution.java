@@ -317,7 +317,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
                         if (j+1 < contribution.size()) {
                             if (contribution.get(j+1).getField().endsWith("_thumbnail")) {
-                                contribution.get(j).setFieldType(contribution.get(j+1).getValue());
+                                contribution.get(j).setFieldType(contribution.get(j+1).getValue()); // Reused
                             }
                         }
 
