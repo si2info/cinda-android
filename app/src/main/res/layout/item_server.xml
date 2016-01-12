@@ -8,7 +8,7 @@
 
     <TextView
         style="@style/server"
-        android:text="@string/verdi_server"
+        android:text="@string/cinda_server"
         android:id="@+id/server"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
@@ -23,7 +23,7 @@
 
     <TextView
         style="@style/server"
-        android:text="@string/verdi_server_desc"
+        android:text="@string/cinda_server_desc"
         android:id="@+id/serverDesc"
         android:layout_below="@+id/server"
         android:layout_alignRight="@+id/server"

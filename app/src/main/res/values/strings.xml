@@ -3,8 +3,8 @@
     <string name="app_name">Cinda</string>
 
     <!-- Parse -->
-    <string name="parseApplicationID">GmZfs4Q3ispg7C5mrT5sfFk2PpPs0HXudLP7tkTr</string>
-    <string name="parseClientKey">LjphrT3LxgdumkViIhKiQfnEapWJ63U5TrL9x4Zl</string>
+    <string name="parseApplicationID" translatable="false">GmZfs4Q3ispg7C5mrT5sfFk2PpPs0HXudLP7tkTr</string>
+    <string name="parseClientKey" translatable="false">LjphrT3LxgdumkViIhKiQfnEapWJ63U5TrL9x4Zl</string>
 
     <!-- Request permissions -->
     <string name="permission_contacts_explanation">We need to know your mail so you can send contributions, do you agree?</string>
@@ -48,15 +48,15 @@
     <string name="campaignGeoTitle">GEOGRAPHIC AMBIT</string>
 
     <string name="campaign_my_data">MY CONTRIBUTIONS</string>
-    <string name="campaign_desc"> </string>
-    <string name="campaign_date"> </string>
-    <string name="campaign_geo"> </string>
+    <string name="campaign_desc" translatable="false"> </string>
+    <string name="campaign_date" translatable="false"> </string>
+    <string name="campaign_geo" translatable="false"> </string>
 
     <string name="continue_reading">Continue reading</string>
     <string name="my_contribute">You have not made any contribution</string>
     <string name="other_contribute">Nobody has contributed anything yet</string>
 
-    <string name="moreUsers"> </string>
+    <string name="moreUsers" translatable="false"> </string>
 
     <string name="viewMore">See more</string>
     <string name="viewLess">Show less</string>
@@ -111,35 +111,35 @@
     <string name="sends">SENDINGS</string>
 
     <!-- item_topuser -->
-    <string name="n_top">1</string>
-    <string name="n_sends">12</string>
+    <string name="n_top" translatable="false">1</string>
+    <string name="n_sends" translatable="false">12</string>
     
     <!-- Server Shared Preferences -->
-    <string name="userPreferences">userPreferences</string>
-    <string name="id_server">idServer</string>
-    <string name="serverUrl">serverUrl</string>
-    <string name="serverName">serverName</string>
-    <string name="serverDesc">serverDesc</string>
-    <string name="serverMapsApi">serverMapsApi</string>
-    <string name="serverParseApi">serverParseApi</string>
-    <string name="serverParseKey">serverParseKey</string>
+    <string name="userPreferences" translatable="false">userPreferences</string>
+    <string name="id_server" translatable="false">idServer</string>
+    <string name="serverUrl" translatable="false">serverUrl</string>
+    <string name="serverName" translatable="false">serverName</string>
+    <string name="serverDesc" translatable="false">serverDesc</string>
+    <string name="serverMapsApi" translatable="false">serverMapsApi</string>
+    <string name="serverParseApi" translatable="false">serverParseApi</string>
+    <string name="serverParseKey" translatable="false">serverParseKey</string>
 
     <!-- User Shared Preferences -->
-    <string name="username">username</string>
-    <string name="mail">mail</string>
-    <string name="device_id">deviceID</string>
-    <string name="token">token</string>
-    <string name="idUser">idUser</string>
+    <string name="username" translatable="false">username</string>
+    <string name="mail" translatable="false">mail</string>
+    <string name="device_id" translatable="false">deviceID</string>
+    <string name="token" translatable="false">token</string>
+    <string name="idUser" translatable="false">idUser</string>
 
-    <string name="modelPreferences">modelPreferences</string>
-    <string name="activeModel">activeModel</string>
-    <string name="idImage">idImage</string>
-    <string name="isModelLoaded">isModelLoaded</string>
-    <string name="currentPhotoPath">currentPhotoPath</string>
-    <string name="latModel">latModel</string>
-    <string name="lngModel">lngModel</string>
+    <string name="modelPreferences" translatable="false">modelPreferences</string>
+    <string name="activeModel" translatable="false">activeModel</string>
+    <string name="idImage" translatable="false">idImage</string>
+    <string name="isModelLoaded" translatable="false">isModelLoaded</string>
+    <string name="currentPhotoPath" translatable="false">currentPhotoPath</string>
+    <string name="latModel" translatable="false">latModel</string>
+    <string name="lngModel" translatable="false">lngModel</string>
 
-    <string name="isParseInitializated">isParseInitializated</string>
+    <string name="isParseInitializated" translatable="false">isParseInitializated</string>
 
     <!-- item_dictionary -->
     <string name="dic_hint">Select&#8230;</string>
@@ -151,49 +151,49 @@
     <string name="dialog_init_tracking">Do you want to start recording your route?</string>
 
     <!-- Camera -->
-    <string name="album_name">Cinda</string>
+    <string name="album_name" translatable="false">Cinda</string>
 
     <!-- Tracking -->
     <string name="title_tracking">Route log</string>
     <string name="tracking">Route</string>
-    <string name="idCampaignTracking">idCampaignTracking</string>
+    <string name="idCampaignTracking" translatable="false">idCampaignTracking</string>
     <string name="gpx_send">Contribution sent</string>
     <string name="gpx_not_send">Their contribution could not be sent, try again later from the \"Synchronize\" option.</string>
     <string name="recording_route">Recording route</string>
 
     <!-- GPX -->
-    <string name="base_dir">Cinda</string>
-    <string name="gpx_dir_name">gpx</string>
+    <string name="base_dir" translatable="false">Cinda</string>
+    <string name="gpx_dir_name" translatable="false">gpx</string>
 
     <!-- Errors -->
     <string name="userCantOperate">Try again later</string>
     <string name="noID">Model not available</string>
 
     <!-- Push -->
-    <string name="nNotification">nNotification</string>
-    <string name="parseDebugChannel">DebugChannel</string>
-    <string name="parseProductionChannel">ProductionChannel</string>
+    <string name="nNotification" translatable="false">nNotification</string>
+    <string name="parseDebugChannel" translatable="false">DebugChannel</string>
+    <string name="parseProductionChannel" translatable="false">ProductionChannel</string>
 
     <!-- Test String -->
         <!-- activity_main -->
-        <string name="verdi_server"> </string>
-        <string name="verdi_server_url"> </string>
-        <string name="verdi_server_desc"> </string>
+        <string name="cinda_server" translatable="false"> </string>
+        <string name="cinda_server_url" translatable="false"> </string>
+        <string name="cinda_server_desc" translatable="false"> </string>
 
         <!-- item_campaign -->
-        <string name="issue_title"> </string>
-        <string name="issue_description"> </string>
+        <string name="issue_title" translatable="false"> </string>
+        <string name="issue_description" translatable="false"> </string>
 
         <!-- item_campaign_user -->
-        <string name="user"> </string>
-        <string name="campaign_user_title"> </string>
-        <string name="campaign_user_data"> </string>
+        <string name="user" translatable="false"> </string>
+        <string name="campaign_user_title" translatable="false"> </string>
+        <string name="campaign_user_data" translatable="false"> </string>
 
         <!-- item_campaign_sync -->
-        <string name="campaign_sync_title"> </string>
-        <string name="campaign_sync_desc"> </string>
+        <string name="campaign_sync_title" translatable="false"> </string>
+        <string name="campaign_sync_desc" translatable="false"> </string>
 
         <!-- Server -->
-        <string name="urlServer"> </string>
+        <string name="urlServer" translatable="false"> </string>
 
 </resources>
