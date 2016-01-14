@@ -13,5 +13,6 @@ public class Item {
     public static final int CONTRIBUTION = 4;
     public static final int DICTIONARY = 5;
     public static final int PROFILE = 6;
+    public static final int PROFILE_TRACKING = 7;
 
 }

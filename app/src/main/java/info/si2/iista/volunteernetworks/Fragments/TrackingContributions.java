@@ -10,9 +10,9 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import info.si2.iista.volunteernetworks.AdapterProfile;
+import info.si2.iista.volunteernetworks.AdapterProfileTracking;
 import info.si2.iista.volunteernetworks.R;
-import info.si2.iista.volunteernetworks.apiclient.ItemProfile;
+import info.si2.iista.volunteernetworks.apiclient.ItemProfileTracking;
 
 /**
  * Developer: Jose Miguel Mingorance
@@ -31,12 +31,12 @@ public class TrackingContributions extends Fragment {
         View view = inflater.inflate(R.layout.recycler, container, false);
 
         // Extras
-        ArrayList<ItemProfile> items = getArguments().getParcelableArrayList("items");
+        ArrayList<ItemProfileTracking> items = getArguments().getParcelableArrayList("items");
 
         // RecyclerView
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        AdapterProfile adapter = new AdapterProfile(getContext(), items);
+        AdapterProfileTracking adapter = new AdapterProfileTracking(getContext(), items);
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -47,7 +47,7 @@ public class TrackingContributions extends Fragment {
      * Instance fragment
      * @return View Fragment
      */
-    public static TrackingContributions newInstance(ArrayList<ItemProfile> items) {
+    public static TrackingContributions newInstance(ArrayList<ItemProfileTracking> items) {
 
         TrackingContributions fragment = new TrackingContributions();
 

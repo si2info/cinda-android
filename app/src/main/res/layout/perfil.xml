@@ -66,8 +66,7 @@
                     android:layout_marginTop="2dp"
                     android:textSize="12sp"
                     android:textColor="@android:color/white"
-                    android:layout_below="@+id/username"
-                    android:text="@string/n_contributions"/>
+                    android:layout_below="@+id/username" />
 
             </RelativeLayout>
 

@@ -30,6 +30,7 @@ public class Virde {
     public static final int FROM_GET_CONTRIBUTION_DETAIL = 12;
     public static final int FROM_SEND_GPX_CONTRIBUTION = 13;
     public static final int FROM_GET_USER_CONTRIBUTIONS = 14;
+    public static final int FROM_GET_USER_TRACKING = 15;
 
     public static Virde getInstance() {
         if (context == null)
@@ -117,6 +118,10 @@ public class Virde {
 
     public void getUserContributions (String token, int idUser) {
         new VirdeGetUserContributions().execute(token, String.valueOf(idUser));
+    }
+
+    public void getUserTracking (String token) {
+        new VirdeGetUserTracking().execute(token);
     }
 
     /** AsyncTasks **/
@@ -309,6 +314,21 @@ public class Virde {
         protected Pair<Result, ArrayList<ItemProfile>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
             return apiClient.getUserContributions(params[0], Integer.valueOf(params[1]));
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onApiClientRequestResult(result);
+        }
+
+    }
+
+    class VirdeGetUserTracking extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemProfileTracking>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<ItemProfileTracking>> doInBackground(String... params) {
+            ApiClient apiClient = ApiClient.getInstance();
+            return apiClient.getUserTracking(params[0]);
         }
 
         @Override

@@ -13,26 +13,26 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import info.si2.iista.volunteernetworks.apiclient.ItemProfile;
+import info.si2.iista.volunteernetworks.apiclient.ItemProfileTracking;
 import info.si2.iista.volunteernetworks.util.Util;
 
 /**
  * Developer: Jose Miguel Mingorance
- * Date: 13/1/16
+ * Date: 14/1/16
  * Project: Cinda
  */
-public class AdapterProfile extends RecyclerView.Adapter<AdapterProfile.ViewHolder> {
+public class AdapterProfileTracking extends RecyclerView.Adapter<AdapterProfileTracking.ViewHolder> {
 
     // Adapter
     private Context context;
-    private ArrayList<ItemProfile> items;
+    private ArrayList<ItemProfileTracking> items;
 
     // Listener
     private ClickListener clickListener;
 
     ArrayList<Drawable> circles;
 
-    public AdapterProfile(Context context, ArrayList<ItemProfile> items){
+    public AdapterProfileTracking(Context context, ArrayList<ItemProfileTracking> items){
         this.context = context;
         this.items = items;
         this.circles = new ArrayList<>();
@@ -75,7 +75,7 @@ public class AdapterProfile extends RecyclerView.Adapter<AdapterProfile.ViewHold
     }
 
     @Override
-    public AdapterProfile.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AdapterProfileTracking.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_campaign_user, parent, false);
         return new ViewHolder(v, viewType);
@@ -83,9 +83,9 @@ public class AdapterProfile extends RecyclerView.Adapter<AdapterProfile.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(final AdapterProfile.ViewHolder holder, int position) {
+    public void onBindViewHolder(final AdapterProfileTracking.ViewHolder holder, int position) {
 
-        ItemProfile item = items.get(position);
+        ItemProfileTracking item = items.get(position);
 
         // Date
         String dateSt = Util.parseDateToString("dd/MM/yyyy'\n'HH:mm", item.getCreateDate());
@@ -95,10 +95,7 @@ public class AdapterProfile extends RecyclerView.Adapter<AdapterProfile.ViewHold
         holder.date.setText(dateSt);
 
         // Description
-        if (!item.getDescription().equals(""))
-            holder.description.setText(item.getDescription());
-        else
-            holder.description.setText(context.getString(R.string.no_description));
+        holder.description.setText(context.getString(R.string.no_description));
 
         if (item.getImageCampaign() != null) {
             if (!item.getImageCampaign().equals("")) {

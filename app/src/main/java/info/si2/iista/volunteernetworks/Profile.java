@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import info.si2.iista.volunteernetworks.Fragments.MyContributions;
 import info.si2.iista.volunteernetworks.Fragments.TrackingContributions;
 import info.si2.iista.volunteernetworks.apiclient.ItemProfile;
+import info.si2.iista.volunteernetworks.apiclient.ItemProfileTracking;
 import info.si2.iista.volunteernetworks.apiclient.ItemUser;
 import info.si2.iista.volunteernetworks.apiclient.OnApiClientResult;
 import info.si2.iista.volunteernetworks.apiclient.Result;
@@ -55,6 +56,10 @@ public class Profile extends AppCompatActivity implements OnApiClientResult {
 
     // Tabs
     private String titles[] = new String[2];
+
+    // Contributions - Tracking
+    private ArrayList<ItemProfile> contributionsArray;
+    private ArrayList<ItemProfileTracking> trackingArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,7 +214,7 @@ public class Profile extends AppCompatActivity implements OnApiClientResult {
     /**
      * Init ViewPager and Tabs
      */
-    private void setupComponents (ArrayList<ItemProfile> contributions, ArrayList<ItemProfile> tracking) {
+    private void setupComponents (ArrayList<ItemProfile> contributions, ArrayList<ItemProfileTracking> tracking) {
 
         setupViewPager(viewPager, contributions, tracking);
 
@@ -249,7 +254,7 @@ public class Profile extends AppCompatActivity implements OnApiClientResult {
      * Init ViewPager
      * @param viewPager View to init
      */
-    private void setupViewPager (ViewPager viewPager, ArrayList<ItemProfile> contributions, ArrayList<ItemProfile> tracking) {
+    private void setupViewPager (ViewPager viewPager, ArrayList<ItemProfile> contributions, ArrayList<ItemProfileTracking> tracking) {
 
         titles[0] = getString(R.string.contributions);
         titles[1] = getString(R.string.trackings);
@@ -285,26 +290,51 @@ public class Profile extends AppCompatActivity implements OnApiClientResult {
                 if (result.first.isError()) {
                     Util.makeToast(this, result.first.getMensaje(), 0);
                     textError.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
                 } else {
 
-                    int nContributions = result.second.size();
-                    ArrayList<ItemProfile> contributionsArray = new ArrayList<>();
-                    ArrayList<ItemProfile> tracking = new ArrayList<>();
+                    contributionsArray = new ArrayList<>();
 
                     for (Object object : result.second) {
-                        ItemProfile item = (ItemProfile)object;
-                        if (item.getTracking().equals("0")) { // Contributions
-                            contributionsArray.add(item);
-                        } else { // Tracking
-                            tracking.add(item);
-                        }
+                        contributionsArray.add((ItemProfile)object);
+                    }
+
+                    int myID = Util.getIntPreference(this, getString(R.string.idUser));
+                    if (myID == user.getId()) {
+                        Virde.getInstance(this).getUserTracking(Util.getToken(this));
+                    } else {
+
+                        // nContributions
+                        int nContributions = contributionsArray.size();
+                        contributions.setText(String.format(getString(R.string.n_contributions), nContributions));
+
+                        // ViewPager
+                        setupComponents(contributionsArray, trackingArray);
+
+                        // Stop progress
+                        progressBar.setVisibility(View.GONE);
+                    }
+
+                }
+                break;
+            case Virde.FROM_GET_USER_TRACKING:
+                if (result.first.isError()) {
+                    Util.makeToast(this, result.first.getMensaje(), 0);
+                    textError.setVisibility(View.VISIBLE);
+                } else {
+
+                    trackingArray = new ArrayList<>();
+
+                    for (Object object : result.second) {
+                        trackingArray.add((ItemProfileTracking)object);
                     }
 
                     // nContributions
+                    int nContributions = contributionsArray.size() + trackingArray.size();
                     contributions.setText(String.format(getString(R.string.n_contributions), nContributions));
 
                     // ViewPager
-                    setupComponents(contributionsArray, tracking);
+                    setupComponents(contributionsArray, trackingArray);
 
                 }
                 progressBar.setVisibility(View.GONE);
