@@ -96,6 +96,8 @@
     <string name="addImage">Añadir imagen</string>
     <string name="more_info">+Info</string>
     <string name="dialog_required_fields">Completa todos los campos requeridos resaltados en rojo para enviar tu contribución.</string>
+    <string name="no_description">Sin descripción</string>
+    <string name="noContributions">Contribuciones no disponibles</string>
 
     <!-- recycler_topusers -->
     <string name="name">NOMBRE</string>
@@ -116,6 +118,11 @@
     <string name="gpx_send">Contribución enviada</string>
     <string name="gpx_not_send">Su contribución no se pudo enviar, inténtelo más tarde desde la opción \"Sincronizar\".</string>
     <string name="recording_route">Grabando ruta</string>
+
+    <!-- Profile -->
+    <string name="contributions">Contribuciones</string>
+    <string name="trackings">Rutas</string>
+    <string name="n_contributions">%d contribuciones</string>
 
     <!-- Errors -->
     <string name="userCantOperate">Inténtelo más tarde</string>

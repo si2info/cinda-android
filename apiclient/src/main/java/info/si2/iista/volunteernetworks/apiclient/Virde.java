@@ -29,6 +29,7 @@ public class Virde {
     public static final int FROM_GET_DICTIONARY = 11;
     public static final int FROM_GET_CONTRIBUTION_DETAIL = 12;
     public static final int FROM_SEND_GPX_CONTRIBUTION = 13;
+    public static final int FROM_GET_USER_CONTRIBUTIONS = 14;
 
     public static Virde getInstance() {
         if (context == null)
@@ -112,6 +113,10 @@ public class Virde {
 
     public void getContributionDetail(int idContribution) {
         new VirdeGetContributionDetail().execute(String.valueOf(idContribution));
+    }
+
+    public void getUserContributions (String token, int idUser) {
+        new VirdeGetUserContributions().execute(token, String.valueOf(idUser));
     }
 
     /** AsyncTasks **/
@@ -289,6 +294,21 @@ public class Virde {
         protected Pair<Result, ArrayList<ItemModelValue>> doInBackground(String... params) {
             ApiClient apiClient = ApiClient.getInstance();
             return apiClient.getContributionDetail(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Pair result) {
+            context.onApiClientRequestResult(result);
+        }
+
+    }
+
+    class VirdeGetUserContributions extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemProfile>>> {
+
+        @Override
+        protected Pair<Result, ArrayList<ItemProfile>> doInBackground(String... params) {
+            ApiClient apiClient = ApiClient.getInstance();
+            return apiClient.getUserContributions(params[0], Integer.valueOf(params[1]));
         }
 
         @Override

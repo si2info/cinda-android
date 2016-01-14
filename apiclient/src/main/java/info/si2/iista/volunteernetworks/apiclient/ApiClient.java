@@ -51,6 +51,7 @@ public class ApiClient {
     private static final String URL_DICTIONARY = "/cindaAPI/dictionary/";
     private static final String URL_CONTRIBUTION = "/cindaAPI/contribution/";
     private static final String URL_GPX_CONTRIBUTION = "/cindaAPI/tracking/send/";
+    private static final String URL_GET_USER_CONTRIBUTIONS = "/cindaAPI/volunteer/%s/listData/";
 
     private static Context context;
 
@@ -438,6 +439,48 @@ public class ApiClient {
         } catch (IOException e) {
             e.printStackTrace();
             return new Pair<>(new Result(true, message, from, 0), null);
+        }
+
+    }
+
+    public Pair<Result, ArrayList<ItemProfile>> getUserContributions (String token, int id) {
+
+        int from = Virde.FROM_GET_USER_CONTRIBUTIONS; // FROM
+        String message = context.getString(R.string.noContributions);
+
+        ArrayList<ItemProfile> result = new ArrayList<>();
+        OkHttpClient client = getOkHttpClient();
+
+        RequestBody formBody = new FormEncodingBuilder()
+                .add("token", token)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(HOST + String.format(URL_GET_USER_CONTRIBUTIONS, String.valueOf(id)))
+                .post(formBody)
+                .build();
+
+        try {
+
+            Response response = client.newCall(request).execute();
+            String respStr  = response.body().string();
+
+            GsonBuilder gsonBuilder = new GsonBuilder()
+                    .setDateFormat("yyyy-MM-dd HH:mm:ss");
+            Gson gson = gsonBuilder.create();
+
+            if (isJSONValid(respStr)) {
+                ItemProfile[] items = gson.fromJson(respStr, ItemProfile[].class);
+                for (ItemProfile item : items)
+                    item.setType(Item.PROFILE);
+                Collections.addAll(result, items);
+            }
+
+            return new Pair<>(new Result(false, message, from, 0), result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Pair<>(new Result(true, message, from, 1), new ArrayList<ItemProfile>());
         }
 
     }

@@ -105,6 +105,8 @@
     <string name="addImage">Add image</string>
     <string name="more_info">+Info</string>
     <string name="dialog_required_fields">Complete all required fields highlighted in red to submit your contribution.</string>
+    <string name="no_description">Without description</string>
+    <string name="noContributions">Contributions unavailable</string>
 
     <!-- recycler_topusers -->
     <string name="name">NAME</string>
@@ -164,6 +166,11 @@
     <!-- GPX -->
     <string name="base_dir" translatable="false">Cinda</string>
     <string name="gpx_dir_name" translatable="false">gpx</string>
+
+    <!-- Profile -->
+    <string name="contributions">Contributions</string>
+    <string name="trackings">Routes</string>
+    <string name="n_contributions">%d contributions</string>
 
     <!-- Errors -->
     <string name="userCantOperate">Try again later</string>

@@ -9,29 +9,30 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Date;
+import com.squareup.picasso.Picasso;
 
-import info.si2.iista.volunteernetworks.apiclient.ItemContribution;
+import java.util.ArrayList;
+
+import info.si2.iista.volunteernetworks.apiclient.ItemProfile;
 import info.si2.iista.volunteernetworks.util.Util;
 
 /**
  * Developer: Jose Miguel Mingorance
- * Date: 24/9/15
- * Project: Virde
+ * Date: 13/1/16
+ * Project: Cinda
  */
-public class AdapterContributions extends RecyclerView.Adapter<AdapterContributions.ViewHolder> {
+public class AdapterProfile extends RecyclerView.Adapter<AdapterProfile.ViewHolder> {
 
     // Adapter
     private Context context;
-    private ArrayList<ItemContribution> items;
+    private ArrayList<ItemProfile> items;
 
     // Listener
     private ClickListener clickListener;
 
     ArrayList<Drawable> circles;
 
-    public AdapterContributions(Context context, ArrayList<ItemContribution> items){
+    public AdapterProfile(Context context, ArrayList<ItemProfile> items){
         this.context = context;
         this.items = items;
         this.circles = new ArrayList<>();
@@ -74,8 +75,7 @@ public class AdapterContributions extends RecyclerView.Adapter<AdapterContributi
     }
 
     @Override
-    public AdapterContributions.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
+    public AdapterProfile.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_campaign_user, parent, false);
         return new ViewHolder(v, viewType);
@@ -83,34 +83,30 @@ public class AdapterContributions extends RecyclerView.Adapter<AdapterContributi
     }
 
     @Override
-    public void onBindViewHolder(final AdapterContributions.ViewHolder holder, int position) {
+    public void onBindViewHolder(final AdapterProfile.ViewHolder holder, int position) {
 
-        ItemContribution item = items.get(position);
+        ItemProfile item = items.get(position);
 
         // Date
-        String dateSt;
-        if (item.getDate().length() >= 18) {
-            Date date = Util.parseStringToDate("yyyy-MM-dd HH:mm:ss", item.getDate());
-            dateSt = Util.parseDateToString(date);
-        } else {
-            Date date = Util.parseStringToDate("yyyy/MM/dd HH:mm", item.getDate());
-            dateSt = Util.parseDateToString(date);
-        }
+        String dateSt = Util.parseDateToString("dd/MM/yyyy 'a las ' HH:mm", item.getCreateDate());
 
         // User
-        if (item.isMine()) {
-            holder.user.setText(dateSt);
-            holder.date.setVisibility(View.GONE);
-        } else {
-            holder.user.setText(item.getUser());
-            holder.date.setText(dateSt);
-        }
+        holder.user.setText(item.getNameCampaign());
+        holder.date.setText(dateSt);
 
         // Description
         if (!item.getDescription().equals(""))
             holder.description.setText(item.getDescription());
         else
             holder.description.setText(context.getString(R.string.no_description));
+
+        if (item.getImageCampaign() != null) {
+            if (!item.getImageCampaign().equals("")) {
+                Picasso.with(context)
+                        .load(item.getImageCampaign())
+                        .into(holder.image);
+            }
+        }
 
     }
 

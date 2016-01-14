@@ -1,12 +1,17 @@
 package info.si2.iista.volunteernetworks;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -53,8 +58,21 @@ public class TopUsers extends AppCompatActivity implements AdapterTopUsers.Click
     @Override
     public void onContributionItemClick(View view, int position) {
 
-//        Intent intent = new Intent(this, Test.class);
-//        startActivity(intent);
+        ImageView userImage = (ImageView)view.findViewById(R.id.userImage);
+        ItemUser user = items.get(position);
+
+        Intent intent = new Intent(this, Profile.class);
+        intent.putExtra("user", user);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation(this, userImage, "transitionUser");
+            ActivityCompat.startActivity(this, intent, options.toBundle());
+
+        } else {
+            startActivity(intent);
+        }
 
     }
 
