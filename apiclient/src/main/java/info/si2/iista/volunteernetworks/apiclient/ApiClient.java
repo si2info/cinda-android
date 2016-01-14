@@ -529,7 +529,7 @@ public class ApiClient {
         MultipartBuilder formEncodingBuilder = new MultipartBuilder();
         formEncodingBuilder.type(MultipartBuilder.FORM);
 
-        formEncodingBuilder.addFormDataPart("id", String.valueOf(item.getId()));
+        formEncodingBuilder.addFormDataPart("id", item.getId());
         formEncodingBuilder.addFormDataPart("id_campaign", String.valueOf(item.getIdCampaign()));
         formEncodingBuilder.addFormDataPart("id_volunteer", String.valueOf(item.getIdVolunteer()));
 
@@ -554,7 +554,7 @@ public class ApiClient {
             return new Pair<>(new Result(true, message, from, 1), result);
         }
 
-        if (!respStr.equals("0")) {
+        if (respStr.equals("1")) {
             return new Pair<>(new Result(false, null, from, 0), result);
         } else {
             return new Pair<>(new Result(true, message, from, 1), result);

@@ -161,8 +161,8 @@ public class DBVirde {
 
         /** GPX **/
 
-    public void selectGpx (long idServer, long idTracking) {
-        new DBVirdeSelectGpx().execute(idServer, idTracking);
+    public void selectGpx (int idServer, String idTracking) {
+        new DBVirdeSelectGpx().execute(String.valueOf(idServer), idTracking);
     }
 
     public void selectGpxsToSync () {
@@ -447,12 +447,12 @@ public class DBVirde {
 
         /** GPX **/
 
-    class DBVirdeSelectGpx extends AsyncTask<Long, Void, Pair<Result, ArrayList<ItemGpx>>> {
+    class DBVirdeSelectGpx extends AsyncTask<String, Void, Pair<Result, ArrayList<ItemGpx>>> {
 
         @Override
-        protected Pair<Result, ArrayList<ItemGpx>> doInBackground(Long... longs) {
+        protected Pair<Result, ArrayList<ItemGpx>> doInBackground(String... params) {
             DBApi apiClient = DBApi.getInstance((Context) context);
-            return apiClient.selectGpx(longs[0], longs[1]);
+            return apiClient.selectGpx(Integer.valueOf(params[0]), params[1]);
         }
 
         @Override

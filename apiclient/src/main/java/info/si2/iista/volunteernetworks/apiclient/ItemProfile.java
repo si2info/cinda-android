@@ -36,7 +36,7 @@ public class ItemProfile implements Parcelable {
 
     private String description, image;
 
-    private long tracking;
+    private String tracking;
 
     public int getId() {
         return id;
@@ -118,11 +118,11 @@ public class ItemProfile implements Parcelable {
         this.image = image;
     }
 
-    public long getTracking() {
+    public String getTracking() {
         return tracking;
     }
 
-    public void setTracking(long tracking) {
+    public void setTracking(String tracking) {
         this.tracking = tracking;
     }
 
@@ -132,7 +132,7 @@ public class ItemProfile implements Parcelable {
         createDate = tmpCreateDate != -1 ? new Date(tmpCreateDate) : null;
         authorId = in.readInt();
         username = in.readString();
-        tracking = in.readLong();
+        tracking = in.readString();
     }
 
     @Override
@@ -146,7 +146,7 @@ public class ItemProfile implements Parcelable {
         dest.writeLong(createDate != null ? createDate.getTime() : -1L);
         dest.writeInt(authorId);
         dest.writeString(username);
-        dest.writeLong(tracking);
+        dest.writeString(tracking);
     }
 
     @SuppressWarnings("unused")

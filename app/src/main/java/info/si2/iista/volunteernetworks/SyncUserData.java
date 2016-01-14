@@ -168,9 +168,9 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
     public void syncTrackings () {
 
         for (ItemSync item : items) {
-            if (item.getId() > 10000 && !item.isSync()) {
-                long idServer = Util.getIntPreference(this, getString(R.string.id_server));
-                long idTracking = item.getId();
+            if (!item.getIdGpx().equals("0") && !item.isSync()) {
+                int idServer = Util.getIntPreference(this, getString(R.string.id_server));
+                String idTracking = item.getIdGpx();
                 DBVirde.getInstance(this).selectGpx(idServer, idTracking);
             }
         }
@@ -348,13 +348,12 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
             case Virde.FROM_SEND_GPX_CONTRIBUTION:
 
                 // Id item sent
-                String idGpxSt = (String) result.second.get(0);
-                long idGpx = Long.valueOf(idGpxSt);
+                String idGpx = (String) result.second.get(0);
 
                 // Search item position
                 for (int i=0; i<items.size(); i++) {
-                    long id = items.get(i).getId();
-                    if (idGpx == id){
+                    String id = items.get(i).getIdGpx();
+                    if (idGpx.equals(id)){
                         position = i;
                         break;
                     }

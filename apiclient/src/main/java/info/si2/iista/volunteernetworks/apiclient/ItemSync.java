@@ -8,6 +8,7 @@ package info.si2.iista.volunteernetworks.apiclient;
 public class ItemSync {
 
     private long id;
+    private String idGpx;
     private int type;
     private String imgCampaign, title, url, date;
     private boolean isSync, isSynchronizing;
@@ -29,6 +30,14 @@ public class ItemSync {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getIdGpx() {
+        return idGpx;
+    }
+
+    public void setIdGpx(String idGpx) {
+        this.idGpx = idGpx;
     }
 
     public boolean isSync() {

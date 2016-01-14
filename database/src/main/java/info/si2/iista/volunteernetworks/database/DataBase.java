@@ -87,7 +87,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_GPX =
             "CREATE TABLE " + DBGpxContribution.TABLE + " (" +
-                    DBGpxContribution.ID + TYPE_LONG + PRIMARY_KEY + COMMA_SEP +
+                    DBGpxContribution.ID + TYPE_TEXT + PRIMARY_KEY + COMMA_SEP +
                     DBGpxContribution.ID_SERVER + TYPE_INT + COMMA_SEP +
                     DBGpxContribution.ID_CAMPAIGN + TYPE_INT + COMMA_SEP +
                     DBGpxContribution.DIR + TYPE_TEXT + COMMA_SEP +

@@ -315,11 +315,11 @@ public class Tracking extends AppCompatActivity implements OnApiClientResult, On
 
         Date now = new Date();
         int idUser = Util.getIntPreference(this, getString(R.string.idUser));
-        String idGpx = idUser + Util.parseDateToString("yyyyMMddHHmmss", now);
+        String idGpx = idUser + Util.parseDateToString("-yyyyMMddHHmmss", now);
         String fileDir = Util.saveGpxFile(Tracking.this, locationsRecorded, idGpx);
 
         ItemGpx gpx = new ItemGpx();
-        gpx.setId(Long.valueOf(idGpx));
+        gpx.setId(idGpx);
         gpx.setDir(fileDir);
         gpx.setDate(now);
         gpx.setIdServer(Util.getIntPreference(this, getString(R.string.id_server)));

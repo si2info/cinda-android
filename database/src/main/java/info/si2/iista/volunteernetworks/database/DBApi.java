@@ -682,7 +682,7 @@ public class DBApi {
                 dir = URLEncoder.encode(item.getDir(), "UTF-8");
 
             String sql = "INSERT OR REPLACE INTO " + DBGpxContribution.TABLE + " " +
-                    "VALUES (" + item.getId() + "," + item.getIdServer() + "," + item.getIdCampaign() + ",'" +
+                    "VALUES ('" + item.getId() + "'," + item.getIdServer() + "," + item.getIdCampaign() + ",'" +
                     dir + "','" + parseDateToString("dd/MM/yyyy 'a las' HH:mm", item.getDate()) + "','" + item.isSync() + "')";
 
             database.execSQL(sql);
@@ -726,7 +726,7 @@ public class DBApi {
                         DBGpxContribution.DIR + "='" + dir + "'," +
                         DBGpxContribution.DATE + "='" + dateToString(item.getDate()) + "'," +
                         DBGpxContribution.IS_SYNC + "='" + item.isSync() + "' " +
-                        "WHERE " + DBGpxContribution.ID + "=" + item.getId();
+                        "WHERE " + DBGpxContribution.ID + "='" + item.getId() + "'";
 
                 database.execSQL(sql);
             }
@@ -759,7 +759,7 @@ public class DBApi {
 
             sql = "UPDATE " + DBGpxContribution.TABLE + " " +
                     "SET " + DBGpxContribution.IS_SYNC + "='" + item.isSync() + "' " +
-                    "WHERE " + DBGpxContribution.ID + "=" + item.getId();
+                    "WHERE " + DBGpxContribution.ID + "='" + item.getId() + "'";
 
             database.execSQL(sql);
 
@@ -772,7 +772,7 @@ public class DBApi {
 
     }
 
-    public synchronized Pair<Result, ArrayList<ItemGpx>> selectGpx (long idServer, long id) {
+    public synchronized Pair<Result, ArrayList<ItemGpx>> selectGpx (int idServer, String id) {
 
         int from = DBVirde.FROM_SELECT_GPX;
         ArrayList<ItemGpx> result = new ArrayList<>();
@@ -780,7 +780,7 @@ public class DBApi {
         String sql;
         sql = "SELECT * FROM " + DBGpxContribution.TABLE +
                 " WHERE " + DBGpxContribution.ID_SERVER + " = " + idServer +
-                " AND " + DBGpxContribution.ID + " = " + id;
+                " AND " + DBGpxContribution.ID + " = '" + id + "'";
 
         open();
 
@@ -846,7 +846,7 @@ public class DBApi {
 
             item.setType(Item.SYNC);
             item.setImgCampaign("");
-            item.setId(c.getLong(0));
+            item.setIdGpx(c.getString(0));
             item.setDate(c.getString(1));
             item.setTitle(URLDecoder.decode(c.getString(2), "UTF-8"));
             item.setUrl(URLDecoder.decode(c.getString(3), "UTF-8"));
@@ -865,7 +865,7 @@ public class DBApi {
         ItemGpx item = new ItemGpx();
 
         try {
-            item.setId(c.getLong(0));
+            item.setId(c.getString(0));
             item.setIdServer(c.getInt(1));
             item.setIdCampaign(c.getInt(2));
             item.setDir(URLDecoder.decode(c.getString(3), "UTF-8"));

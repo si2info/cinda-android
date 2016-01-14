@@ -293,7 +293,7 @@ public class Profile extends AppCompatActivity implements OnApiClientResult {
 
                     for (Object object : result.second) {
                         ItemProfile item = (ItemProfile)object;
-                        if (item.getTracking() == 0) { // Contributions
+                        if (item.getTracking().equals("0")) { // Contributions
                             contributionsArray.add(item);
                         } else { // Tracking
                             tracking.add(item);
