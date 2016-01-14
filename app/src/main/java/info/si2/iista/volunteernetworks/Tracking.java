@@ -314,7 +314,7 @@ public class Tracking extends AppCompatActivity implements OnApiClientResult, On
     public ItemGpx makeItemGpx () {
 
         Date now = new Date();
-        String idUser = Util.getPreference(this, getString(R.string.idUser));
+        int idUser = Util.getIntPreference(this, getString(R.string.idUser));
         String idGpx = idUser + Util.parseDateToString("yyyyMMddHHmmss", now);
         String fileDir = Util.saveGpxFile(Tracking.this, locationsRecorded, idGpx);
 
@@ -324,7 +324,7 @@ public class Tracking extends AppCompatActivity implements OnApiClientResult, On
         gpx.setDate(now);
         gpx.setIdServer(Util.getIntPreference(this, getString(R.string.id_server)));
         gpx.setIdCampaign(Util.getIntPreference(this, getString(R.string.idCampaignTracking)));
-        gpx.setIdVolunteer(Integer.valueOf(idUser));
+        gpx.setIdVolunteer(idUser);
         gpx.setSync(false);
 
         // Clear map and locations

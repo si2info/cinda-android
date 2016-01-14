@@ -5,7 +5,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -46,7 +45,6 @@ public class Profile extends AppCompatActivity implements OnApiClientResult {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private CollapsingToolbarLayout collapsingToolbarLayout;
-    private CoordinatorLayout coordinatorLayout;
     private ViewPager viewPager;
     private ImageView headerImage, profileImage;
     private TextView username, contributions, textError;
@@ -111,7 +109,6 @@ public class Profile extends AppCompatActivity implements OnApiClientResult {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
@@ -147,54 +144,65 @@ public class Profile extends AppCompatActivity implements OnApiClientResult {
     private void setupUserDeatail () {
 
         // Profile image
-        Picasso.with(this)
-                .load(user.getImage())
-                .transform(new CircleTransform())
-                .into(profileImage);
+        if (user.getImage() != null) {
+            if (!user.getImage().equals("")) {
+                Picasso.with(this)
+                        .load(user.getImage())
+                        .transform(new CircleTransform())
+                        .into(profileImage);
+            } else {
+                Picasso.with(this)
+                        .load(R.drawable.test_logo_si2)
+                        .transform(new CircleTransform())
+                        .into(profileImage);
+            }
+        }
 
         // Header image
-        Picasso.with(this).load(user.getImage())
-                .transform(new BlurTransformation(this, 20))
-                .into(headerImage, new Callback() {
-                    @Override
-                    public void onSuccess() {
-
-                        Bitmap bitmap = ((BitmapDrawable)headerImage.getDrawable()).getBitmap();
-
-                        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                            @SuppressWarnings("ResourceType")
+        if (user.getImage() != null) {
+            if (!user.getImage().equals("")) {
+                Picasso.with(this).load(user.getImage())
+                        .transform(new BlurTransformation(this, 20))
+                        .into(headerImage, new Callback() {
                             @Override
-                            public void onGenerated(Palette palette) {
+                            public void onSuccess() {
 
-                                Palette.Swatch swatch = palette.getVibrantSwatch();
-                                Palette.Swatch swatchDark = palette.getDarkVibrantSwatch();
+                                Bitmap bitmap = ((BitmapDrawable) headerImage.getDrawable()).getBitmap();
 
-                                int vibrant = 0x000000;
-                                int vibrantDark = 0x000000;
-                                if (swatch != null && swatchDark != null) {
-                                    vibrant = swatch.getRgb();
-                                    vibrantDark = swatchDark.getRgb();
-                                }
-                                int vibrantColor = palette.getVibrantColor(vibrant);
-                                int vibrantDarkColor = palette.getDarkVibrantColor(vibrantDark);
+                                Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                                    @SuppressWarnings("ResourceType")
+                                    @Override
+                                    public void onGenerated(Palette palette) {
 
-                                collapsingToolbarLayout.setContentScrimColor(vibrantColor);
-                                collapsingToolbarLayout.setStatusBarScrimColor(vibrantDarkColor);
+                                        Palette.Swatch swatch = palette.getVibrantSwatch();
+                                        Palette.Swatch swatchDark = palette.getDarkVibrantSwatch();
 
-                                coordinatorLayout.setBackgroundColor(vibrantDarkColor);
+                                        int vibrant = 0x000000;
+                                        int vibrantDark = 0x000000;
+                                        if (swatch != null && swatchDark != null) {
+                                            vibrant = swatch.getRgb();
+                                            vibrantDark = swatchDark.getRgb();
+                                        }
+                                        int vibrantColor = palette.getVibrantColor(vibrant);
+                                        int vibrantDarkColor = palette.getDarkVibrantColor(vibrantDark);
+
+                                        collapsingToolbarLayout.setContentScrimColor(vibrantColor);
+                                        collapsingToolbarLayout.setStatusBarScrimColor(vibrantDarkColor);
+
+                                    }
+                                });
+
+                            }
+
+                            @Override
+                            public void onError() {
+
                             }
                         });
-
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
+            }
+        }
 
         username.setText(user.getUsername());
-        contributions.setText(String.format(getString(R.string.n_contributions), user.getnContributions()));
 
     }
 
@@ -279,20 +287,24 @@ public class Profile extends AppCompatActivity implements OnApiClientResult {
                     textError.setVisibility(View.VISIBLE);
                 } else {
 
-                    ArrayList<ItemProfile> contributions = new ArrayList<>();
+                    int nContributions = result.second.size();
+                    ArrayList<ItemProfile> contributionsArray = new ArrayList<>();
                     ArrayList<ItemProfile> tracking = new ArrayList<>();
 
                     for (Object object : result.second) {
                         ItemProfile item = (ItemProfile)object;
                         if (item.getTracking() == 0) { // Contributions
-                            contributions.add(item);
+                            contributionsArray.add(item);
                         } else { // Tracking
                             tracking.add(item);
                         }
                     }
 
+                    // nContributions
+                    contributions.setText(String.format(getString(R.string.n_contributions), nContributions));
+
                     // ViewPager
-                    setupComponents(contributions, tracking);
+                    setupComponents(contributionsArray, tracking);
 
                 }
                 progressBar.setVisibility(View.GONE);
