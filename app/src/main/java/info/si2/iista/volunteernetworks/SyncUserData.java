@@ -168,10 +168,12 @@ public class SyncUserData extends AppCompatActivity implements AdapterSyncUserDa
     public void syncTrackings () {
 
         for (ItemSync item : items) {
-            if (!item.getIdGpx().equals("0") && !item.isSync()) {
-                int idServer = Util.getIntPreference(this, getString(R.string.id_server));
-                String idTracking = item.getIdGpx();
-                DBVirde.getInstance(this).selectGpx(idServer, idTracking);
+            if (item.getIdGpx() != null) {
+                if (!item.getIdGpx().equals("0") && !item.isSync()) {
+                    int idServer = Util.getIntPreference(this, getString(R.string.id_server));
+                    String idTracking = item.getIdGpx();
+                    DBVirde.getInstance(this).selectGpx(idServer, idTracking);
+                }
             }
         }
 
