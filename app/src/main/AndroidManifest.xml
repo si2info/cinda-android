@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-
     <!-- Network -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -28,8 +27,12 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!-- Parse -->
-    <permission android:protectionLevel="signature"
-        android:name="${applicationId}.permission.C2D_MESSAGE" />
+    <permission
+        android:name="${applicationId}.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <!-- WatchFace -->
+    <uses-permission android:name="com.google.android.permission.PROVIDE_BACKGROUND" />
     <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
 
     <application
@@ -75,25 +78,26 @@
         <activity
             android:name=".Tracking"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".DictionaryValue"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme">
-
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
 
-            <meta-data android:name="android.app.searchable" android:resource="@xml/searchable"
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"
                 android:value=".DictionaryValue" />
-
         </activity>
 
         <!--  -->
-        <!--<meta-data android:name="android.app.searchable"-->
-            <!--android:resource="@xml/searchable" />-->
+        <!-- <meta-data android:name="android.app.searchable" -->
+        <!-- android:resource="@xml/searchable" /> -->
+
 
         <!-- Maps -->
         <meta-data
@@ -106,26 +110,23 @@
             android:value="4af8e192cb7f8db7bb39d229cbf7bc628704d24e" />
 
         <!-- Services -->
-        <service android:name=".TrackingService"
+        <service
+            android:name=".TrackingService"
+            android:enabled="true"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:enabled="true"/>
+            android:label="@string/app_name" />
 
         <receiver android:name=".NotificationReceiver" />
 
-        <meta-data android:name="com.google.android.gms.version"
+        <meta-data
+            android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-        <service
-            android:name=".wear.ListenerService">
-            <intent-filter>
-                <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
-            </intent-filter>
-        </service>
 
         <!-- Parse -->
         <service android:name="com.parse.PushService" />
-        <receiver android:name=".push.PushReceiver"
+
+        <receiver
+            android:name=".push.PushReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />
@@ -133,16 +134,22 @@
                 <action android:name="com.parse.push.intent.OPEN" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.parse.GcmBroadcastReceiver"
+        <receiver
+            android:name="com.parse.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-                <!--<category android:name="info.si2.iista.volunteernetworks" />-->
+                <!-- <category android:name="info.si2.iista.volunteernetworks" /> -->
                 <category android:name="${applicationId}" />
             </intent-filter>
         </receiver>
 
+        <service android:name=".wear.ListenerService">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
