@@ -26,6 +26,16 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.WindowInsets;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,6 +65,8 @@ public class MainActivity extends CanvasWatchFaceService {
     String server;
     int canvasH;
     int canvasW;
+
+    GoogleApiClient googleClient;
 
     private static final Typeface NORMAL_TYPEFACE =
             Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
@@ -226,6 +238,32 @@ public class MainActivity extends CanvasWatchFaceService {
             mPointS.setColor(getResources().getColor(R.color.dark_green));
 
             mTime = new Time();
+
+
+            googleClient = new GoogleApiClient.Builder(getBaseContext())
+                    .addApi(Wearable.API)
+                    .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                        @Override
+                        public void onConnected(Bundle bundle) {
+
+                        }
+
+                        @Override
+                        public void onConnectionSuspended(int i) {
+
+                        }
+                    })
+                    .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(ConnectionResult connectionResult) {
+
+                        }
+                    })
+                    .build();
+
+            googleClient.connect();
+
+            new SendToDataLayerThread("/wear", "on").start();
         }
 
         @Override
@@ -284,7 +322,10 @@ public class MainActivity extends CanvasWatchFaceService {
 
             // Load resources that have alternate values for round watches.
             Resources resources = MainActivity.this.getResources();
-            boolean isRound = insets.isRound();
+            boolean isRound = false;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH) {
+                isRound = insets.isRound();
+            }
 
             mXOffset = resources.getDimension(R.dimen.digital_x_offset);
 
@@ -554,6 +595,11 @@ public class MainActivity extends CanvasWatchFaceService {
             if (mTouch)
                 canvas.drawCircle(mTouchX,mTouchY, 30, mTouchCirclePaint);
 
+
+            if (mTime.minute == 00 && mTime.second == 00) {
+                new SendToDataLayerThread("/wear","update");
+            }
+
         }
 
         /**
@@ -720,5 +766,34 @@ public class MainActivity extends CanvasWatchFaceService {
         Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width,
                 height, filter);
         return newBitmap;
+    }
+
+    // Wear AsyntTask
+    private class SendToDataLayerThread extends Thread {
+        String path;
+        String message;
+
+        // Constructor to send a message to the data layer
+        SendToDataLayerThread(String p, String msg) {
+            path = p;
+            message = msg;
+        }
+
+        public void run() {
+
+
+
+            NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(googleClient).await();
+            for (Node node : nodes.getNodes()) {
+                MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(googleClient, node.getId(), path, message.getBytes()).await();
+                if (result.getStatus().isSuccess()) {
+                    Log.v("myTag", "Message: {" + message + "} sent to: " + node.getDisplayName());
+                }
+                else {
+                    // Log an error
+                    Log.v("myTag", "ERROR: failed to send Message");
+                }
+            }
+        }
     }
 }

@@ -31,7 +31,6 @@ public class ListenerService extends WearableListenerService {
                 if (path.equals(WEARABLE_DATA_PATH)) {}
                 dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
 
-
                 // Broadcast DataMap contents to wearable activity for display
                 // The content has the golf hole number and distances to the front,
                 // middle and back pin placements.
