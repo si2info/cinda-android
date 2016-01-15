@@ -265,25 +265,25 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
         for (int i=0; i<items.size(); i++) {
 
+            ItemModel itemModel = items.get(i);
+
             // Construcción de la vista
             View view;
             boolean lastItem = (i == items.size()-1);
             if (i != 0) {
-                view = Model.getItem(Contribution.this, items.get(i), items.get(i-1).getId(), lastItem, isDetail);
+                view = Model.getItem(Contribution.this, itemModel, items.get(i-1).getId(), lastItem, isDetail);
             } else {
-                view = Model.getItem(Contribution.this, items.get(i), -1, lastItem, isDetail);
+                view = Model.getItem(Contribution.this, itemModel, -1, lastItem, isDetail);
             }
 
             if (view != null) {
 
-                String tag = view.getTag().toString();
-
                 // Guardar View de location para asignar después
-                if (tag.equals(ItemModel.ITEM_GEOPOS))
+                if (itemModel.getFieldType().equals(ItemModel.ITEM_GEOPOS))
                     viewLocation = (RelativeLayout) view;
 
                 // Test dictionary
-                if (tag.equals(ItemModel.ITEM_DICTIONARY)) {
+                if (itemModel.getFieldType().equals(ItemModel.ITEM_DICTIONARY)) {
                     viewDictionary = (RelativeLayout) view;
                     dictionary = new Dictionary();
                     dictionary.setCode(Integer.valueOf(items.get(i).getFieldOptions()));
@@ -310,7 +310,7 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
     public ItemModelValue searchModelValue (ArrayList<ItemModel> copyModel, ArrayList<ItemModelValue> contribution, String key) {
 
         for (int i=0; i<copyModel.size(); i++) {
-            if (copyModel.get(i).getFieldType().equals(key)) {
+            if (copyModel.get(i).getFieldName().equals(key)) {
                 for (int j=0; j<contribution.size(); j++) {
                     if (copyModel.get(i).getFieldName().equals(contribution.get(j).getField())){
                         copyModel.remove(i);
@@ -342,10 +342,18 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
         for (int i=0; i<layout.getChildCount(); i++) {
             RelativeLayout view = (RelativeLayout) layout.getChildAt(i);
             String tag = view.getTag().toString();
+            String toSearch = "";
             ItemModelValue value = searchModelValue(copyModel, contribution, tag);
 
+            for (ItemModel itemModel : model) {
+                if (itemModel.getFieldName().equals(tag)) {
+                    toSearch = itemModel.getFieldType();
+                    break;
+                }
+            }
+
             if (value != null) {
-                switch (tag) {
+                switch (toSearch) {
                     case ItemModel.ITEM_EDIT_TEXT:
                     case ItemModel.ITEM_EDIT_TEXT_BIG:
                     case ItemModel.ITEM_EDIT_NUMBER:
@@ -420,10 +428,18 @@ public class Contribution extends AppCompatActivity implements OnApiClientResult
 
             RelativeLayout view = (RelativeLayout) layout.getChildAt(i);
             String tag = view.getTag().toString();
+            String toSearch = "";
             String[] data;
             String key;
 
-            switch (tag) {
+            for (ItemModel itemModel : model) {
+                if (itemModel.getFieldName().equals(tag)) {
+                    toSearch = itemModel.getFieldType();
+                    break;
+                }
+            }
+
+            switch (toSearch) {
                 case ItemModel.ITEM_EDIT_TEXT:
                 case ItemModel.ITEM_EDIT_TEXT_BIG:
                 case ItemModel.ITEM_EDIT_NUMBER:

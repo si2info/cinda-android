@@ -139,7 +139,7 @@ public class Model {
 
         modelDictionary.setLayoutParams(params);
 
-        modelDictionary.setTag(item.getFieldType());
+        modelDictionary.setTag(item.getFieldName());
         modelDictionary.setId(item.getId());
 
         return modelDictionary;
@@ -178,7 +178,7 @@ public class Model {
 
         modelDateTime.setLayoutParams(params);
 
-        modelDateTime.setTag(item.getFieldType());
+        modelDateTime.setTag(item.getFieldName());
         modelDateTime.setId(item.getId());
 
         return modelDateTime;
@@ -214,7 +214,7 @@ public class Model {
 
         modelDescription.setLayoutParams(params);
 
-        modelDescription.setTag(item.getFieldType());
+        modelDescription.setTag(item.getFieldName());
         modelDescription.setId(item.getId());
 
         return modelDescription;
@@ -284,7 +284,7 @@ public class Model {
 
         modelEditText.setLayoutParams(params);
 
-        modelEditText.setTag(item.getFieldType());
+        modelEditText.setTag(item.getFieldName());
         modelEditText.setId(item.getId());
 
         return modelEditText;
@@ -324,7 +324,7 @@ public class Model {
         }
 
         // ImageView - Map Image
-        imgMap.setTag(item.getFieldType());
+        imgMap.setTag(item.getFieldName());
 
         // ImageView - OnClick
         if (!isDetail) {
@@ -348,7 +348,7 @@ public class Model {
 
         modelMap.setLayoutParams(params);
 
-        modelMap.setTag(item.getFieldType());
+        modelMap.setTag(item.getFieldName());
         modelMap.setId(item.getId());
 
         return modelMap;
@@ -411,7 +411,7 @@ public class Model {
         modelImage.setLayoutParams(params);
 
         modelImage.setId(item.getId());
-        modelImage.setTag(item.getFieldType());
+        modelImage.setTag(item.getFieldName());
 
         return modelImage;
 
@@ -477,7 +477,7 @@ public class Model {
         modelSpinner.setLayoutParams(params);
 
         modelSpinner.setId(item.getId());
-        modelSpinner.setTag(item.getFieldType());
+        modelSpinner.setTag(item.getFieldName());
 
         return modelSpinner;
 
@@ -508,7 +508,7 @@ public class Model {
         // Texto contendor de la fecha
         textDate.setText(todayString);
         textDate.setTypeface(Util.getRobotoLight(c));
-        textDate.setTag(item.getFieldType());
+        textDate.setTag(item.getFieldName());
 
         final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -568,7 +568,7 @@ public class Model {
 
         modelDate.setLayoutParams(params);
 
-        modelDate.setTag(item.getFieldType());
+        modelDate.setTag(item.getFieldName());
         modelDate.setId(item.getId());
 
         return modelDate;

@@ -187,17 +187,22 @@ public class ApiClient {
                     .setDateFormat("yyyy-MM-dd");
             Gson gson = gsonBuilder.create();
 
-            ItemCampaign item = gson.fromJson(respStr, ItemCampaign.class);
-            item.setType(Item.CAMPAIGN);
+            if (isJSONValid(respStr)) {
 
-            Collections.addAll(result, item);
+                ItemCampaign item = gson.fromJson(respStr, ItemCampaign.class);
+                item.setType(Item.CAMPAIGN);
 
-            return new Pair<>(new Result(false, null, from, 0), result);
+                Collections.addAll(result, item);
+
+                return new Pair<>(new Result(false, null, from, 0), result);
+
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
-            return new Pair<>(new Result(true, message, from, 0), null);
         }
+
+        return new Pair<>(new Result(true, message, from, 0), null);
 
     }
 
