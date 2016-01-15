@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -33,7 +34,26 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import info.si2.iista.volunteernetworks.apiclient.ItemCampaign;
 import info.si2.iista.volunteernetworks.apiclient.ItemServer;
@@ -43,6 +63,8 @@ import info.si2.iista.volunteernetworks.apiclient.Virde;
 import info.si2.iista.volunteernetworks.database.DBVirde;
 import info.si2.iista.volunteernetworks.database.OnDBApiResult;
 import info.si2.iista.volunteernetworks.util.Util;
+import info.si2.iista.volunteernetworks.wear.ListenerService;
+import info.si2.iista.volunteernetworks.wear.WearService;
 
 public class MainActivity extends AppCompatActivity implements AdapterHome.ClickListener, OnApiClientResult,
         OnDBApiResult, SwipeRefreshLayout.OnRefreshListener {
@@ -82,6 +104,16 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
     // Request
     private static final int PERMISSIONS_REQUEST_GET_ACCOUNTS = 1;
 
+    // Wear
+    static final String realtime = "http://virde.dev.si2soluciones.es/cindaAPI/realtime/watchface/?dev=true";
+    static final String server = "http://virde.dev.si2soluciones.es/cindaAPI/server/info/";
+    static final String WEARABLE_DATA_PATH = "/wearable_data";
+
+    static DataMap dataMap;
+    static GoogleApiClient googleClient;
+    static Calendar date = new GregorianCalendar();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +151,46 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
             initApplication();
         }
 
+        // Wear
+        // Build a new GoogleApiClient for the Wearable API
+        googleClient = new GoogleApiClient.Builder(this)
+                .addApiIfAvailable(Wearable.API)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(Bundle bundle) {
+
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int i) {
+
+                    }
+                })
+                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+                    }
+                })
+                .build();
+
+    }
+
+    // Connect to the data layer when the Activity starts
+    @Override
+    protected void onStart() {
+        super.onStart();
+        googleClient.connect();
+        //new GetServerName().execute();
+    }
+
+    // Disconnect from the data layer when the Activity stops
+    @Override
+    protected void onStop() {
+        if (null != googleClient && googleClient.isConnected()) {
+            googleClient.disconnect();
+        }
+        super.onStop();
     }
 
     private void initApplication () {
@@ -288,9 +360,13 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
     @Override
     public void onRefresh() {
 
+        if (!googleClient.isConnected())
+            googleClient.connect();
+
         mSwipeRefreshLayout.setEnabled(false);
         Virde.getInstance(this).getListCampaigns(Util.getPreference(this, getString(R.string.token)));
 
+        new GetServerName().execute();
     }
 
     /**
@@ -827,5 +903,119 @@ public class MainActivity extends AppCompatActivity implements AdapterHome.Click
     protected void onResume() {
         super.onResume();
         Util.restoreModelPreferences(this);
+    }
+
+
+
+    // Wear AsyntTask
+    private static class SendToDataLayerThread extends Thread {
+        String path;
+        String message;
+
+        // Constructor to send a message to the data layer
+        SendToDataLayerThread(String p, String msg) {
+            path = p;
+            message = msg;
+        }
+
+        public void run() {
+
+            if (googleClient != null) {
+                PutDataMapRequest putDMR = PutDataMapRequest.create(path);
+                putDMR.getDataMap().putAll(dataMap);
+                PutDataRequest request = putDMR.asPutDataRequest();
+                DataApi.DataItemResult result = Wearable.DataApi.putDataItem(googleClient, request).await();
+                if (result.getStatus().isSuccess()) {
+                    Log.v("myTag", "DataMap: " + dataMap + " sent successfully to data layer ");
+                } else {
+                    // Log an error
+                    Log.v("myTag", "ERROR: failed to send DataMap to data layer");
+
+                }
+            }
+        }
+    }
+
+    private static class Realtime extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            OkHttpClient client = new OkHttpClient();
+            Response resp = null;
+            String result = null;
+
+            Request request = new Request.Builder()
+                    .url(realtime)
+                    .build();
+
+            try {
+                resp = client.newCall(request).execute();
+                result = resp.body().string();
+            } catch (IOException e) {
+                Log.e("Call realtime", e.toString());
+                e.printStackTrace();
+            }
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            dataMap.putString("json", s);
+            new SendToDataLayerThread(WEARABLE_DATA_PATH, dataMap.toString()).start();
+            // new SendToDataLayerThread("/message_path", s).start();
+        }
+    }
+
+    public static class GetServerName extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            OkHttpClient client = new OkHttpClient();
+            Response resp = null;
+            String result = null;
+
+            Request request = new Request.Builder()
+                    .url(server)
+                    .build();
+
+            try {
+                resp = client.newCall(request).execute();
+                result = resp.body().string();
+            } catch (IOException e) {
+                Log.e("Call realtime", e.toString());
+                e.printStackTrace();
+            }
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            try {
+                JSONObject obj = new JSONObject(s);
+                dataMap = new DataMap();
+                dataMap.putString("serverHour", date.getTime().toString());
+                dataMap.putString("serverName", obj.getString("name"));
+                new Realtime().execute();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -1,229 +1,205 @@
 package info.si2.iista.volunteernetworks.wear;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.app.Service;
+import android.bluetooth.BluetoothClass;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import java.io.ByteArrayOutputStream;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.concurrent.TimeUnit;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
-import info.si2.iista.volunteernetworks.apiclient.ItemContribution;
+import info.si2.iista.volunteernetworks.MainActivity;
 
 /**
- * Developer: Jose Miguel Mingorance
- * Date: 11/11/15
- * Project: Virde
+ * Created by si2soluciones on 22/12/15.
  */
-public class ListenerService extends WearableListenerService implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class ListenerService extends WearableListenerService {
 
-    // HOST
-    private static final String HOST = "http://virde.dev.si2soluciones.es/";
+    // Wear
+    static final String realtime = "http://virde.dev.si2soluciones.es/cindaAPI/realtime/watchface/?dev=true";
+    static final String server = "http://virde.dev.si2soluciones.es/cindaAPI/server/info/";
+    static final String WEARABLE_DATA_PATH = "/wearable_data";
 
-    // URLs
-    private static final String URL_NEAR_ACTIVITY = "API/realtime/nearby-activity/";
-    private static final String URL_NEAR_CONTRIBUTIONS = "API/realtime/contributions/";
-
-    // WEAR ACTIONS
-    private static final String ACTION_NEAR_ACTIVITY = "activity";
-    private static final String ACTION_NEAR_CONTRIBUTIONS = "contributions";
-
-    private GoogleApiClient mGoogleApiClient;
-
-    // Params to get near campaigns and contributions
-    private LatLng latLng;
-    private static final int RADIUS = 1000;
-    private static int count = 0;
+    static DataMap dataMap;
+    static GoogleApiClient googleClient;
+    static Calendar date = new GregorianCalendar();
 
     @Override
     public void onCreate() {
         super.onCreate();
+        googleClient = new GoogleApiClient.Builder(this)
+                .addApiIfAvailable(Wearable.API)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(Bundle bundle) {
 
-        mGoogleApiClient  = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Wearable.API)
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int i) {
+
+                    }
+                })
+                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+                    }
+                })
                 .build();
 
-        mGoogleApiClient.connect();
-
-        latLng = new LatLng(37.157602, -3.585306);
-
+        googleClient.connect();
     }
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
 
-        switch (messageEvent.getPath()) {
-            case ACTION_NEAR_ACTIVITY:
+        if (messageEvent.getPath().equals("/wear")) {
+            final String message = new String(messageEvent.getData());
+            Log.e("myTag", "Message path received on watch is: " + messageEvent.getPath());
+            Log.e("myTag", "Message received on watch is: " + message);
 
-                break;
+            new GetServerName().execute();
 
-            case ACTION_NEAR_CONTRIBUTIONS:
-                new AsyncGetContributions().execute(latLng.latitude, latLng.longitude, (double) RADIUS);
-                break;
+        }
+        else {
+            super.onMessageReceived(messageEvent);
+        }
+    }
+
+    // Wear AsyntTask
+    private static class SendToDataLayerThread extends Thread {
+        String path;
+        String message;
+
+        // Constructor to send a message to the data layer
+        SendToDataLayerThread(String p, String msg) {
+            path = p;
+            message = msg;
         }
 
-    }
+        public void run() {
 
-    /** GOOGLE API CLIENT **/
-    @Override
-    public void onConnected(Bundle bundle) {
-        // TODO revisar posición
-//        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-//                mGoogleApiClient);
-//
-//        if (mLastLocation != null) {
-//
-//            double lat = mLastLocation.getLatitude();
-//            double lng = mLastLocation.getLongitude();
-//
-//            if (latLng == null)
-//                latLng = new LatLng(lat, lng);
-//
-//        }
 
-    }
+            if (googleClient != null) {
+                PutDataMapRequest putDMR = PutDataMapRequest.create(path);
+                putDMR.getDataMap().putAll(dataMap);
+                PutDataRequest request = putDMR.asPutDataRequest();
+                DataApi.DataItemResult result = Wearable.DataApi.putDataItem(googleClient, request).await();
+                if (result.getStatus().isSuccess()) {
+                    Log.v("myTag", "DataMap: " + dataMap + " sent successfully to data layer ");
+                } else {
+                    // Log an error
+                    Log.v("myTag", "ERROR: failed to send DataMap to data layer");
 
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-    }
-
-    /** CLIENT **/
-    class AsyncGetContributions extends AsyncTask<Double, Void, ArrayList<ItemContribution>> {
-
-        @Override
-        protected ArrayList<ItemContribution> doInBackground(Double... params) {
-            return getNearContributions(params[0], params[1], params[2]);
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<ItemContribution> itemContributions) {
-
-            String imageMap = "http://maps.googleapis.com/maps/api/staticmap?key=" + "AIzaSyAWL5TfqsVQJSD8iKEgEXn3zyGu0lipBmQ" +
-                    "&center=" + String.valueOf(latLng.latitude + ","
-                    + String.valueOf(latLng.longitude) +
-                    "&zoom=14&size=240x240" + "&scale=1&maptype=roadmap" +
-                    "&markers=icon:http://app.unidogs.es/images/wear/marker_propio.png|" +
-                    String.valueOf(latLng.latitude) + "," + String.valueOf(latLng.longitude));
-
-            // Añadir markers
-            for (ItemContribution item : itemContributions) {
-
-                String[] pos = item.getGeopos().split(",");
-                imageMap += "&markers=" + pos[0] + "," + pos[1];
-
+                }
             }
-
-            // TODO
-            imageMap = "http://maps.googleapis.com/maps/api/staticmap?key=AIzaSyAWL5TfqsVQJSD8iKEgEXn3zyGu0lipBmQ&center=37.157602,-3.585306&zoom=14&size=240x240&scale=1&maptype=roadmap&markers=icon:http://app.unidogs.es/images/wear/marker_propio.png|37.157602,-3.585306";
-
-            // Carga de imagen mediante Picasso y envío a Wear
-            Picasso.with(ListenerService.this).load(imageMap).into(new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-
-                    PutDataMapRequest dataMap = PutDataMapRequest.create("/Contributions");
-                    dataMap.getDataMap().putAsset("assetContributions", createAssetFromBitmap(bitmap));
-                    dataMap.getDataMap().putInt("count", count);
-                    count++;
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                }
-
-            });
-
-
-
         }
-
     }
 
-    public ArrayList<ItemContribution> getNearContributions (Double lat, Double lng, Double radio) {
+    private static class Realtime extends AsyncTask<Void, Void, String> {
 
-        ArrayList<ItemContribution> result = new ArrayList<>();
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
-        OkHttpClient client = getOkHttpClient();
-        RequestBody formBody = new FormEncodingBuilder()
-                .add("geopos", String.valueOf(lat) + "," + String.valueOf(lng))
-                .add("radius", String.valueOf(radio))
-                .build();
+        @Override
+        protected String doInBackground(Void... params) {
+            OkHttpClient client = new OkHttpClient();
+            Response resp = null;
+            String result = null;
 
-        Request request = new Request.Builder()
-                .url(HOST + URL_NEAR_CONTRIBUTIONS)
-                .post(formBody)
-                .build();
+            Request request = new Request.Builder()
+                    .url(realtime)
+                    .build();
 
-        try {
-
-            Response response = client.newCall(request).execute();
-            String respStr  = response.body().string();
-
-            GsonBuilder gsonBuilder = new GsonBuilder()
-                    .setDateFormat("yyyy-MM-dd HH:mm:ss");
-            Gson gson = gsonBuilder.create();
-
-            if (!respStr.equals("0")) {
-                ItemContribution[] items = gson.fromJson(respStr, ItemContribution[].class);
-                Collections.addAll(result, items);
+            try {
+                resp = client.newCall(request).execute();
+                result = resp.body().string();
+            } catch (IOException e) {
+                Log.e("Call realtime", e.toString());
+                e.printStackTrace();
             }
 
             return result;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
         }
 
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            dataMap.putString("json", s);
+            new SendToDataLayerThread(WEARABLE_DATA_PATH, dataMap.toString()).start();
+            // new SendToDataLayerThread("/message_path", s).start();
+        }
     }
 
-    private static OkHttpClient getOkHttpClient () {
+    public static class GetServerName extends AsyncTask<Void, Void, String> {
 
-        OkHttpClient client = new OkHttpClient();
-        client.setConnectTimeout(15, TimeUnit.SECONDS);
-        client.setReadTimeout(15, TimeUnit.SECONDS);
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
-        return client;
+        @Override
+        protected String doInBackground(Void... params) {
+            OkHttpClient client = new OkHttpClient();
+            Response resp = null;
+            String result = null;
 
+            Request request = new Request.Builder()
+                    .url(server)
+                    .build();
+
+            try {
+                resp = client.newCall(request).execute();
+                result = resp.body().string();
+            } catch (IOException e) {
+                Log.e("Call realtime", e.toString());
+                e.printStackTrace();
+            }
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            try {
+                JSONObject obj = new JSONObject(s);
+                dataMap = new DataMap();
+                dataMap.putString("serverHour", date.getTime().toString());
+                dataMap.putString("serverName", obj.getString("name"));
+                new Realtime().execute();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
-
-    private static Asset createAssetFromBitmap(Bitmap bitmap) {
-        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
-        return Asset.createFromBytes(byteStream.toByteArray());
-    }
-
 }

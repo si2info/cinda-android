@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- General -->
-    <color name="primary">#4CAF50</color>
-    <color name="primary_dark">#388E3C</color>
-    <color name="accent">#4CAF50</color>
-
+    <color name="background">#000000</color>
+    <color name="green">#4cb050</color>
+    <color name="dark_green">#328631</color>
+    <color name="shadow_green">#369B34</color>
+    <color name="accent">#ff9c00</color>
+    <color name="digital_text">#ffffff</color>
+    <color name="arc">#8BC34A</color>
+    <color name="arc2">#CDDC39</color>
 </resources>

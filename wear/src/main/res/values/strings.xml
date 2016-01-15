@@ -1,4 +1,11 @@
 <resources>
-    <string name="app_name">Virde</string>
-    <string name="hello_world">Hello World!</string>
+    <string name="app_name">CINDA </string>
+    <string name="my_digital_name">CINDA</string>
+    <string name="monday">Lunes</string>
+    <string name="tuesday">Martes</string>
+    <string name="wednesday">Miércoles</string>
+    <string name="thursday">Jueves</string>
+    <string name="friday">Viernes</string>
+    <string name="saturday">Sabado</string>
+    <string name="sunday">Domingo</string>
 </resources>
